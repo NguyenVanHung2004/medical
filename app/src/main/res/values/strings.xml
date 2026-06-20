@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">MedicalApp</string>
+
+    <!-- 1. Quản lý người dùng - Đăng ký & Đăng nhập -->
+    <string name="login_title">Đăng Nhập</string>
+    <string name="register_title">Đăng Ký</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="phone_hint">Số điện thoại</string>
+    <string name="otp_hint">Mã OTP</string>
+    <string name="login_button">Đăng Nhập</string>
+    <string name="register_button">Đăng Ký</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="login_with_google">Đăng nhập với Google</string>
+    <string name="login_with_facebook">Đăng nhập với Facebook</string>
+    <string name="login_with_apple">Đăng nhập với Apple</string>
+    <string name="terms_and_conditions">Điều khoản Dịch vụ &amp; Chính sách Bảo mật</string>
+    <string name="agree_terms">Tôi đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật</string>
+
+    <!-- Hồ sơ -->
+    <string name="profile_title">Hồ Sơ Cá Nhân</string>
+    <string name="full_name">Họ và tên</string>
+    <string name="dob">Ngày sinh</string>
+    <string name="gender">Giới tính</string>
+    <string name="address">Địa chỉ</string>
+    <string name="insurance_info">Thông tin bảo hiểm</string>
+    <string name="medical_history">Tiền sử bệnh / Dị ứng</string>
+    <string name="settings">Cài đặt</string>
+    <string name="logout">Đăng xuất</string>
+
+    <!-- 2. Quản lý lịch hẹn -->
+    <string name="home_title">Trang Chủ</string>
+    <string name="appointments_title">Lịch Hẹn</string>
+    <string name="search_doctor_hint">Tìm kiếm bác sĩ, chuyên khoa, phòng khám...</string>
+    <string name="book_appointment">Đặt Lịch Hẹn</string>
+    <string name="appointment_reason">Lý do khám / Triệu chứng</string>
+    <string name="consultation_type">Hình thức khám</string>
+    <string name="online_consultation">Khám trực tuyến</string>
+    <string name="offline_consultation">Khám trực tiếp</string>
+    <string name="confirm_booking">Xác nhận đặt lịch</string>
+    <string name="cancel_appointment">Hủy lịch hẹn</string>
+    <string name="reschedule_appointment">Đặt lại lịch</string>
+    <string name="appointment_history">Lịch sử khám bệnh</string>
+
+    <!-- 3. Thông báo -->
+    <string name="notifications_title">Thông Báo</string>
+    <string name="reminder_settings">Cài đặt nhắc nhở</string>
+
+    <!-- 4. Giao diện & Điều hướng -->
+    <string name="tab_home">Trang Chủ</string>
+    <string name="tab_appointments">Lịch Hẹn</string>
+    <string name="tab_doctors">Bác Sĩ</string>
+    <string name="tab_profile">Hồ Sơ</string>
+
+    <!-- 5. Bác sĩ -->
+    <string name="specialty">Chuyên khoa</string>
+    <string name="experience">Kinh nghiệm</string>
+    <string name="reviews">Đánh giá</string>
+    <string name="availability">Lịch trống</string>
+    <string name="sort_by_rating">Sắp xếp theo đánh giá</string>
+    <string name="sort_by_availability">Sắp xếp theo lịch trống</string>
+</resources>
