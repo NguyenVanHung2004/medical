@@ -18,7 +18,10 @@ import com.example.medical.presentation.ui.auth.LoginRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 import com.example.medical.presentation.ui.patient_home.PatientHomeRoute
+import com.example.medical.presentation.ui.doctor_list.DoctorListRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +44,19 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable("patient_home") {
-                                PatientHomeRoute()
+                                PatientHomeRoute(
+                                    onNavigateToDoctorList = { type ->
+                                        navController.navigate("doctor_list/$type")
+                                    }
+                                )
+                            }
+                            composable(
+                                "doctor_list/{type}",
+                                arguments = listOf(navArgument("type") { type = NavType.StringType })
+                            ) {
+                                DoctorListRoute(
+                                    onNavigateBack = { navController.popBackStack() }
+                                )
                             }
                         }
                     }

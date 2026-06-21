@@ -33,16 +33,21 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PatientHomeRoute(
+    onNavigateToDoctorList: (String) -> Unit,
     viewModel: PatientHomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    PatientHomeScreen(uiState = uiState)
+    PatientHomeScreen(
+        uiState = uiState,
+        onNavigateToDoctorList = onNavigateToDoctorList
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PatientHomeScreen(
-    uiState: PatientHomeUiState
+    uiState: PatientHomeUiState,
+    onNavigateToDoctorList: (String) -> Unit
 ) {
 
     val configuration = LocalConfiguration.current
@@ -78,7 +83,7 @@ fun PatientHomeScreen(
                         uiState.upcomingAppointment?.let { appointment ->
                             UpcomingAppointmentCard(appointment)
                         }
-                        QuickActionsSection()
+                        QuickActionsSection(onNavigateToDoctorList)
                     }
 
                     // Cột phải: Chuyên khoa, Góc sức khỏe
@@ -104,7 +109,7 @@ fun PatientHomeScreen(
                     uiState.upcomingAppointment?.let { appointment ->
                         UpcomingAppointmentCard(appointment)
                     }
-                    QuickActionsSection()
+                    QuickActionsSection(onNavigateToDoctorList)
                     PopularSpecialtiesSection(specialties = uiState.specialties)
                     HealthCornerSection()
                 }
@@ -322,14 +327,16 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
 }
 
 @Composable
-fun QuickActionsSection() {
+fun QuickActionsSection(onNavigateToDoctorList: (String) -> Unit) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Card(
-                modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_telemedicine)) { /* TODO */ },
+                modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_telemedicine)) { 
+                    onNavigateToDoctorList("online")
+                },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -362,7 +369,9 @@ fun QuickActionsSection() {
                 }
             }
             Card(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_in_person)) { 
+                    onNavigateToDoctorList("offline")
+                },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
