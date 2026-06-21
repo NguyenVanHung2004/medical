@@ -1,14 +1,18 @@
 package com.example.medical.presentation.ui.patient_home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -33,7 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PatientHomeRoute(
-    onNavigateToDoctorList: (String) -> Unit,
+    onNavigateToDoctorList: (String, String?) -> Unit,
     viewModel: PatientHomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -43,11 +47,12 @@ fun PatientHomeRoute(
     )
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PatientHomeScreen(
     uiState: PatientHomeUiState,
-    onNavigateToDoctorList: (String) -> Unit
+    onNavigateToDoctorList: (String, String?) -> Unit
 ) {
 
     val configuration = LocalConfiguration.current
@@ -72,7 +77,6 @@ fun PatientHomeScreen(
                         .padding(24.dp),
                     horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // Cột trái: Header, Lịch hẹn, Thao tác nhanh
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -86,14 +90,16 @@ fun PatientHomeScreen(
                         QuickActionsSection(onNavigateToDoctorList)
                     }
 
-                    // Cột phải: Chuyên khoa, Góc sức khỏe
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        PopularSpecialtiesSection(specialties = uiState.specialties)
+                        PopularSpecialtiesSection(
+                            specialties = uiState.specialties,
+                            onNavigateToDoctorList = onNavigateToDoctorList
+                        )
                         HealthCornerSection()
                     }
                 }
@@ -110,7 +116,10 @@ fun PatientHomeScreen(
                         UpcomingAppointmentCard(appointment)
                     }
                     QuickActionsSection(onNavigateToDoctorList)
-                    PopularSpecialtiesSection(specialties = uiState.specialties)
+                    PopularSpecialtiesSection(
+                        specialties = uiState.specialties,
+                        onNavigateToDoctorList = onNavigateToDoctorList
+                    )
                     HealthCornerSection()
                 }
             }
@@ -322,7 +331,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
 }
 
 @Composable
-fun QuickActionsSection(onNavigateToDoctorList: (String) -> Unit) {
+fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -330,7 +339,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String) -> Unit) {
         ) {
             Card(
                 modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_telemedicine)) { 
-                    onNavigateToDoctorList("online")
+                    onNavigateToDoctorList("online", null)
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
@@ -365,7 +374,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String) -> Unit) {
             }
             Card(
                 modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_in_person)) { 
-                    onNavigateToDoctorList("offline")
+                    onNavigateToDoctorList("offline", null)
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
@@ -403,7 +412,10 @@ fun QuickActionsSection(onNavigateToDoctorList: (String) -> Unit) {
 }
 
 @Composable
-fun PopularSpecialtiesSection(specialties: List<Specialty>) {
+fun PopularSpecialtiesSection(
+    specialties: List<Specialty>,
+    onNavigateToDoctorList: (String, String?) -> Unit
+) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -424,14 +436,16 @@ fun PopularSpecialtiesSection(specialties: List<Specialty>) {
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
+        LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            specialties.forEach { specialty ->
+            items(specialties) { specialty ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable { /* TODO */ }
+                    modifier = Modifier.clickable { 
+                        onNavigateToDoctorList("offline", specialty.name) 
+                    }
                 ) {
                     Box(
                         modifier = Modifier
@@ -441,7 +455,7 @@ fun PopularSpecialtiesSection(specialties: List<Specialty>) {
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.FavoriteBorder, // Fallback icon
+                            imageVector = getSpecialtyIcon(specialty.name),
                             contentDescription = specialty.name,
                             tint = colorResource(id = R.color.primaryBlue)
                         )
@@ -471,7 +485,7 @@ fun HealthCornerSection() {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp)
+                .height(160.dp)
                 .clickable(onClickLabel = stringResource(id = R.string.read_now)) { /* TODO */ },
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.primaryBlueLight)), // Fallback background
@@ -519,7 +533,7 @@ fun HealthCornerSection() {
                             color = colorResource(id = R.color.primaryBlue)
                         )
                         Icon(
-                            imageVector = Icons.Default.ArrowForward,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = stringResource(id = R.string.read_now),
                             tint = colorResource(id = R.color.primaryBlue),
                             modifier = Modifier.size(16.dp)
@@ -586,5 +600,18 @@ fun BottomNavigationBar() {
                 unselectedTextColor = colorResource(id = R.color.textSecondary)
             )
         )
+    }
+}
+
+fun getSpecialtyIcon(name: String): androidx.compose.ui.graphics.vector.ImageVector {
+    return when {
+        name.contains("Nhi", ignoreCase = true) -> Icons.Default.ChildCare
+        name.contains("Thần kinh", ignoreCase = true) -> Icons.Default.Psychology
+        name.contains("Răng", ignoreCase = true) || name.contains("Nha", ignoreCase = true) -> Icons.Default.Face
+        name.contains("Tim", ignoreCase = true) -> Icons.Default.Favorite
+        name.contains("Mắt", ignoreCase = true) -> Icons.Default.Visibility
+        name.contains("Da liễu", ignoreCase = true) -> Icons.Default.PanTool
+        name.contains("Nội", ignoreCase = true) -> Icons.Default.MedicalServices
+        else -> Icons.Default.LocalHospital
     }
 }

@@ -30,10 +30,14 @@ class PatientHomeRepositoryImpl : PatientHomeRepository {
     override fun getPopularSpecialties(): Flow<List<Specialty>> {
         return flowOf(
             listOf(
-                Specialty("1", "Tim mạch", null),
+                Specialty("1", "Khám nội chung", null),
                 Specialty("2", "Nhi khoa", null),
-                Specialty("3", "Da liễu", null),
-                Specialty("4", "Răng hàm mặt", null)
+                Specialty("3", "Tim mạch", null),
+                Specialty("4", "Răng hàm mặt", null),
+                Specialty("5", "Da liễu", null),
+                Specialty("6", "Thần kinh", null),
+                Specialty("7", "Mắt", null),
+                Specialty("8", "Tai mũi họng", null)
             )
         )
     }

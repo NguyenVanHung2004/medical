@@ -17,8 +17,11 @@ class DoctorListViewModel(
 ) : ViewModel() {
 
     private val typeParam: String? = savedStateHandle["type"]
+    private val specialtyParam: String? = savedStateHandle["specialty"]
     
-    private val _uiState = MutableStateFlow(DoctorListUiState())
+    private val _uiState = MutableStateFlow(DoctorListUiState(
+        selectedSpecialty = specialtyParam
+    ))
     val uiState: StateFlow<DoctorListUiState> = _uiState.asStateFlow()
 
     init {
