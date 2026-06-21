@@ -14,6 +14,7 @@ val networkModule = module {
 
 val repositoryModule = module {
     single<AuthRepository> { AuthRepositoryImpl() }
+    single<com.example.medical.domain.repository.PatientHomeRepository> { com.example.medical.data.repository.PatientHomeRepositoryImpl() }
 }
 
 val useCaseModule = module {
@@ -22,6 +23,7 @@ val useCaseModule = module {
 
 val viewModelModule = module {
     viewModel { AuthViewModel(get()) }
+    viewModel { com.example.medical.presentation.ui.patient_home.PatientHomeViewModel(get()) }
 }
 
 val appModule = module {

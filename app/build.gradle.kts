@@ -68,4 +68,10 @@ dependencies {
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    
+    // Coil for Compose
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 }

@@ -61,4 +61,31 @@
     <string name="availability">Lịch trống</string>
     <string name="sort_by_rating">Sắp xếp theo đánh giá</string>
     <string name="sort_by_availability">Sắp xếp theo lịch trống</string>
+
+    <!-- Patient Home Screen -->
+    <string name="greeting_morning">Chào buổi sáng,</string>
+    <string name="upcoming_appointment">LỊCH HẸN SẮP TỚI</string>
+    <string name="in_hours">Trong %s giờ</string>
+    <string name="btn_details">Chi tiết</string>
+    <string name="btn_enter_clinic">Vào phòng khám</string>
+    <string name="action_book_new">Đặt lịch mới</string>
+    <string name="action_book_new_desc">Chọn bác sĩ &amp; thời gian</string>
+    <string name="action_telemedicine">Tư vấn từ xa</string>
+    <string name="action_telemedicine_desc">Khám qua video</string>
+    <string name="action_in_person">Khám tại viện</string>
+    <string name="action_in_person_desc">Đặt khám trực tiếp</string>
+    <string name="popular_specialties">Chuyên khoa phổ biến</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="health_corner">Góc sức khỏe</string>
+    <string name="read_now">Đọc ngay</string>
+    
+    <string name="spec_cardiology">Tim mạch</string>
+    <string name="spec_pediatrics">Nhi khoa</string>
+    <string name="spec_dermatology">Da liễu</string>
+    <string name="spec_dentistry">Răng hàm mặt</string>
+
+    <string name="bottom_nav_search">Tìm kiếm</string>
+    <string name="bottom_nav_appointments">Lịch hẹn</string>
+    <string name="bottom_nav_profile">Hồ sơ</string>
+    <string name="bottom_nav_notifications">Thông báo</string>
 </resources>

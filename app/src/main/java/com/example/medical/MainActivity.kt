@@ -15,19 +15,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.medical.presentation.theme.MedicalAppTheme
 import com.example.medical.presentation.ui.auth.LoginRoute
 
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.medical.presentation.ui.patient_home.PatientHomeRoute
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MedicalAppTheme {
+                val navController = rememberNavController()
+                
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        LoginRoute(
-                            onLoginSuccess = {
-                                // Navigate to Home
+                        NavHost(navController = navController, startDestination = "login") {
+                            composable("login") {
+                                LoginRoute(
+                                    onLoginSuccess = {
+                                        navController.navigate("patient_home") {
+                                            popUpTo("login") { inclusive = true }
+                                        }
+                                    }
+                                )
                             }
-                        )
+                            composable("patient_home") {
+                                PatientHomeRoute()
+                            }
+                        }
                     }
                 }
             }
