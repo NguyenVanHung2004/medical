@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,36 +45,70 @@ fun PatientHomeScreen(
     uiState: PatientHomeUiState
 ) {
 
+    val configuration = LocalConfiguration.current
+    val isTablet = configuration.screenWidthDp > 600
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar()
         },
         containerColor = colorResource(id = R.color.bgLight)
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(paddingValues),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Header
-            HeaderSection(userName = uiState.userName)
+            if (isTablet) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    // Cột trái: Header, Lịch hẹn, Thao tác nhanh
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        HeaderSection(userName = uiState.userName)
+                        uiState.upcomingAppointment?.let { appointment ->
+                            UpcomingAppointmentCard(appointment)
+                        }
+                        QuickActionsSection()
+                    }
 
-            // Upcoming Appointment
-            uiState.upcomingAppointment?.let { appointment ->
-                UpcomingAppointmentCard(appointment)
+                    // Cột phải: Chuyên khoa, Góc sức khỏe
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        PopularSpecialtiesSection(specialties = uiState.specialties)
+                        HealthCornerSection()
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    HeaderSection(userName = uiState.userName)
+                    uiState.upcomingAppointment?.let { appointment ->
+                        UpcomingAppointmentCard(appointment)
+                    }
+                    QuickActionsSection()
+                    PopularSpecialtiesSection(specialties = uiState.specialties)
+                    HealthCornerSection()
+                }
             }
-
-            // Quick Actions
-            QuickActionsSection()
-
-            // Popular Specialties
-            PopularSpecialtiesSection(specialties = uiState.specialties)
-
-            // Health Corner
-            HealthCornerSection()
         }
     }
 }
@@ -220,7 +255,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
+                            contentDescription = "Ngày khám",
                             tint = colorResource(id = R.color.primaryBlue),
                             modifier = Modifier.size(16.dp)
                         )
@@ -243,7 +278,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Info, // Use time icon if available
-                            contentDescription = null,
+                            contentDescription = "Thời gian",
                             tint = colorResource(id = R.color.primaryBlue),
                             modifier = Modifier.size(16.dp)
                         )
@@ -289,55 +324,12 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
 @Composable
 fun QuickActionsSection() {
     Column {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(colorResource(id = R.color.primaryBlueLight), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = null,
-                        tint = colorResource(id = R.color.primaryBlue)
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column {
-                    Text(
-                        text = stringResource(id = R.string.action_book_new),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.action_book_new_desc),
-                        fontSize = 14.sp,
-                        color = colorResource(id = R.color.textSecondary)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Card(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_telemedicine)) { /* TODO */ },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -351,7 +343,7 @@ fun QuickActionsSection() {
                     ) {
                         Icon(
                             imageVector = Icons.Default.Call,
-                            contentDescription = null,
+                            contentDescription = stringResource(id = R.string.action_telemedicine),
                             tint = colorResource(id = R.color.primaryBlue)
                         )
                     }
@@ -384,7 +376,7 @@ fun QuickActionsSection() {
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
+                            contentDescription = stringResource(id = R.string.action_in_person),
                             tint = colorResource(id = R.color.primaryBlue)
                         )
                     }
@@ -475,7 +467,8 @@ fun HealthCornerSection() {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp),
+                .height(140.dp)
+                .clickable(onClickLabel = stringResource(id = R.string.read_now)) { /* TODO */ },
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.primaryBlueLight)), // Fallback background
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -523,7 +516,7 @@ fun HealthCornerSection() {
                         )
                         Icon(
                             imageVector = Icons.Default.ArrowForward,
-                            contentDescription = null,
+                            contentDescription = stringResource(id = R.string.read_now),
                             tint = colorResource(id = R.color.primaryBlue),
                             modifier = Modifier.size(16.dp)
                         )
