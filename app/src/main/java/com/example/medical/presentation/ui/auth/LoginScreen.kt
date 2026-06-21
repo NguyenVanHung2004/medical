@@ -91,7 +91,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "Vui lòng tục",
+                text = "Vui lòngád tục",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
