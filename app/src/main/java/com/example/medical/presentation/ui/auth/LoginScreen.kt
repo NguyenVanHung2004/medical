@@ -80,7 +80,7 @@ fun LoginScreen(
         ) {
             // Premium Header
             Text(
-                text = "Welcome Back",
+                text = "k",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 32.sp
@@ -91,7 +91,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "Vui lòng nhập thông tin để tiếp tục",
+                text = "Vui lòng tục",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
