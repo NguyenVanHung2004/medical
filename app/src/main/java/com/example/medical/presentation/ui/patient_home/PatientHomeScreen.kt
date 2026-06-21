@@ -127,11 +127,6 @@ fun HeaderSection(userName: String) {
     ) {
         Column {
             Text(
-                text =userName,
-                fontSize = 14.sp,
-                color = colorResource(id = R.color.textSecondary)
-            )
-            Text(
                 text = stringResource(id = R.string.greeting_morning),
                 fontSize = 14.sp,
                 color = colorResource(id = R.color.textSecondary)
