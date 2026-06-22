@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.booking
+package com.example.medical.presentation.ui.patient.booking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,14 +40,19 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BookingRoute(
     onNavigateBack: () -> Unit,
-    onNavigateToNext: () -> Unit,
+    onNavigateToNext: (String, String, String) -> Unit,
     viewModel: BookingViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     BookingScreen(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onNavigateToNext = onNavigateToNext,
+        onNavigateToNext = {
+            val doctorId = uiState.doctor?.id ?: return@BookingScreen
+            val date = uiState.selectedDate?.let { "${it.dateString} ${it.month}" } ?: return@BookingScreen
+            val time = uiState.selectedTimeSlot?.timeRange?.split(" - ")?.firstOrNull() ?: return@BookingScreen
+            onNavigateToNext(doctorId, date, time)
+        },
         onDateSelected = viewModel::selectDate,
         onTimeSlotSelected = viewModel::selectTimeSlot
     )

@@ -6,10 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.medical.presentation.theme.MedicalAppTheme
 import com.example.medical.presentation.ui.auth.LoginRoute
 
@@ -18,8 +15,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
-import com.example.medical.presentation.ui.patient_home.PatientHomeRoute
-import com.example.medical.presentation.ui.doctor_list.DoctorListRoute
+import com.example.medical.presentation.ui.patient.booking.BookingRoute
+import com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute
+import com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute
+import com.example.medical.presentation.ui.patient.patient_home.PatientHomeRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,9 +65,28 @@ class MainActivity : ComponentActivity() {
                             "booking/{doctorId}",
                             arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
                         ) {
-                            com.example.medical.presentation.ui.booking.BookingRoute(
+                            BookingRoute(
                                 onNavigateBack = { navController.popBackStack() },
-                                onNavigateToNext = { /* TODO */ }
+                                onNavigateToNext = { doctorId, date, time ->
+                                    navController.navigate("booking_success/$doctorId/$date/$time")
+                                }
+                            )
+                        }
+                        composable(
+                            "booking_success/{doctorId}/{date}/{time}",
+                            arguments = listOf(
+                                navArgument("doctorId") { type = NavType.StringType },
+                                navArgument("date") { type = NavType.StringType },
+                                navArgument("time") { type = NavType.StringType }
+                            )
+                        ) {
+                            BookingSuccessRoute(
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateHome = {
+                                    navController.navigate("patient_home") {
+                                        popUpTo("patient_home") { inclusive = true }
+                                    }
+                                }
                             )
                         }
                     }

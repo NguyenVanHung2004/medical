@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.patient_home
+package com.example.medical.presentation.ui.patient.patient_home
 
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.Article

@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.booking
+package com.example.medical.presentation.ui.patient.booking
 
 import com.example.medical.domain.model.BookingDate
 import com.example.medical.domain.model.DoctorDetail

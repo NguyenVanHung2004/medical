@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.patient_home
+package com.example.medical.presentation.ui.patient.patient_home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
@@ -603,7 +604,7 @@ fun BottomNavigationBar() {
     }
 }
 
-fun getSpecialtyIcon(name: String): androidx.compose.ui.graphics.vector.ImageVector {
+fun getSpecialtyIcon(name: String): ImageVector {
     return when {
         name.contains("Nhi", ignoreCase = true) -> Icons.Default.ChildCare
         name.contains("Thần kinh", ignoreCase = true) -> Icons.Default.Psychology

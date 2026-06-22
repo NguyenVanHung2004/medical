@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.doctor_list
+package com.example.medical.presentation.ui.patient.doctor_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +41,7 @@ import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.ConsultationType
 import com.example.medical.domain.model.DoctorDetail
-import com.example.medical.presentation.ui.patient_home.BottomNavigationBar
+import com.example.medical.presentation.ui.patient.patient_home.BottomNavigationBar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -84,7 +86,7 @@ fun DoctorListScreen(
                         fontWeight = FontWeight.Bold,
                         color = colorResource(id = R.color.primaryBlue),
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center
                     )
                 },
                 navigationIcon = {
@@ -318,7 +320,7 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
 
 @Composable
 fun BadgeItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     text: String,
     backgroundColor: Color,
     textColor: Color,

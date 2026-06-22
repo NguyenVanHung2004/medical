@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.doctor_list
+package com.example.medical.presentation.ui.patient.doctor_list
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -18,10 +18,12 @@ class DoctorListViewModel(
 
     private val typeParam: String? = savedStateHandle["type"]
     private val specialtyParam: String? = savedStateHandle["specialty"]
-    
-    private val _uiState = MutableStateFlow(DoctorListUiState(
-        selectedSpecialty = specialtyParam
-    ))
+
+    private val _uiState = MutableStateFlow(
+        DoctorListUiState(
+            selectedSpecialty = specialtyParam
+        )
+    )
     val uiState: StateFlow<DoctorListUiState> = _uiState.asStateFlow()
 
     init {
@@ -30,13 +32,13 @@ class DoctorListViewModel(
             "offline" -> ConsultationType.OFFLINE
             else -> null
         }
-        
+
         val title = when (typeParam) {
             "online" -> "Khám trực tuyến"
             "offline" -> "Khám trực tiếp"
             else -> "Danh sách Bác sĩ"
         }
-        
+
         _uiState.update { it.copy(title = title) }
         loadDoctors(consultationType)
     }
@@ -49,11 +51,11 @@ class DoctorListViewModel(
             }
         }
     }
-    
+
     fun onSearchQueryChange(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
     }
-    
+
     fun onSpecialtySelected(specialty: String?) {
         _uiState.update { it.copy(selectedSpecialty = specialty) }
         // Implement local filtering logic here if needed

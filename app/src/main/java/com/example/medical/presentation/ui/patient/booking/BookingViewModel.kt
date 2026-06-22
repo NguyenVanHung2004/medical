@@ -1,4 +1,4 @@
-package com.example.medical.presentation.ui.booking
+package com.example.medical.presentation.ui.patient.booking
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
