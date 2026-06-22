@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.medical.R
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentRequest
@@ -30,31 +31,19 @@ import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun DoctorAppointmentRoute(
-    viewModel: DoctorAppointmentViewModel = koinViewModel(),
-    onNavigateToHome: () -> Unit = {},
-    onNavigateToPatients: () -> Unit = {},
-    onNavigateToNotifications: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    viewModel: DoctorAppointmentViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
     DoctorAppointmentScreen(
-        uiState = uiState,
-        onNavigateToHome = onNavigateToHome,
-        onNavigateToPatients = onNavigateToPatients,
-        onNavigateToNotifications = onNavigateToNotifications,
-        onNavigateToProfile = onNavigateToProfile
+        uiState = uiState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoctorAppointmentScreen(
-    uiState: DoctorAppointmentUiState,
-    onNavigateToHome: () -> Unit,
-    onNavigateToPatients: () -> Unit,
-    onNavigateToNotifications: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    uiState: DoctorAppointmentUiState
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
@@ -91,46 +80,6 @@ fun DoctorAppointmentScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        },
-        bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface
-            ) {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text(stringResource(R.string.nav_home)) },
-                    selected = false,
-                    onClick = onNavigateToHome
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.CalendarToday, contentDescription = "Appointments") },
-                    label = { Text(stringResource(R.string.nav_appointments)) },
-                    selected = true,
-                    onClick = { /* Already here */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                    )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.People, contentDescription = "Patients") },
-                    label = { Text(stringResource(R.string.nav_patients)) },
-                    selected = false,
-                    onClick = onNavigateToPatients
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.NotificationsNone, contentDescription = "Notifications") },
-                    label = { Text(stringResource(R.string.nav_notifications)) },
-                    selected = false,
-                    onClick = onNavigateToNotifications
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.PersonOutline, contentDescription = "Profile") },
-                    label = { Text(stringResource(R.string.nav_profile)) },
-                    selected = false,
-                    onClick = onNavigateToProfile
-                )
-            }
         }
     ) { paddingValues ->
         if (uiState.isLoading) {
@@ -250,6 +199,27 @@ fun PendingRequestCard(request: AppointmentRequest) {
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val isOnline = request.type == AppointmentType.ONLINE
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    if (isOnline) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                    else MaterialTheme.colorScheme.surfaceVariant,
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (isOnline) stringResource(R.string.online) else stringResource(R.string.offline),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Event,
@@ -282,6 +252,24 @@ fun PendingRequestCard(request: AppointmentRequest) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
+            }
+            
+            if (request.type == AppointmentType.OFFLINE && request.location != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.Top) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp).padding(top = 2.dp),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = request.location,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -431,6 +419,26 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false) 
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
+                            // Appointment Type Chip
+                            val isOnline = appointment.type == AppointmentType.ONLINE
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        if (isOnline) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                        else MaterialTheme.colorScheme.surfaceVariant,
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (isOnline) stringResource(R.string.online) else stringResource(R.string.offline),
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    color = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+
                             Text(
                                 text = appointment.patientName,
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -495,25 +503,6 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false) 
                             }
                         }
                     }
-                    
-                    // Appointment Type Chip (Retained as requested)
-                    val isOnline = appointment.type == AppointmentType.ONLINE
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                if (isOnline) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                                else MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(8.dp)
-                            )
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = if (isOnline) stringResource(R.string.online) else stringResource(R.string.offline),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                            color = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -533,8 +522,8 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false) 
                         ) {
                             Text(
                                 text = stringResource(R.string.enter_clinic),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 16.sp,
                                 style = MaterialTheme.typography.labelLarge,
                                 color = Color.White
                             )
@@ -547,8 +536,8 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false) 
                         ) {
                             Text(
                                 text = stringResource(R.string.view_details),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 16.sp,
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.primary
                             )

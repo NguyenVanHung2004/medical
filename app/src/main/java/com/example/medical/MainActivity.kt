@@ -11,8 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.medical.presentation.theme.MedicalAppTheme
 import com.example.medical.presentation.ui.auth.LoginRoute
-import com.example.medical.presentation.ui.doctor.home.DoctorHomeRoute
-import com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentRoute
+import com.example.medical.presentation.ui.doctor.navigation.DoctorMainScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,17 +28,12 @@ class MainActivity : ComponentActivity() {
                 when (currentScreen) {
                     "login" -> {
                         LoginRoute(
-                            onLoginSuccess = { currentScreen = "doctor_home" }
+                            onLoginSuccess = { currentScreen = "doctor_main" }
                         )
                     }
-                    "doctor_home" -> {
-                        DoctorHomeRoute(
-                            onNavigateToAppointments = { currentScreen = "doctor_appointments" }
-                        )
-                    }
-                    "doctor_appointments" -> {
-                        DoctorAppointmentRoute(
-                            onNavigateToHome = { currentScreen = "doctor_home" }
+                    "doctor_main" -> {
+                        DoctorMainScreen(
+                            onLogout = { currentScreen = "login" }
                         )
                     }
                 }

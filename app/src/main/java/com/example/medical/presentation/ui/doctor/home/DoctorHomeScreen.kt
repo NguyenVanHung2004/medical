@@ -1,6 +1,7 @@
 package com.example.medical.presentation.ui.doctor.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.medical.R
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentRequest
@@ -34,18 +36,14 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun DoctorHomeRoute(
     viewModel: DoctorHomeViewModel = koinViewModel(),
-    onNavigateToPatients: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {},
     onNavigateToAppointments: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     DoctorHomeScreen(
         uiState = uiState,
-        onNavigateToPatients = onNavigateToPatients,
         onNavigateToNotifications = onNavigateToNotifications,
-        onNavigateToProfile = onNavigateToProfile,
         onNavigateToAppointments = onNavigateToAppointments
     )
 }
@@ -54,9 +52,7 @@ fun DoctorHomeRoute(
 @Composable
 fun DoctorHomeScreen(
     uiState: DoctorHomeUIState,
-    onNavigateToPatients: () -> Unit,
     onNavigateToNotifications: () -> Unit,
-    onNavigateToProfile: () -> Unit,
     onNavigateToAppointments: () -> Unit
 ) {
     Scaffold(
@@ -91,46 +87,6 @@ fun DoctorHomeScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        },
-        bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface
-            ) {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text(stringResource(R.string.nav_home)) },
-                    selected = true,
-                    onClick = { /* Do nothing, already here */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                    )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.CalendarToday, contentDescription = "Appointments") },
-                    label = { Text(stringResource(R.string.nav_appointments)) },
-                    selected = false,
-                    onClick = onNavigateToAppointments
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.People, contentDescription = "Patients") },
-                    label = { Text(stringResource(R.string.nav_patients)) },
-                    selected = false,
-                    onClick = onNavigateToPatients
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.NotificationsNone, contentDescription = "Notifications") },
-                    label = { Text(stringResource(R.string.nav_notifications)) },
-                    selected = false,
-                    onClick = onNavigateToNotifications
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.PersonOutline, contentDescription = "Profile") },
-                    label = { Text(stringResource(R.string.nav_profile)) },
-                    selected = false,
-                    onClick = onNavigateToProfile
-                )
-            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -168,7 +124,7 @@ fun DoctorHomeScreen(
                                     Spacer(modifier = Modifier.height(24.dp))
                                     StatsSection()
                                     Spacer(modifier = Modifier.height(24.dp))
-                                    RequestsSection(requests = uiState.pendingRequests)
+                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
                                     Spacer(modifier = Modifier.height(24.dp))
                                 }
                             }
@@ -199,7 +155,7 @@ fun DoctorHomeScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             StatsSection()
                             Spacer(modifier = Modifier.height(24.dp))
-                            RequestsSection(requests = uiState.pendingRequests)
+                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
                             Spacer(modifier = Modifier.height(24.dp))
                             AppointmentsSection(appointments = uiState.todayAppointments)
                             Spacer(modifier = Modifier.height(80.dp)) // For FAB
@@ -328,7 +284,7 @@ fun StatCard(
 }
 
 @Composable
-fun RequestsSection(requests: List<AppointmentRequest>) {
+fun RequestsSection(requests: List<AppointmentRequest>, onViewAllClick: () -> Unit) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -343,7 +299,8 @@ fun RequestsSection(requests: List<AppointmentRequest>) {
             Text(
                 text = stringResource(R.string.view_all),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { onViewAllClick() }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -620,8 +577,8 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                         ) {
                             Text(
                                 text = stringResource(R.string.enter_clinic),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 16.sp,
                                 style = MaterialTheme.typography.labelLarge
                             )
                         }
@@ -633,8 +590,8 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                         ) {
                             Text(
                                 text = stringResource(R.string.view_details),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 16.sp,
                                 style = MaterialTheme.typography.labelLarge
                             )
                         }

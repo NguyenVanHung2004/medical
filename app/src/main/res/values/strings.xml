@@ -47,6 +47,19 @@
     <!-- 3. Thông báo -->
     <string name="notifications_title">Thông Báo</string>
     <string name="reminder_settings">Cài đặt nhắc nhở</string>
+    <string name="mark_all_read">Đánh dấu đã đọc</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_unread">Chưa đọc</string>
+
+    <!-- Notification Item Strings -->
+    <string name="noti_title_new_request">Yêu cầu đặt lịch mới</string>
+    <string name="noti_body_new_request">Bệnh nhân %1$s yêu cầu khám %2$s.</string>
+    <string name="noti_title_cancelled">Lịch khám bị hủy</string>
+    <string name="noti_body_cancelled">Bệnh nhân %1$s đã hủy ca khám %2$s.</string>
+    <string name="noti_title_upcoming">Sắp đến giờ khám</string>
+    <string name="noti_body_upcoming">Ca khám %1$s với %2$s sẽ bắt đầu %3$s.</string>
+    <string name="noti_online">trực tuyến</string>
+    <string name="noti_offline">trực tiếp</string>
 
     <!-- 4. Giao diện & Điều hướng -->
     <string name="tab_home">Trang Chủ</string>
@@ -85,4 +98,19 @@
     <string name="scheduled_appointments">Đã lên lịch</string>
     <string name="nav_home">Trang chủ</string>
     <string name="nav_appointments">Lịch hẹn</string>
+
+    <!-- Doctor Profile Strings -->
+    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="services_and_fees">Dịch vụ &amp; Chi phí</string>
+    <string name="online_consultation_service">Tư vấn trực tuyến</string>
+    <string name="in_person_consultation_service">Khám tại viện</string>
+    <string name="working_hours">Thời gian làm việc</string>
+    <string name="update_working_hours">Cập nhật lịch làm việc</string>
+    <string name="notification_settings">Cài đặt thông báo</string>
+    <string name="account_security">Bảo mật tài khoản</string>
+    <string name="help_and_faq">Hỗ trợ &amp; FAQ</string>
+    <string name="change_date_and_time">Đổi ngày &amp; giờ</string>
+    <string name="morning">Sáng</string>
+    <string name="afternoon">Chiều</string>
+    <string name="confirm_schedule_change">Xác nhận đổi lịch</string>
 </resources>

@@ -24,14 +24,17 @@ class DoctorHomeRepositoryImpl : DoctorHomeRepository {
                 patientName = "Trần Thị Bích",
                 patientInitial = "B",
                 timeRange = "09:00 - 09:30",
-                reason = "Tái khám sau phẫu thuật"
+                reason = "Tái khám sau phẫu thuật",
+                type = AppointmentType.ONLINE
             ),
             AppointmentRequest(
                 id = "REQ02",
                 patientName = "Lê Văn Cường",
                 patientInitial = "L",
                 timeRange = "10:30 - 11:00",
-                reason = "Tư vấn kết quả xét nghiệm"
+                reason = "Tư vấn kết quả xét nghiệm",
+                type = AppointmentType.OFFLINE,
+                location = "Phòng 204, Khu A"
             )
         ))
     }
