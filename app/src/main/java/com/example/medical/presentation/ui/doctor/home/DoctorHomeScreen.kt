@@ -1,6 +1,7 @@
 package com.example.medical.presentation.ui.doctor.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -34,7 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun DoctorHomeRoute(
     viewModel: DoctorHomeViewModel = koinViewModel(),
-    onNavigateToPatients: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAppointments: () -> Unit = {}
@@ -43,7 +43,6 @@ fun DoctorHomeRoute(
 
     DoctorHomeScreen(
         uiState = uiState,
-        onNavigateToPatients = onNavigateToPatients,
         onNavigateToNotifications = onNavigateToNotifications,
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToAppointments = onNavigateToAppointments
@@ -54,7 +53,6 @@ fun DoctorHomeRoute(
 @Composable
 fun DoctorHomeScreen(
     uiState: DoctorHomeUIState,
-    onNavigateToPatients: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToAppointments: () -> Unit
@@ -112,12 +110,7 @@ fun DoctorHomeScreen(
                     selected = false,
                     onClick = onNavigateToAppointments
                 )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.People, contentDescription = "Patients") },
-                    label = { Text(stringResource(R.string.nav_patients)) },
-                    selected = false,
-                    onClick = onNavigateToPatients
-                )
+                // Removed Patients NavigationBarItem
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.NotificationsNone, contentDescription = "Notifications") },
                     label = { Text(stringResource(R.string.nav_notifications)) },
@@ -168,7 +161,7 @@ fun DoctorHomeScreen(
                                     Spacer(modifier = Modifier.height(24.dp))
                                     StatsSection()
                                     Spacer(modifier = Modifier.height(24.dp))
-                                    RequestsSection(requests = uiState.pendingRequests)
+                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
                                     Spacer(modifier = Modifier.height(24.dp))
                                 }
                             }
@@ -199,7 +192,7 @@ fun DoctorHomeScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             StatsSection()
                             Spacer(modifier = Modifier.height(24.dp))
-                            RequestsSection(requests = uiState.pendingRequests)
+                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
                             Spacer(modifier = Modifier.height(24.dp))
                             AppointmentsSection(appointments = uiState.todayAppointments)
                             Spacer(modifier = Modifier.height(80.dp)) // For FAB
@@ -328,7 +321,7 @@ fun StatCard(
 }
 
 @Composable
-fun RequestsSection(requests: List<AppointmentRequest>) {
+fun RequestsSection(requests: List<AppointmentRequest>, onViewAllClick: () -> Unit) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -343,7 +336,8 @@ fun RequestsSection(requests: List<AppointmentRequest>) {
             Text(
                 text = stringResource(R.string.view_all),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { onViewAllClick() }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

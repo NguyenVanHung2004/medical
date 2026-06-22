@@ -3,7 +3,20 @@ package com.example.medical.domain.model
 data class Doctor(
     val id: String,
     val name: String,
-    val avatarUrl: String?
+    val avatarUrl: String?,
+    val specialty: String = "",
+    val experience: String = "",
+    val isOnlineConsultationEnabled: Boolean = false,
+    val onlineConsultationFee: Long = 0,
+    val isInPersonConsultationEnabled: Boolean = false,
+    val inPersonConsultationFee: Long = 0,
+    val workingHoursSummary: String = "Thứ 2 - Thứ 6\n08:00 - 11:30\n13:30 - 17:00"
+)
+
+data class WorkingTimeSlot(
+    val time: String,
+    val isSelected: Boolean,
+    val isAvailable: Boolean = true
 )
 
 data class AppointmentRequest(

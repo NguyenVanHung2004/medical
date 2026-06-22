@@ -13,6 +13,8 @@ import com.example.medical.presentation.theme.MedicalAppTheme
 import com.example.medical.presentation.ui.auth.LoginRoute
 import com.example.medical.presentation.ui.doctor.home.DoctorHomeRoute
 import com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentRoute
+import com.example.medical.presentation.ui.doctor.notification.DoctorNotificationRoute
+import com.example.medical.presentation.ui.doctor.profile.DoctorProfileRoute
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,12 +36,32 @@ class MainActivity : ComponentActivity() {
                     }
                     "doctor_home" -> {
                         DoctorHomeRoute(
-                            onNavigateToAppointments = { currentScreen = "doctor_appointments" }
+                            onNavigateToAppointments = { currentScreen = "doctor_appointments" },
+                            onNavigateToNotifications = { currentScreen = "doctor_notifications" },
+                            onNavigateToProfile = { currentScreen = "doctor_profile" }
                         )
                     }
                     "doctor_appointments" -> {
                         DoctorAppointmentRoute(
-                            onNavigateToHome = { currentScreen = "doctor_home" }
+                            onNavigateToHome = { currentScreen = "doctor_home" },
+                            onNavigateToNotifications = { currentScreen = "doctor_notifications" },
+                            onNavigateToProfile = { currentScreen = "doctor_profile" }
+                        )
+                    }
+                    "doctor_notifications" -> {
+                        DoctorNotificationRoute(
+                            onNavigateToHome = { currentScreen = "doctor_home" },
+                            onNavigateToAppointments = { currentScreen = "doctor_appointments" },
+                            onNavigateToProfile = { currentScreen = "doctor_profile" },
+                            onNavigateBack = { currentScreen = "doctor_home" }
+                        )
+                    }
+                    "doctor_profile" -> {
+                        DoctorProfileRoute(
+                            onNavigateToHome = { currentScreen = "doctor_home" },
+                            onNavigateToAppointments = { currentScreen = "doctor_appointments" },
+                            onNavigateToNotifications = { currentScreen = "doctor_notifications" },
+                            onLogout = { currentScreen = "login" }
                         )
                     }
                 }

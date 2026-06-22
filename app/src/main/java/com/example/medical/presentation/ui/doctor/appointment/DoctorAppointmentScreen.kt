@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 fun DoctorAppointmentRoute(
     viewModel: DoctorAppointmentViewModel = koinViewModel(),
     onNavigateToHome: () -> Unit = {},
-    onNavigateToPatients: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {}
 ) {
@@ -41,7 +40,6 @@ fun DoctorAppointmentRoute(
     DoctorAppointmentScreen(
         uiState = uiState,
         onNavigateToHome = onNavigateToHome,
-        onNavigateToPatients = onNavigateToPatients,
         onNavigateToNotifications = onNavigateToNotifications,
         onNavigateToProfile = onNavigateToProfile
     )
@@ -52,7 +50,6 @@ fun DoctorAppointmentRoute(
 fun DoctorAppointmentScreen(
     uiState: DoctorAppointmentUiState,
     onNavigateToHome: () -> Unit,
-    onNavigateToPatients: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToProfile: () -> Unit
 ) {
@@ -111,12 +108,6 @@ fun DoctorAppointmentScreen(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                     )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.People, contentDescription = "Patients") },
-                    label = { Text(stringResource(R.string.nav_patients)) },
-                    selected = false,
-                    onClick = onNavigateToPatients
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.NotificationsNone, contentDescription = "Notifications") },
