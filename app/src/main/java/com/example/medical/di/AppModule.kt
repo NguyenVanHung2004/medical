@@ -26,6 +26,7 @@ val viewModelModule = module {
     viewModel { AuthViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.patient_home.PatientHomeViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.doctor_list.DoctorListViewModel(get(), get()) }
+    viewModel { com.example.medical.presentation.ui.booking.BookingViewModel(get(), get()) }
 }
 
 val appModule = module {

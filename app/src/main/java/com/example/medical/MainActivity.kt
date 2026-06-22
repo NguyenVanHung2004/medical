@@ -56,7 +56,19 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             DoctorListRoute(
-                                onNavigateBack = { navController.popBackStack() }
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToBooking = { doctorId ->
+                                    navController.navigate("booking/$doctorId")
+                                }
+                            )
+                        }
+                        composable(
+                            "booking/{doctorId}",
+                            arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
+                        ) {
+                            com.example.medical.presentation.ui.booking.BookingRoute(
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToNext = { /* TODO */ }
                             )
                         }
                     }

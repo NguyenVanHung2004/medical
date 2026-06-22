@@ -14,5 +14,7 @@ data class DoctorDetail(
     val yearsOfExperience: Int,
     val isOnline: Boolean,
     val supportedTypes: List<ConsultationType>,
-    val isFullyBookedToday: Boolean = false
+    val isFullyBookedToday: Boolean = false,
+    val reviewCount: Int = 0,
+    val bio: String = ""
 )

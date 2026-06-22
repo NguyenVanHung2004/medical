@@ -45,6 +45,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DoctorListRoute(
     onNavigateBack: () -> Unit,
+    onNavigateToBooking: (String) -> Unit,
     viewModel: DoctorListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +57,8 @@ fun DoctorListRoute(
         onLocationSelected = viewModel::onLocationSelected,
         onRatingSelected = viewModel::onRatingSelected,
         onAvailabilitySelected = viewModel::onAvailabilitySelected,
-        onInsuranceSelected = viewModel::onInsuranceSelected
+        onInsuranceSelected = viewModel::onInsuranceSelected,
+        onDoctorClick = onNavigateToBooking
     )
 }
 
@@ -70,7 +72,8 @@ fun DoctorListScreen(
     onLocationSelected: (String?) -> Unit,
     onRatingSelected: (String?) -> Unit,
     onAvailabilitySelected: (String?) -> Unit,
-    onInsuranceSelected: (String?) -> Unit
+    onInsuranceSelected: (String?) -> Unit,
+    onDoctorClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -195,7 +198,7 @@ fun DoctorListScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(uiState.doctors) { doctor ->
-                        DoctorCard(doctor = doctor)
+                        DoctorCard(doctor = doctor, onClick = { onDoctorClick(doctor.id) })
                     }
                 }
             }
@@ -204,9 +207,9 @@ fun DoctorListScreen(
 }
 
 @Composable
-fun DoctorCard(doctor: DoctorDetail) {
+fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth().clickable { /* Handle click */ },
+        modifier = Modifier.fillMaxWidth().clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
