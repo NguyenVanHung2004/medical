@@ -19,4 +19,17 @@ class AuthRepositoryImpl : AuthRepository {
             emit(Result.Error("Email hoặc mật khẩu không chính xác"))
         }
     }
+
+    override fun register(email: String, phone: String, password: String): Flow<Result<User>> = flow {
+        emit(Result.Loading)
+        // Simulate network delay
+        delay(1500)
+        
+        // Mock validation/success
+        if (email.isNotBlank() || phone.isNotBlank()) {
+            emit(Result.Success(User(id = "2", email = email, fullName = "Người dùng mới", token = "fake_token_reg")))
+        } else {
+            emit(Result.Error("Vui lòng nhập Email hoặc Số điện thoại"))
+        }
+    }
 }

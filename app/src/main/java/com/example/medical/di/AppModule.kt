@@ -8,6 +8,8 @@ import com.example.medical.presentation.ui.patient.booking.BookingViewModel
 import com.example.medical.presentation.ui.patient.booking_success.BookingSuccessViewModel
 import com.example.medical.presentation.ui.patient.patient_home.PatientHomeViewModel
 import com.example.medical.presentation.ui.patient.doctor_list.DoctorListViewModel
+import com.example.medical.presentation.ui.auth.RegisterViewModel
+import com.example.medical.domain.usecase.RegisterUseCase
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import com.example.medical.data.repository.AppointmentRepositoryImpl
@@ -30,10 +32,12 @@ val repositoryModule = module {
 
 val useCaseModule = module {
     factory { LoginUseCase(get()) }
+    factory { RegisterUseCase(get()) }
 }
 
 val viewModelModule = module {
     viewModel { AuthViewModel(get()) }
+    viewModel { RegisterViewModel(get()) }
     viewModel { PatientHomeViewModel(get()) }
     viewModel { DoctorListViewModel(get(), get()) }
     viewModel { BookingViewModel(get(), get()) }

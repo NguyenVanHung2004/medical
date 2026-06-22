@@ -66,7 +66,6 @@ fun MedicalAppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        // typography = Typography, // Uncomment when Type.kt is implemented
         content = content
     )
 }

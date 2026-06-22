@@ -5,20 +5,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.medical.presentation.theme.MedicalAppTheme
 import com.example.medical.presentation.ui.auth.LoginRoute
-
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import androidx.navigation.NavType
-import com.example.medical.presentation.ui.patient.booking.BookingRoute
-import com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute
-import com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute
-import com.example.medical.presentation.ui.patient.patient_home.PatientHomeRoute
+import com.example.medical.presentation.ui.auth.RegisterRoute
+import com.example.medical.presentation.ui.intro.IntroScreen
+import com.example.medical.presentation.ui.welcome.WelcomeScreen
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,82 +27,72 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MedicalAppTheme {
-                val navController = rememberNavController()
-                
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    NavHost(navController = navController, startDestination = "login") {
-                        composable("login") {
-                            LoginRoute(
-                                onLoginSuccess = {
-                                    navController.navigate("patient_home") {
-                                        popUpTo("login") { inclusive = true }
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        var currentScreen by remember { mutableStateOf("welcome") }
+                        var isDoctorRole by remember { mutableStateOf(false) }
+
+                        when (currentScreen) {
+                            "welcome" -> {
+                                WelcomeScreen(
+                                    onRoleSelected = { isDoctor ->
+                                        isDoctorRole = isDoctor
+                                        currentScreen = "login"
                                     }
-                                }
-                            )
-                        }
-                        composable("patient_home") {
-                            PatientHomeRoute(
-                                onNavigateToDoctorList = { type, specialty ->
-                                    val route = if (specialty != null) "doctor_list/$type?specialty=$specialty" else "doctor_list/$type"
-                                    navController.navigate(route)
-                                },
-                                onNavigateToAppointmentDetail = { appointmentId ->
-                                    navController.navigate("appointment_detail/$appointmentId")
-                                }
-                            )
-                        }
-                        composable(
-                            "doctor_list/{type}?specialty={specialty}",
-                            arguments = listOf(
-                                navArgument("type") { type = NavType.StringType },
-                                navArgument("specialty") { type = NavType.StringType; nullable = true; defaultValue = null }
-                            )
-                        ) {
-                            DoctorListRoute(
-                                onNavigateBack = { navController.popBackStack() },
-                                onNavigateToBooking = { doctorId ->
-                                    navController.navigate("booking/$doctorId")
-                                }
-                            )
-                        }
-                        composable(
-                            "booking/{doctorId}",
-                            arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
-                        ) {
-                            BookingRoute(
-                                onNavigateBack = { navController.popBackStack() },
-                                onNavigateToNext = { doctorId, date, time ->
-                                    navController.navigate("booking_success/$doctorId/$date/$time")
-                                }
-                            )
-                        }
-                        composable(
-                            "booking_success/{doctorId}/{date}/{time}",
-                            arguments = listOf(
-                                navArgument("doctorId") { type = NavType.StringType },
-                                navArgument("date") { type = NavType.StringType },
-                                navArgument("time") { type = NavType.StringType }
-                            )
-                        ) {
-                            BookingSuccessRoute(
-                                onNavigateBack = { navController.popBackStack() },
-                                onNavigateHome = {
-                                    navController.navigate("patient_home") {
-                                        popUpTo("patient_home") { inclusive = true }
+                                )
+                            }
+                            "login" -> {
+                                LoginRoute(
+                                    isDoctor = isDoctorRole,
+                                    onLoginSuccess = {
+                                        if (isDoctorRole) {
+                                            currentScreen = "doctor_home"
+                                        } else {
+                                            currentScreen = "intro"
+                                        }
+                                    },
+                                    onRegisterClick = {
+                                        currentScreen = "register"
                                     }
-                                }
-                            )
-                        }
-                        composable(
-                            "appointment_detail/{appointmentId}",
-                            arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
-                        ) {
-                            com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailRoute(
-                                appointmentId = it.arguments?.getString("appointmentId") ?: "",
-                                onNavigateBack = { navController.popBackStack() },
-                                onNavigateToChangeDoctor = { /* TODO: handle doctor change */ },
-                                onNavigateToReschedule = { /* TODO: handle reschedule */ }
-                            )
+                                )
+                            }
+                            "register" -> {
+                                RegisterRoute(
+                                    isDoctor = isDoctorRole,
+                                    onBackClick = { currentScreen = "login" },
+                                    onLoginClick = { currentScreen = "login" },
+                                    onRegisterSuccess = {
+                                        currentScreen = "login"
+                                    }
+                                )
+                            }
+                            "intro" -> {
+                                IntroScreen(
+                                    onFinishIntro = {
+                                        currentScreen = "patient_home"
+                                    }
+                                )
+                            }
+                            "patient_home" -> {
+                                AlertDialog(
+                                    onDismissRequest = { },
+                                    title = { Text("Home Screen") },
+                                    text = { Text("Bắt đầu vào homeScreen Bệnh nhân") },
+                                    confirmButton = {
+                                        TextButton(onClick = { /* TODO */ }) { Text("OK") }
+                                    }
+                                )
+                            }
+                            "doctor_home" -> {
+                                AlertDialog(
+                                    onDismissRequest = { },
+                                    title = { Text("Home Screen") },
+                                    text = { Text("Bắt đầu vào homeScreen Bác sĩ") },
+                                    confirmButton = {
+                                        TextButton(onClick = { /* TODO */ }) { Text("OK") }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
