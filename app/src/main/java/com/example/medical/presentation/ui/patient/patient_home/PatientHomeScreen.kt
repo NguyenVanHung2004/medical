@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +35,7 @@ import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.Specialty
+import com.example.medical.presentation.ui.patient.appointments.AppointmentsRoute
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -59,19 +61,25 @@ fun PatientHomeScreen(
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp > 600
 
+    var currentTab by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("home") }
+
     Scaffold(
         bottomBar = {
-            BottomNavigationBar()
+            BottomNavigationBar(
+                currentTab = currentTab,
+                onTabSelected = { currentTab = it }
+            )
         },
         containerColor = colorResource(id = R.color.bgLight)
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            if (isTablet) {
+        if (currentTab == "home") {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                if (isTablet) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -125,6 +133,14 @@ fun PatientHomeScreen(
                 }
             }
         }
+    } else if (currentTab == "appointments") {
+        Box(modifier = Modifier.padding(paddingValues)) {
+            AppointmentsRoute(
+                onNavigateToHome = { currentTab = "home" },
+                onNavigateToAppointments = { currentTab = "appointments" }
+            )
+        }
+    }
     }
 }
 
@@ -547,7 +563,10 @@ fun HealthCornerSection() {
 }
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(
+    currentTab: String = "home",
+    onTabSelected: (String) -> Unit = {}
+) {
     NavigationBar(
         containerColor = colorResource(id = R.color.white),
         tonalElevation = 8.dp
@@ -555,8 +574,8 @@ fun BottomNavigationBar() {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
             label = { Text(stringResource(id = R.string.bottom_nav_search)) },
-            selected = true,
-            onClick = { /* TODO */ },
+            selected = currentTab == "home",
+            onClick = { onTabSelected("home") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = colorResource(id = R.color.primaryBlue),
                 selectedTextColor = colorResource(id = R.color.primaryBlue),
@@ -568,13 +587,14 @@ fun BottomNavigationBar() {
         NavigationBarItem(
             icon = { Icon(Icons.Default.DateRange, contentDescription = "Appointments") },
             label = { Text(stringResource(id = R.string.bottom_nav_appointments)) },
-            selected = false,
-            onClick = { /* TODO */ },
+            selected = currentTab == "appointments",
+            onClick = { onTabSelected("appointments") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = colorResource(id = R.color.primaryBlue),
                 selectedTextColor = colorResource(id = R.color.primaryBlue),
                 unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary)
+                unselectedTextColor = colorResource(id = R.color.textSecondary),
+                indicatorColor = colorResource(id = R.color.primaryBlueLight)
             )
         )
         NavigationBarItem(

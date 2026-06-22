@@ -88,4 +88,5 @@
     <string name="bottom_nav_appointments">Lịch hẹn</string>
     <string name="bottom_nav_profile">Hồ sơ</string>
     <string name="bottom_nav_notifications">Thông báo</string>
+    <string name="appointments">Lịch hẹn</string>
 </resources>

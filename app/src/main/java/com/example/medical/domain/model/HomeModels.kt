@@ -13,7 +13,10 @@ data class Appointment(
     val doctor: Doctor,
     val date: String,
     val time: String,
-    val hoursRemaining: Int
+    val hoursRemaining: Int,
+    val location: String = "Tư vấn trực tuyến",
+    val isOnline: Boolean = true,
+    val status: String? = null
 )
 
 data class Specialty(

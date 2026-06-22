@@ -10,6 +10,9 @@ import com.example.medical.presentation.ui.patient.patient_home.PatientHomeViewM
 import com.example.medical.presentation.ui.patient.doctor_list.DoctorListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import com.example.medical.data.repository.AppointmentRepositoryImpl
+import com.example.medical.domain.repository.AppointmentRepository
+import com.example.medical.presentation.ui.patient.appointments.AppointmentsViewModel
 
 
 val networkModule = module {
@@ -20,6 +23,7 @@ val repositoryModule = module {
     single<AuthRepository> { AuthRepositoryImpl() }
     single<com.example.medical.domain.repository.PatientHomeRepository> { com.example.medical.data.repository.PatientHomeRepositoryImpl() }
     single<com.example.medical.domain.repository.DoctorRepository> { com.example.medical.data.repository.DoctorRepositoryImpl() }
+    single<AppointmentRepository> { AppointmentRepositoryImpl() }
 }
 
 val useCaseModule = module {
@@ -32,8 +36,8 @@ val viewModelModule = module {
     viewModel { DoctorListViewModel(get(), get()) }
     viewModel { BookingViewModel(get(), get()) }
     viewModel { BookingSuccessViewModel(get(), get()) }
+    viewModel { AppointmentsViewModel(get()) }
 }
-
 val appModule = module {
     includes(networkModule, repositoryModule, viewModelModule, useCaseModule)
 }

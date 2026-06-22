@@ -1,4 +1,4 @@
-package com.example.medical.data.repository
+    package com.example.medical.data.repository
 
 import com.example.medical.domain.model.ConsultationType
 import com.example.medical.domain.model.DoctorDetail
