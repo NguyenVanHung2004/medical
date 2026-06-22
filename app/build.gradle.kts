@@ -66,6 +66,9 @@ dependencies {
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended")
     
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    
     // Credential Manager for Google Login
     implementation("androidx.credentials:credentials:1.2.2")
     implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
