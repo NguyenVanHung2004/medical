@@ -89,4 +89,43 @@
     <string name="bottom_nav_profile">Hồ sơ</string>
     <string name="bottom_nav_notifications">Thông báo</string>
     <string name="appointments">Lịch hẹn</string>
+    <string name="my_appointments_title">Lịch hẹn của tôi</string>
+    <string name="tab_upcoming_appointments">Sắp tới</string>
+    <string name="tab_history_appointments">Lịch sử</string>
+    <string name="no_upcoming_appointments">Chưa có lịch hẹn sắp tới.</string>
+    <string name="no_history_appointments">Chưa có lịch sử khám bệnh.</string>
+    <string name="back_button_description">Quay lại</string>
+    <string name="appointment_detail_title">Chi tiết lịch hẹn</string>
+    <string name="status_confirmed">Đã xác nhận</string>
+    <string name="view_profile">Xem hồ sơ</string>
+    <string name="change_doctor">Đổi bác sĩ</string>
+    <string name="time_label">Thời gian</string>
+    <string name="consultation_type_label">Hình thức khám</string>
+    <string name="join_clinic_room">Tham gia phòng khám</string>
+    <string name="patient_label">Bệnh nhân</string>
+    <string name="reason_for_visit_label">Lý do khám</string>
+    <string name="privacy_and_profile">QUYỀN RIÊNG TƯ &amp; HỒ SƠ</string>
+    <string name="allow_view_prescription_history">Cho phép xem lịch sử đơn thuốc</string>
+    <string name="share_test_results">Chia sẻ kết quả xét nghiệm</string>
+    <string name="change_appointment">Đổi lịch hẹn</string>
+    <string name="cancel_appointment_action">Hủy lịch hẹn</string>
+    <string name="notes_label">Ghi chú tư vấn</string>
+    <string name="rebook_appointment">Đặt lại lịch</string>
+    <string name="follow_up_appointment">Tái khám</string>
+    <string name="export_pdf">Xuất PDF/CSV</string>
+    <string name="share_info">Chia sẻ thông tin</string>
+    
+    <!-- Profile Screen -->
+    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="contact_info">Liên hệ</string>
+    <string name="medical_info">Thông tin y tế</string>
+    <string name="blood_type">NHÓM MÁU</string>
+    <string name="allergies">DỊ ỨNG</string>
+    <string name="settings_header">Cài đặt</string>
+    <string name="notification_settings">Cài đặt thông báo</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="privacy_settings">Quyền riêng tư</string>
+    <string name="delete_account">Xóa tài khoản</string>
 </resources>

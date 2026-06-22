@@ -24,6 +24,7 @@ val repositoryModule = module {
     single<com.example.medical.domain.repository.PatientHomeRepository> { com.example.medical.data.repository.PatientHomeRepositoryImpl() }
     single<com.example.medical.domain.repository.DoctorRepository> { com.example.medical.data.repository.DoctorRepositoryImpl() }
     single<AppointmentRepository> { AppointmentRepositoryImpl() }
+    single<com.example.medical.domain.repository.ProfileRepository> { com.example.medical.data.repository.ProfileRepositoryImpl() }
 }
 
 val useCaseModule = module {
@@ -37,6 +38,7 @@ val viewModelModule = module {
     viewModel { BookingViewModel(get(), get()) }
     viewModel { BookingSuccessViewModel(get(), get()) }
     viewModel { AppointmentsViewModel(get()) }
+    viewModel { com.example.medical.presentation.ui.patient.profile.ProfileViewModel(get()) }
 }
 val appModule = module {
     includes(networkModule, repositoryModule, viewModelModule, useCaseModule)

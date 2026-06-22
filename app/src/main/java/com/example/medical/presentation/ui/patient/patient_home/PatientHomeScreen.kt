@@ -41,12 +41,14 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PatientHomeRoute(
     onNavigateToDoctorList: (String, String?) -> Unit,
+    onNavigateToAppointmentDetail: (String) -> Unit,
     viewModel: PatientHomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     PatientHomeScreen(
         uiState = uiState,
-        onNavigateToDoctorList = onNavigateToDoctorList
+        onNavigateToDoctorList = onNavigateToDoctorList,
+        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
     )
 }
 
@@ -55,7 +57,8 @@ fun PatientHomeRoute(
 @Composable
 fun PatientHomeScreen(
     uiState: PatientHomeUiState,
-    onNavigateToDoctorList: (String, String?) -> Unit
+    onNavigateToDoctorList: (String, String?) -> Unit,
+    onNavigateToAppointmentDetail: (String) -> Unit
 ) {
 
     val configuration = LocalConfiguration.current
@@ -135,10 +138,15 @@ fun PatientHomeScreen(
         }
     } else if (currentTab == "appointments") {
         Box(modifier = Modifier.padding(paddingValues)) {
-            AppointmentsRoute(
+            com.example.medical.presentation.ui.patient.appointments.AppointmentsRoute(
                 onNavigateToHome = { currentTab = "home" },
-                onNavigateToAppointments = { currentTab = "appointments" }
+                onNavigateToAppointments = { currentTab = "appointments" },
+                onNavigateToDetail = onNavigateToAppointmentDetail
             )
+        }
+    } else if (currentTab == "profile") {
+        Box(modifier = Modifier.padding(paddingValues)) {
+            com.example.medical.presentation.ui.patient.profile.ProfileRoute()
         }
     }
     }
@@ -600,20 +608,21 @@ fun BottomNavigationBar(
         NavigationBarItem(
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text(stringResource(id = R.string.bottom_nav_profile)) },
-            selected = false,
-            onClick = { /* TODO */ },
+            selected = currentTab == "profile",
+            onClick = { onTabSelected("profile") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = colorResource(id = R.color.primaryBlue),
                 selectedTextColor = colorResource(id = R.color.primaryBlue),
                 unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary)
+                unselectedTextColor = colorResource(id = R.color.textSecondary),
+                indicatorColor = colorResource(id = R.color.primaryBlueLight)
             )
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Notifications, contentDescription = "Notifications") },
             label = { Text(stringResource(id = R.string.bottom_nav_notifications)) },
-            selected = false,
-            onClick = { /* TODO */ },
+            selected = currentTab == "notifications",
+            onClick = { onTabSelected("notifications") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = colorResource(id = R.color.primaryBlue),
                 selectedTextColor = colorResource(id = R.color.primaryBlue),

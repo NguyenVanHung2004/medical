@@ -44,6 +44,9 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToDoctorList = { type, specialty ->
                                     val route = if (specialty != null) "doctor_list/$type?specialty=$specialty" else "doctor_list/$type"
                                     navController.navigate(route)
+                                },
+                                onNavigateToAppointmentDetail = { appointmentId ->
+                                    navController.navigate("appointment_detail/$appointmentId")
                                 }
                             )
                         }
@@ -87,6 +90,17 @@ class MainActivity : ComponentActivity() {
                                         popUpTo("patient_home") { inclusive = true }
                                     }
                                 }
+                            )
+                        }
+                        composable(
+                            "appointment_detail/{appointmentId}",
+                            arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+                        ) {
+                            com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailRoute(
+                                appointmentId = it.arguments?.getString("appointmentId") ?: "",
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToChangeDoctor = { /* TODO: handle doctor change */ },
+                                onNavigateToReschedule = { /* TODO: handle reschedule */ }
                             )
                         }
                     }

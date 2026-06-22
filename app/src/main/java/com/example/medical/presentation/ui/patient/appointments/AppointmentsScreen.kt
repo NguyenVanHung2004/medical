@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -25,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,16 +38,24 @@ import com.example.medical.R
 fun AppointmentsRoute(
     onNavigateToHome: () -> Unit,
     onNavigateToAppointments: () -> Unit,
+    onNavigateToDetail: (String) -> Unit,
     viewModel: AppointmentsViewModel = org.koin.androidx.compose.koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    AppointmentsScreen(uiState = uiState, onNavigateToHome)
+    AppointmentsScreen(uiState = uiState, onNavigateToHome = onNavigateToHome, onNavigateToDetail = onNavigateToDetail)
 }
 
 @Composable
-fun AppointmentsScreen(uiState: AppointmentsUiState, onNavigateToHome : () -> Unit) {
+fun AppointmentsScreen(
+    uiState: AppointmentsUiState,
+    onNavigateToHome: () -> Unit,
+    onNavigateToDetail: (String) -> Unit
+) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Sắp tới", "Lịch sử")
+    val tabs = listOf(
+        stringResource(id = R.string.tab_upcoming_appointments),
+        stringResource(id = R.string.tab_history_appointments)
+    )
 
     Column(
         modifier = Modifier
@@ -63,13 +74,13 @@ fun AppointmentsScreen(uiState: AppointmentsUiState, onNavigateToHome : () -> Un
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(id = R.string.back_button_description),
                     tint = colorResource(id = R.color.primaryBlue)
                 )
             }
 
             Text(
-                text = "Lịch hẹn của tôi",
+                text = stringResource(id = R.string.my_appointments_title),
                 modifier = Modifier.align(Alignment.Center),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -122,7 +133,7 @@ fun AppointmentsScreen(uiState: AppointmentsUiState, onNavigateToHome : () -> Un
                 if (uiState.upcomingAppointments.isEmpty()) {
                     item {
                         Text(
-                            text = "Chưa có lịch hẹn sắp tới.",
+                            text = stringResource(id = R.string.no_upcoming_appointments),
                             modifier = Modifier.padding(16.dp),
                             color = colorResource(id = R.color.textSecondary)
                         )
@@ -137,7 +148,8 @@ fun AppointmentsScreen(uiState: AppointmentsUiState, onNavigateToHome : () -> Un
                             time = appt.time,
                             location = appt.location,
                             isOnline = appt.isOnline,
-                            status = appt.status
+                            status = appt.status,
+                            onClickDetail = { onNavigateToDetail(appt.id) }
                         )
                     }
                 }
@@ -145,22 +157,50 @@ fun AppointmentsScreen(uiState: AppointmentsUiState, onNavigateToHome : () -> Un
                 if (uiState.historyAppointments.isEmpty()) {
                     item {
                         Text(
-                            text = "Chưa có lịch sử khám bệnh.",
+                            text = stringResource(id = R.string.no_history_appointments),
                             modifier = Modifier.padding(16.dp),
                             color = colorResource(id = R.color.textSecondary)
                         )
                     }
                 } else {
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = { /* TODO */ },
+                                modifier = Modifier.weight(1f).height(40.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                            ) {
+                                Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(id = R.string.export_pdf), fontSize = 12.sp)
+                            }
+                            OutlinedButton(
+                                onClick = { /* TODO */ },
+                                modifier = Modifier.weight(1f).height(40.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                            ) {
+                                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(id = R.string.share_info), fontSize = 12.sp)
+                            }
+                        }
+                    }
                     items(uiState.historyAppointments) { appt ->
-                        AppointmentCard(
+                        HistoryAppointmentCard(
                             doctorName = appt.doctor.name,
                             specialty = appt.doctor.specialty,
                             avatarUrl = appt.doctor.avatarUrl,
                             date = appt.date,
                             time = appt.time,
-                            location = appt.location,
-                            isOnline = appt.isOnline,
-                            status = appt.status
+                            reason = appt.reason,
+                            notes = appt.notes
                         )
                     }
                 }
@@ -178,7 +218,8 @@ fun AppointmentCard(
     time: String,
     location: String,
     isOnline: Boolean,
-    status: String?
+    status: String?,
+    onClickDetail: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -285,13 +326,140 @@ fun AppointmentCard(
 
             // Action Button
             OutlinedButton(
-                onClick = { /* TODO */ },
+                onClick = onClickDetail,
                 modifier = Modifier.fillMaxWidth().height(48.dp),
                 shape = RoundedCornerShape(8.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
             ) {
-                Text("Chi tiết", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(id = R.string.btn_details), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+@Composable
+fun HistoryAppointmentCard(
+    doctorName: String,
+    specialty: String,
+    avatarUrl: String,
+    date: String,
+    time: String,
+    reason: String?,
+    notes: String?
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = doctorName,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = doctorName,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.textPrimary)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = specialty,
+                        fontSize = 14.sp,
+                        color = colorResource(id = R.color.textSecondary)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Details block
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.bgLight), RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Date",
+                        tint = colorResource(id = R.color.textSecondary),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(text = "$time, $date", fontSize = 14.sp, color = colorResource(id = R.color.textPrimary))
+                }
+                
+                if (reason != null) {
+                    androidx.compose.material3.HorizontalDivider(color = colorResource(id = R.color.dividerColor))
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.reason_for_visit_label),
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                        Text(
+                            text = reason,
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.textPrimary)
+                        )
+                    }
+                }
+                
+                if (notes != null) {
+                    androidx.compose.material3.HorizontalDivider(color = colorResource(id = R.color.dividerColor))
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.notes_label),
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                        Text(
+                            text = notes,
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.textPrimary)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Action Buttons
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier.weight(1f).height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(stringResource(id = R.string.rebook_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                }
+                Button(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier.weight(1f).height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(stringResource(id = R.string.follow_up_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                }
             }
         }
     }

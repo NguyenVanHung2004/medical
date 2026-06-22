@@ -16,7 +16,9 @@ data class Appointment(
     val hoursRemaining: Int,
     val location: String = "Tư vấn trực tuyến",
     val isOnline: Boolean = true,
-    val status: String? = null
+    val status: String? = null,
+    val reason: String? = null,
+    val notes: String? = null
 )
 
 data class Specialty(
