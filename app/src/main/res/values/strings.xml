@@ -128,4 +128,8 @@
     <string name="language_vietnamese">Tiếng Việt</string>
     <string name="privacy_settings">Quyền riêng tư</string>
     <string name="delete_account">Xóa tài khoản</string>
+    
+    <!-- Notifications Screen -->
+    <string name="notifications_screen_title">Thông báo</string>
+    <string name="no_notifications">Chưa có thông báo nào.</string>
 </resources>

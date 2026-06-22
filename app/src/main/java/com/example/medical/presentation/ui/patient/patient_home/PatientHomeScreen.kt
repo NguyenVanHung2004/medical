@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -147,6 +148,10 @@ fun PatientHomeScreen(
     } else if (currentTab == "profile") {
         Box(modifier = Modifier.padding(paddingValues)) {
             com.example.medical.presentation.ui.patient.profile.ProfileRoute()
+        }
+    } else if (currentTab == "notifications") {
+        Box(modifier = Modifier.padding(paddingValues)) {
+            com.example.medical.presentation.ui.patient.notifications.NotificationsRoute()
         }
     }
     }
@@ -338,17 +343,29 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                     onClick = { /* TODO */ },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue)),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
-                    Text(text = stringResource(id = R.string.btn_details))
+                    Text(
+                        text = stringResource(id = R.string.btn_details),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center
+                    )
                 }
                 Button(
                     onClick = { /* TODO */ },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue))
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue)),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
-                    Text(text = stringResource(id = R.string.btn_enter_clinic))
+                    Text(
+                        text = stringResource(id = R.string.btn_enter_clinic),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }

@@ -15,4 +15,6 @@
     <color name="textSecondary">#64748B</color>
     <color name="dividerColor">#E2E8F0</color>
     <color name="errorRed">#EF4444</color>
+    <color name="warningOrange">#F57C00</color>
+    <color name="successGreen">#388E3C</color>
 </resources>
