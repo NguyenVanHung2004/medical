@@ -28,6 +28,14 @@ class AuthViewModel(private val loginUseCase: LoginUseCase) : ViewModel() {
         _uiState.update { it.copy(passwordVisible = isVisible) }
     }
 
+    fun onDoctorRoleChange(isDoctor: Boolean) {
+        _uiState.update { it.copy(isDoctor = isDoctor) }
+    }
+
+    fun onGoogleLoginSuccess(token: String) {
+        _uiState.update { it.copy(isSuccess = true, errorMessage = null) }
+    }
+
     fun login() {
         viewModelScope.launch {
             val currentState = _uiState.value

@@ -66,6 +66,11 @@ dependencies {
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended")
     
+    // Credential Manager for Google Login
+    implementation("androidx.credentials:credentials:1.2.2")
+    implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
