@@ -1,7 +1,7 @@
 package com.example.medical.presentation.ui.patient.appointments
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Videocam
@@ -24,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -33,13 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
+import com.example.medical.domain.model.AppointmentStatus
+import com.example.medical.domain.model.AppointmentType
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppointmentsRoute(
     onNavigateToHome: () -> Unit,
     onNavigateToAppointments: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
-    viewModel: AppointmentsViewModel = org.koin.androidx.compose.koinViewModel()
+    viewModel: AppointmentsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     AppointmentsScreen(uiState = uiState, onNavigateToHome = onNavigateToHome, onNavigateToDetail = onNavigateToDetail)
@@ -145,11 +146,11 @@ fun AppointmentsScreen(
                             specialty = appt.doctor.specialty,
                             avatarUrl = appt.doctor.avatarUrl,
                             date = appt.date,
-                            time = appt.time,
+                            time = appt.timeRange,
                             location = appt.location,
-                            isOnline = appt.isOnline,
                             status = appt.status,
-                            onClickDetail = { onNavigateToDetail(appt.id) }
+                            onClickDetail = { onNavigateToDetail(appt.id) },
+                            isOnline = appt.type == AppointmentType.ONLINE
                         )
                     }
                 }
@@ -172,7 +173,7 @@ fun AppointmentsScreen(
                                 onClick = { /* TODO */ },
                                 modifier = Modifier.weight(1f).height(40.dp),
                                 shape = RoundedCornerShape(8.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                                 colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                             ) {
                                 Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -198,9 +199,9 @@ fun AppointmentsScreen(
                             specialty = appt.doctor.specialty,
                             avatarUrl = appt.doctor.avatarUrl,
                             date = appt.date,
-                            time = appt.time,
+                            time = appt.timeRange,
                             reason = appt.reason,
-                            notes = appt.notes
+                            notes = "",
                         )
                     }
                 }
@@ -213,12 +214,12 @@ fun AppointmentsScreen(
 fun AppointmentCard(
     doctorName: String,
     specialty: String,
-    avatarUrl: String,
+    avatarUrl: String?,
     date: String,
     time: String,
-    location: String,
+    location: String?,
     isOnline: Boolean,
-    status: String?,
+    status: AppointmentStatus,
     onClickDetail: () -> Unit
 ) {
     Card(
@@ -267,7 +268,7 @@ fun AppointmentCard(
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = status,
+                            text = status.name,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = colorResource(id = R.color.primaryBlue)
@@ -315,7 +316,7 @@ fun AppointmentCard(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = location,
+                        text = "",
                         fontSize = 14.sp,
                         color = if (isOnline) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.textPrimary)
                     )
@@ -342,7 +343,7 @@ fun AppointmentCard(
 fun HistoryAppointmentCard(
     doctorName: String,
     specialty: String,
-    avatarUrl: String,
+    avatarUrl: String?,
     date: String,
     time: String,
     reason: String?,
@@ -407,7 +408,7 @@ fun HistoryAppointmentCard(
                 }
                 
                 if (reason != null) {
-                    androidx.compose.material3.HorizontalDivider(color = colorResource(id = R.color.dividerColor))
+                    HorizontalDivider(color = colorResource(id = R.color.dividerColor))
                     Column {
                         Text(
                             text = stringResource(id = R.string.reason_for_visit_label),
@@ -423,7 +424,7 @@ fun HistoryAppointmentCard(
                 }
                 
                 if (notes != null) {
-                    androidx.compose.material3.HorizontalDivider(color = colorResource(id = R.color.dividerColor))
+                    HorizontalDivider(color = colorResource(id = R.color.dividerColor))
                     Column {
                         Text(
                             text = stringResource(id = R.string.notes_label),

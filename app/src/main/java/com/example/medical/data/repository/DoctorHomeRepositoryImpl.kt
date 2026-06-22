@@ -4,11 +4,11 @@ import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentRequest
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
-import com.example.medical.domain.model.Doctor
 import com.example.medical.domain.repository.DoctorHomeRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import com.example.medical.domain.model.Doctor
 
 class DoctorHomeRepositoryImpl : DoctorHomeRepository {
     override fun getDoctorProfile(): Flow<Doctor> = flow {
@@ -42,36 +42,7 @@ class DoctorHomeRepositoryImpl : DoctorHomeRepository {
     override fun getTodayAppointments(): Flow<List<Appointment>> = flow {
         delay(500)
         emit(listOf(
-            Appointment(
-                id = "APP01",
-                patientName = "Nguyễn Thị Mai",
-                patientInitial = "M",
-                patientGender = "nữ",
-                patientAge = 65,
-                patientIdStr = "198273",
-                patientAvatarUrl = null,
-                date = "Ngày mai",
-                timeRange = "10:00 - 10:30",
-                reason = "Khám định kỳ",
-                location = null,
-                status = AppointmentStatus.HAPPENING,
-                type = AppointmentType.ONLINE
-            ),
-            Appointment(
-                id = "APP02",
-                patientName = "Phạm Văn Hùng",
-                patientInitial = "H",
-                patientGender = "nam",
-                patientAge = 45,
-                patientIdStr = "198274",
-                patientAvatarUrl = null,
-                date = "16/06/2026",
-                timeRange = "11:00 - 11:30",
-                reason = "Tái khám nội tiết",
-                location = "Phòng 204, Khu A",
-                status = AppointmentStatus.UPCOMING,
-                type = AppointmentType.OFFLINE
-            )
+
         ))
     }
 

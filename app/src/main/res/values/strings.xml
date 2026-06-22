@@ -184,7 +184,6 @@
     <string name="offline">Tại viện</string>
     <string name="patient_info_format">BN %1$s, %2$d tuổi • ID: %3$s</string>
     <string name="enter_clinic">Vào phòng khám</string>
-    <string name="view_profile">Xem hồ sơ</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="nav_patients">Bệnh nhân</string>
     <string name="nav_notifications">Thông báo</string>
@@ -195,13 +194,11 @@
     <string name="nav_appointments">Lịch hẹn</string>
 
     <!-- Doctor Profile Strings -->
-    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
     <string name="services_and_fees">Dịch vụ &amp; Chi phí</string>
     <string name="online_consultation_service">Tư vấn trực tuyến</string>
     <string name="in_person_consultation_service">Khám tại viện</string>
     <string name="working_hours">Thời gian làm việc</string>
     <string name="update_working_hours">Cập nhật lịch làm việc</string>
-    <string name="notification_settings">Cài đặt thông báo</string>
     <string name="account_security">Bảo mật tài khoản</string>
     <string name="help_and_faq">Hỗ trợ &amp; FAQ</string>
     <string name="change_date_and_time">Đổi ngày &amp; giờ</string>

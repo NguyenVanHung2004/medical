@@ -239,7 +239,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.in_hours, appointment.hoursRemaining),
+                        text = stringResource(id = R.string.in_hours, ""),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = colorResource(id = R.color.primaryBlue)
@@ -268,7 +268,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                         color = colorResource(id = R.color.textPrimary)
                     )
                     Text(
-                        text = "${appointment.doctor.specialty} • ${appointment.doctor.hospital}",
+                        text = appointment.doctor.specialty,
                         fontSize = 14.sp,
                         color = colorResource(id = R.color.textSecondary),
                         maxLines = 1,
@@ -323,7 +323,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = appointment.time,
+                            text = appointment.timeRange,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             color = colorResource(id = R.color.textPrimary)

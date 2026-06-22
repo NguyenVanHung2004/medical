@@ -206,18 +206,27 @@ fun NotificationItem(
                 NotificationType.NEW_APPOINTMENT_REQUEST -> MaterialTheme.colorScheme.background
                 NotificationType.APPOINTMENT_CANCELLED -> Color(0xFFFFEBEE)
                 NotificationType.UPCOMING_APPOINTMENT -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                NotificationType.REMINDER -> TODO()
+                NotificationType.UPDATE -> TODO()
+                NotificationType.SYSTEM -> TODO()
             }
             
             val iconTint = when (notification.type) {
                 NotificationType.NEW_APPOINTMENT_REQUEST -> MaterialTheme.colorScheme.primary
                 NotificationType.APPOINTMENT_CANCELLED -> Color(0xFFD32F2F)
                 NotificationType.UPCOMING_APPOINTMENT -> MaterialTheme.colorScheme.primary
+                NotificationType.REMINDER -> TODO()
+                NotificationType.UPDATE -> TODO()
+                NotificationType.SYSTEM -> TODO()
             }
 
             val icon = when (notification.type) {
                 NotificationType.NEW_APPOINTMENT_REQUEST -> Icons.Default.EventNote
                 NotificationType.APPOINTMENT_CANCELLED -> Icons.Default.Cancel
                 NotificationType.UPCOMING_APPOINTMENT -> Icons.Default.Videocam
+                NotificationType.REMINDER -> TODO()
+                NotificationType.UPDATE -> TODO()
+                NotificationType.SYSTEM -> TODO()
             }
 
             Box(
@@ -246,6 +255,9 @@ fun NotificationItem(
                         NotificationType.NEW_APPOINTMENT_REQUEST -> R.string.noti_title_new_request
                         NotificationType.APPOINTMENT_CANCELLED -> R.string.noti_title_cancelled
                         NotificationType.UPCOMING_APPOINTMENT -> R.string.noti_title_upcoming
+                        NotificationType.REMINDER -> TODO()
+                        NotificationType.UPDATE -> TODO()
+                        NotificationType.SYSTEM -> TODO()
                     }
                     Text(
                         text = stringResource(id = titleRes),
@@ -290,6 +302,10 @@ fun NotificationItem(
                             notification.timeInfo
                         )
                     }
+
+                    NotificationType.REMINDER -> TODO()
+                    NotificationType.UPDATE -> TODO()
+                    NotificationType.SYSTEM -> TODO()
                 }
 
                 Text(

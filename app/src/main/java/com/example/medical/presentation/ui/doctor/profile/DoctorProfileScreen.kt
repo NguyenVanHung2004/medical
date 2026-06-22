@@ -64,7 +64,13 @@ fun DoctorProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.profile_title), fontWeight = FontWeight.Bold, fontSize = 20.sp) },
+                title = {
+                    Text(
+                        stringResource(R.string.profile_title),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
@@ -205,7 +211,11 @@ fun DoctorInfoCard(doctor: Doctor) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(R.string.edit_profile))
             }
@@ -258,7 +268,10 @@ fun ServicesAndFeesCard(
                     )
                 )
             }
-            Divider(modifier = Modifier.padding(vertical = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+            Divider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -271,7 +284,13 @@ fun ServicesAndFeesCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "${String.format(Locale.US, "%,d", doctor.inPersonConsultationFee)}đ",
+                        text = "${
+                            String.format(
+                                Locale.US,
+                                "%,d",
+                                doctor.inPersonConsultationFee
+                            )
+                        }đ",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -307,7 +326,10 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(16.dp)
             ) {
                 Row {
@@ -331,7 +353,11 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Icon(imageVector = Icons.Default.EditCalendar, contentDescription = null, modifier = Modifier.size(16.dp))
+                Icon(
+                    imageVector = Icons.Default.EditCalendar,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(R.string.update_working_hours))
             }
@@ -348,11 +374,20 @@ fun SettingsList() {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
-            SettingItem(icon = Icons.Default.NotificationsNone, title = stringResource(R.string.notification_settings))
+            SettingItem(
+                icon = Icons.Default.NotificationsNone,
+                title = stringResource(R.string.notification_settings)
+            )
             Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-            SettingItem(icon = Icons.Default.Security, title = stringResource(R.string.account_security))
+            SettingItem(
+                icon = Icons.Default.Security,
+                title = stringResource(R.string.account_security)
+            )
             Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-            SettingItem(icon = Icons.Default.HelpOutline, title = stringResource(R.string.help_and_faq))
+            SettingItem(
+                icon = Icons.Default.HelpOutline,
+                title = stringResource(R.string.help_and_faq)
+            )
         }
     }
 }
@@ -366,7 +401,11 @@ fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: St
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = title,
@@ -374,7 +413,11 @@ fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: St
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )
-        Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+        )
     }
 }
 
@@ -386,7 +429,11 @@ fun LogoutButton(onLogout: () -> Unit) {
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
     ) {
-        Icon(imageVector = Icons.Default.Logout, contentDescription = null, modifier = Modifier.size(16.dp))
+        Icon(
+            imageVector = Icons.Default.Logout,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp)
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = stringResource(R.string.logout), fontWeight = FontWeight.Bold)
     }
@@ -422,9 +469,9 @@ fun WorkingHoursDialog(
                         Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Days selector
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -433,7 +480,7 @@ fun WorkingHoursDialog(
                     val daysOfWeek = DayOfWeek.values()
                     daysOfWeek.forEach { day ->
                         val isSelected = selectedDayOfWeek == day
-                        val dayName = when(day) {
+                        val dayName = when (day) {
                             DayOfWeek.MONDAY -> "T2"
                             DayOfWeek.TUESDAY -> "T3"
                             DayOfWeek.WEDNESDAY -> "T4"
@@ -460,9 +507,9 @@ fun WorkingHoursDialog(
                         }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 // Morning slots
                 Text(
                     text = stringResource(R.string.morning),
@@ -474,9 +521,9 @@ fun WorkingHoursDialog(
                     slots = timeSlots.filter { it.time < "12:00" },
                     onToggle = onToggleTimeSlot
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Afternoon slots
                 Text(
                     text = stringResource(R.string.afternoon),
@@ -488,9 +535,9 @@ fun WorkingHoursDialog(
                     slots = timeSlots.filter { it.time >= "12:00" },
                     onToggle = onToggleTimeSlot
                 )
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 Button(
                     onClick = onConfirm,
                     modifier = Modifier.fillMaxWidth(),
@@ -539,9 +586,12 @@ fun TimeSlotItem(
     onToggle: (WorkingTimeSlot) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val containerColor = if (slot.isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
-    val contentColor = if (slot.isSelected) Color.White else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-    val borderColor = if (slot.isSelected) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+    val containerColor =
+        if (slot.isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+    val contentColor =
+        if (slot.isSelected) Color.White else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+    val borderColor =
+        if (slot.isSelected) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
 
     Box(
         modifier = modifier

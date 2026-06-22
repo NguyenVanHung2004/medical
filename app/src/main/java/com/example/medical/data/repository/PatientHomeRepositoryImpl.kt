@@ -11,19 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 class PatientHomeRepositoryImpl : PatientHomeRepository {
     override fun getUpcomingAppointment(): Flow<Appointment?> {
         return flowOf(
-            Appointment(
-                id = "1",
-                doctor = Doctor(
-                    id = "d1",
-                    name = "BS. Nguyễn Văn A",
-                    specialty = "Chuyên khoa Tim mạch",
-                    hospital = "Bệnh viện Chợ Rẫy",
-                    avatarUrl = "https://i.pravatar.cc/150?img=11"
-                ),
-                date = "15/10/2023",
-                time = "09:00 - 09:30",
-                hoursRemaining = 2
-            )
+
         )
     }
 

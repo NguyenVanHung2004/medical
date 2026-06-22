@@ -1,10 +1,5 @@
 package com.example.medical.domain.model
 
-enum class NotificationType {
-    NEW_APPOINTMENT_REQUEST,
-    APPOINTMENT_CANCELLED,
-    UPCOMING_APPOINTMENT
-}
 
 data class DoctorNotification(
     val id: String,

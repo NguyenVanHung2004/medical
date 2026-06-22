@@ -108,6 +108,10 @@ fun NotificationCard(notification: Notification) {
             iconTint = colorResource(id = R.color.successGreen) // Assuming green
             iconBgColor = Color(0xFFE8F5E9)
         }
+
+        NotificationType.NEW_APPOINTMENT_REQUEST -> TODO()
+        NotificationType.APPOINTMENT_CANCELLED -> TODO()
+        NotificationType.UPCOMING_APPOINTMENT -> TODO()
     }
 
     Card(

@@ -4,6 +4,7 @@ import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentRequest
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
+import com.example.medical.domain.model.Doctor
 import com.example.medical.domain.repository.DoctorAppointmentRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -57,7 +58,12 @@ class DoctorAppointmentRepositoryImpl : DoctorAppointmentRepository {
                 reason = "Tái khám định kỳ",
                 location = null,
                 status = AppointmentStatus.HAPPENING,
-                type = AppointmentType.ONLINE
+                type = AppointmentType.ONLINE,
+                doctor = Doctor(
+                    id = "DOC001",
+                    name = "BS. Nguyễn Văn An",
+                    avatarUrl = null
+                )
             ),
             Appointment(
                 id = "APP02",
@@ -72,7 +78,12 @@ class DoctorAppointmentRepositoryImpl : DoctorAppointmentRepository {
                 reason = "Khám tổng quát",
                 location = "Phòng 204, Khu A",
                 status = AppointmentStatus.UPCOMING,
-                type = AppointmentType.OFFLINE
+                type = AppointmentType.OFFLINE,
+                doctor = Doctor(
+                    id = "DOC001",
+                    name = "BS. Nguyễn Văn An",
+                    avatarUrl = null
+                )
             ),
             Appointment(
                 id = "APP03",
@@ -87,7 +98,12 @@ class DoctorAppointmentRepositoryImpl : DoctorAppointmentRepository {
                 reason = "Tư vấn kết quả xét nghiệm",
                 location = null,
                 status = AppointmentStatus.UPCOMING,
-                type = AppointmentType.ONLINE
+                type = AppointmentType.ONLINE,
+                doctor = Doctor(
+                    id = "DOC001",
+                    name = "BS. Nguyễn Văn An",
+                    avatarUrl = null
+                )
             )
         ))
     }
