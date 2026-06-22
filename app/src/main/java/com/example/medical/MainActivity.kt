@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.medical.presentation.theme.MedicalAppTheme
 import com.example.medical.presentation.ui.auth.LoginRoute
+import com.example.medical.presentation.ui.doctor.home.DoctorHomeRoute
+import com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentRoute
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,12 +24,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MedicalAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
+                var currentScreen by remember { mutableStateOf("login") }
+                
+                when (currentScreen) {
+                    "login" -> {
                         LoginRoute(
-                            onLoginSuccess = {
-                                // Navigate to Home
-                            }
+                            onLoginSuccess = { currentScreen = "doctor_home" }
+                        )
+                    }
+                    "doctor_home" -> {
+                        DoctorHomeRoute(
+                            onNavigateToAppointments = { currentScreen = "doctor_appointments" }
+                        )
+                    }
+                    "doctor_appointments" -> {
+                        DoctorAppointmentRoute(
+                            onNavigateToHome = { currentScreen = "doctor_home" }
                         )
                     }
                 }

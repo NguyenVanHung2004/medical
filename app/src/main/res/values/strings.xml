@@ -61,4 +61,28 @@
     <string name="availability">Lịch trống</string>
     <string name="sort_by_rating">Sắp xếp theo đánh giá</string>
     <string name="sort_by_availability">Sắp xếp theo lịch trống</string>
+
+    <string name="good_morning">Chào buổi sáng,</string>
+    <string name="appointments_today">Ca khám hôm nay</string>
+    <string name="pending_requests">Chờ xác nhận</string>
+    <string name="requests_to_process">Yêu cầu chờ xử lý</string>
+    <string name="view_all">Xem tất cả</string>
+    <string name="reason_label">Lý do:</string>
+    <string name="reject">Từ chối</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="schedule_today">Lịch làm việc hôm nay</string>
+    <string name="happening">ĐANG DIỄN RA</string>
+    <string name="online">Trực tuyến</string>
+    <string name="offline">Tại viện</string>
+    <string name="patient_info_format">BN %1$s, %2$d tuổi • ID: %3$s</string>
+    <string name="enter_clinic">Vào phòng khám</string>
+    <string name="view_profile">Xem hồ sơ</string>
+    <string name="view_details">Xem chi tiết</string>
+    <string name="nav_patients">Bệnh nhân</string>
+    <string name="nav_notifications">Thông báo</string>
+    <string name="nav_profile">Hồ sơ</string>
+    <string name="manage_appointments">Quản lý lịch hẹn</string>
+    <string name="scheduled_appointments">Đã lên lịch</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_appointments">Lịch hẹn</string>
 </resources>
