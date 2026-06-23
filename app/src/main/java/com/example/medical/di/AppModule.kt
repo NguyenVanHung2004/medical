@@ -10,6 +10,9 @@ import com.example.medical.presentation.ui.patient.patient_home.PatientHomeViewM
 import com.example.medical.presentation.ui.patient.doctor_list.DoctorListViewModel
 import com.example.medical.presentation.ui.auth.RegisterViewModel
 import com.example.medical.domain.usecase.RegisterUseCase
+import com.example.medical.domain.usecase.ForgotPasswordUseCase
+import com.example.medical.presentation.ui.auth.forgot_password.ForgotPasswordViewModel
+import com.example.medical.presentation.ui.patient.complete_profile.CompleteProfileViewModel
 import com.example.medical.presentation.ui.doctor.home.DoctorHomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -37,6 +40,7 @@ val repositoryModule = module {
 val useCaseModule = module {
     factory { LoginUseCase(get()) }
     factory { RegisterUseCase(get()) }
+    factory { ForgotPasswordUseCase(get()) }
     factory { com.example.medical.domain.usecase.GetDoctorHomeDataUseCase(get()) }
     factory { com.example.medical.domain.usecase.GetDoctorAppointmentsUseCase(get()) }
     factory { com.example.medical.domain.usecase.GetNotificationsUseCase(get()) }
@@ -47,6 +51,7 @@ val useCaseModule = module {
 
 val viewModelModule = module {
     viewModel { AuthViewModel(get()) }
+    viewModel { ForgotPasswordViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.doctor.home.DoctorHomeViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.doctor.notification.DoctorNotificationViewModel(get(), get(), get(), get()) }
@@ -57,6 +62,7 @@ val viewModelModule = module {
     viewModel { BookingViewModel(get(), get()) }
     viewModel { BookingSuccessViewModel(get(), get()) }
     viewModel { AppointmentsViewModel(get()) }
+    viewModel { CompleteProfileViewModel() }
     viewModel { com.example.medical.presentation.ui.patient.profile.ProfileViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.patient.notifications.NotificationsViewModel(get()) }
 }

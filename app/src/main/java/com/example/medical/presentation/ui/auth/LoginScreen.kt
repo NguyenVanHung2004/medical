@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,8 +41,10 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginRoute(
     viewModel: AuthViewModel = koinViewModel(),
     isDoctor: Boolean,
+    onBackClick: () -> Unit,
     onLoginSuccess: () -> Unit,
-    onRegisterClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -56,9 +59,11 @@ fun LoginRoute(
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
         onDoctorRoleChange = viewModel::onDoctorRoleChange,
         onGoogleLoginSuccess = viewModel::onGoogleLoginSuccess,
+        onBackClick = onBackClick,
         onLoginClick = viewModel::login,
         onLoginSuccess = onLoginSuccess,
         onRegisterClick = onRegisterClick,
+        onForgotPasswordClick = onForgotPasswordClick,
         onResetState = viewModel::resetState
     )
 }
@@ -72,9 +77,11 @@ fun LoginScreen(
     onPasswordVisibilityChange: (Boolean) -> Unit,
     onDoctorRoleChange: (Boolean) -> Unit,
     onGoogleLoginSuccess: (String) -> Unit,
+    onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
     onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
     onResetState: () -> Unit
 ) {
 
@@ -97,23 +104,39 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = stringResource(id = R.string.welcome_back),
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 32.sp
-                ),
-                color = MaterialTheme.colorScheme.primary
-            )
-            
-            Text(
-                text = if (uiState.isDoctor) "Dành cho Bác sĩ" else "Dành cho Bệnh nhân",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(top = 4.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.welcome_back),
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 26.sp
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = if (uiState.isDoctor) "Dành cho Bác sĩ" else "Dành cho Bệnh nhân",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
             
             Spacer(modifier = Modifier.height(8.dp))
             
@@ -202,7 +225,7 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .clip(RoundedCornerShape(4.dp))
-                        .clickable { /* Handle forgot password */ }
+                        .clickable { onForgotPasswordClick() }
                         .padding(vertical = 8.dp, horizontal = 4.dp)
                 )
             }
@@ -348,9 +371,11 @@ fun LoginScreenPreview() {
             onPasswordVisibilityChange = {},
             onDoctorRoleChange = {},
             onGoogleLoginSuccess = {},
+            onBackClick = {},
             onLoginClick = {},
             onLoginSuccess = {},
             onRegisterClick = {},
+            onForgotPasswordClick = {},
             onResetState = {}
         )
     }

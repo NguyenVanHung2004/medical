@@ -7,10 +7,14 @@ import kotlinx.coroutines.flow.Flow
 
 class LoginUseCase(private val repository: AuthRepository) {
     operator fun invoke(email: String, password: String): Flow<Result<User>> {
-        // Validation logic can go here before calling the repository
         if (email.isBlank() || password.isBlank()) {
             return kotlinx.coroutines.flow.flow { 
-                emit(Result.Error("Email and password cannot be empty")) 
+                emit(Result.Error("Vui lòng nhập đầy đủ Email và mật khẩu")) 
+            }
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return kotlinx.coroutines.flow.flow { 
+                emit(Result.Error("Định dạng Email không hợp lệ")) 
             }
         }
         return repository.login(email, password)

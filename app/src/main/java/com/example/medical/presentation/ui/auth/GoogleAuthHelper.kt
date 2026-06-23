@@ -13,13 +13,8 @@ import kotlinx.coroutines.withContext
 
 object GoogleAuthHelper {
 
-    // TODO: Thay thế bằng Web Client ID thực sự của bạn từ Google Cloud Console
     const val WEB_CLIENT_ID = "220192180813-r6ga2cgr7o0b35099q70dkhrcfuq35ih.apps.googleusercontent.com"
 
-    /**
-     * Thực hiện luồng đăng nhập Google sử dụng Credential Manager.
-     * Trả về Google ID Token nếu thành công, hoặc null nếu thất bại/người dùng huỷ.
-     */
     suspend fun doGoogleLogin(context: Context): String? {
         val credentialManager = CredentialManager.create(context)
         
@@ -34,7 +29,7 @@ object GoogleAuthHelper {
             .build()
             
         return try {
-            val result = withContext(Dispatchers.Main) { // getCredential should be called on Main thread, it handles its own UI coroutines
+            val result = withContext(Dispatchers.Main) {
                 credentialManager.getCredential(
                     request = request,
                     context = context,
