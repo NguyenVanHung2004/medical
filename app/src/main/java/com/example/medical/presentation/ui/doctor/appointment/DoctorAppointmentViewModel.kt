@@ -2,7 +2,7 @@ package com.example.medical.presentation.ui.doctor.appointment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.medical.domain.usecase.GetDoctorAppointmentsUseCase
+import com.example.medical.domain.usecase.doctor.GetDoctorAppointmentsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

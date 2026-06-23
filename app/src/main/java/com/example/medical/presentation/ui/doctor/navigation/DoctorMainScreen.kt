@@ -25,7 +25,8 @@ import com.example.medical.presentation.ui.doctor.profile.DoctorProfileRoute
 
 @Composable
 fun DoctorMainScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToAppointmentDetail: (String) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -92,7 +93,9 @@ fun DoctorMainScreen(
                 )
             }
             composable(BottomNavItem.Appointments.route) {
-                DoctorAppointmentRoute()
+                DoctorAppointmentRoute(
+                    onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
+                )
             }
             composable(BottomNavItem.Notifications.route) {
                 DoctorNotificationRoute(

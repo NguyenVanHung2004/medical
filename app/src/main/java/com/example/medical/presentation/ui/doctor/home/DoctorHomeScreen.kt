@@ -432,7 +432,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
             text = appointment.timeRange.split(" - ")[0],
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.width(48.dp).padding(top = 16.dp),
+            modifier = Modifier.width(48.dp),
             textAlign = TextAlign.End
         )
         
@@ -443,7 +443,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxHeight()
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Box(
                 modifier = Modifier
                     .size(12.dp)
@@ -471,7 +471,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
         Card(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = if (isLast) 0.dp else 16.dp),
+                .padding(top = 4.dp, bottom = if (isLast) 0.dp else 16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -499,7 +499,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Icon(
@@ -566,12 +566,12 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                 // Actions
                 if (appointment.status == AppointmentStatus.HAPPENING) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Button(
                             onClick = { /* Enter clinic */ },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
@@ -584,7 +584,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                         }
                         OutlinedButton(
                             onClick = { /* View details */ },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {

@@ -103,6 +103,9 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate("welcome") {
                                             popUpTo(0) // Xóa toàn bộ stack để về màn welcome an toàn
                                         }
+                                    },
+                                    onNavigateToAppointmentDetail = { appointmentId ->
+                                        navController.navigate("doctor_appointment_detail/$appointmentId")
                                     }
                                 )
                             }
@@ -159,6 +162,15 @@ class MainActivity : ComponentActivity() {
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToChangeDoctor = { /* TODO */ },
                                     onNavigateToReschedule = { /* TODO */ }
+                                )
+                            }
+                            composable(
+                                "doctor_appointment_detail/{appointmentId}",
+                                arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute(
+                                    appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: "",
+                                    onNavigateBack = { navController.popBackStack() }
                                 )
                             }
                         }
