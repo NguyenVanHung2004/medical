@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MedicalAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
+                    Box() {
                         val navController = rememberNavController()
 
                         NavHost(navController = navController, startDestination = "welcome") {

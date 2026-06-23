@@ -61,9 +61,23 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
         emit(slots)
     }
 
+    override fun getWeeklySchedule(): Flow<Map<DayOfWeek, List<WorkingTimeSlot>>> = flow {
+        emit(_workingSlotsForDays)
+    }
+
     override fun updateWorkingTimeSlots(dayOfWeek: DayOfWeek, slots: List<WorkingTimeSlot>): Flow<Boolean> = flow {
         _workingSlotsForDays[dayOfWeek] = slots
         updateDoctorProfileSummary()
+        emit(true)
+    }
+
+    override fun updateProfile(name: String, specialty: String, experience: String): Flow<Boolean> = flow {
+        _doctorProfile.update { it.copy(name = name, specialty = specialty, experience = experience) }
+        emit(true)
+    }
+
+    override fun updateFees(onlineFee: Long, inPersonFee: Long): Flow<Boolean> = flow {
+        _doctorProfile.update { it.copy(onlineConsultationFee = onlineFee, inPersonConsultationFee = inPersonFee) }
         emit(true)
     }
 

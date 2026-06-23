@@ -38,7 +38,10 @@ fun DoctorAppointmentRoute(
     
     DoctorAppointmentScreen(
         uiState = uiState,
-        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
+        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
+        onHandleRequest = { id, isAccept ->
+            viewModel.handleRequestAction(id, isAccept)
+        }
     )
 }
 
@@ -46,7 +49,8 @@ fun DoctorAppointmentRoute(
 @Composable
 fun DoctorAppointmentScreen(
     uiState: DoctorAppointmentUiState,
-    onNavigateToAppointmentDetail: (String) -> Unit
+    onNavigateToAppointmentDetail: (String) -> Unit,
+    onHandleRequest: (String, Boolean) -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
@@ -83,7 +87,8 @@ fun DoctorAppointmentScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
@@ -100,7 +105,7 @@ fun DoctorAppointmentScreen(
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
-                            PendingRequestsList(uiState.pendingRequests)
+                            PendingRequestsList(uiState.pendingRequests, onHandleRequest)
                         }
                         VerticalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                         Column(modifier = Modifier.weight(1f)) {
@@ -149,7 +154,7 @@ fun DoctorAppointmentScreen(
                         }
 
                         if (selectedTabIndex == 0) {
-                            PendingRequestsList(uiState.pendingRequests)
+                            PendingRequestsList(uiState.pendingRequests, onHandleRequest)
                         } else {
                             ScheduledAppointmentsList(uiState.scheduledAppointments, onNavigateToAppointmentDetail)
                         }
@@ -161,20 +166,20 @@ fun DoctorAppointmentScreen(
 }
 
 @Composable
-fun PendingRequestsList(requests: List<AppointmentRequest>) {
+fun PendingRequestsList(requests: List<AppointmentRequest>, onHandleRequest: (String, Boolean) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.fillMaxSize()
     ) {
         items(requests) { request ->
-            PendingRequestCard(request)
+            PendingRequestCard(request, onHandleRequest)
         }
     }
 }
 
 @Composable
-fun PendingRequestCard(request: AppointmentRequest) {
+fun PendingRequestCard(request: AppointmentRequest, onHandleRequest: (String, Boolean) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -288,14 +293,14 @@ fun PendingRequestCard(request: AppointmentRequest) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* Reject */ },
+                    onClick = { onHandleRequest(request.id, false) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(stringResource(R.string.reject), color = MaterialTheme.colorScheme.onSurface)
                 }
                 Button(
-                    onClick = { /* Confirm */ },
+                    onClick = { onHandleRequest(request.id, true) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -407,29 +412,7 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                // Badge Row
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(4.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = if (appointment.type == AppointmentType.ONLINE) Icons.Default.Videocam else Icons.Default.LocalHospital,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = if (appointment.type == AppointmentType.ONLINE) stringResource(R.string.online) else stringResource(R.string.offline),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Avatar, Name and Details
+                // Header with Avatar, Name, Details and Chip
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.Top
@@ -448,8 +431,31 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text(
-                            text = appointment.patientName,
+                            // Appointment Type Chip
+                            val isOnline = appointment.type == AppointmentType.ONLINE
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (isOnline) Icons.Default.Videocam else Icons.Default.LocalHospital,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = if (isOnline) stringResource(R.string.online) else stringResource(R.string.offline),
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Text(
+                                text = appointment.patientName,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,

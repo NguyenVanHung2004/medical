@@ -88,16 +88,17 @@ fun DoctorHomeScreen(
                 )
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* Add event */ },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                shape = CircleShape
-            ) {
-                Icon(Icons.Default.EditCalendar, contentDescription = "Add")
-            }
-        }
+//        floatingActionButton = {
+//            FloatingActionButton(
+//                onClick = { /* Add event */ },
+//                containerColor = MaterialTheme.colorScheme.primary,
+//                contentColor = Color.White,
+//                shape = CircleShape
+//            ) {
+//                Icon(Icons.Default.EditCalendar, contentDescription = "Add")
+//            }
+//        },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -169,6 +170,13 @@ fun DoctorHomeScreen(
 
 @Composable
 fun GreetingSection(doctorName: String) {
+    val currentHour = remember { java.time.LocalTime.now().hour }
+    val greetingResId = when (currentHour) {
+        in 0..11 -> R.string.good_morning
+        in 12..17 -> R.string.good_afternoon
+        else -> R.string.good_evening
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -178,7 +186,7 @@ fun GreetingSection(doctorName: String) {
     ) {
         Column {
             Text(
-                text = stringResource(R.string.good_morning),
+                text = stringResource(greetingResId),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )

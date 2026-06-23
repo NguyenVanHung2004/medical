@@ -9,6 +9,9 @@ data class DoctorProfileUiState(
     val doctor: Doctor? = null,
     val errorMessage: String? = null,
     val isWorkingHoursDialogVisible: Boolean = false,
+    val isEditProfileDialogVisible: Boolean = false,
+    val isEditFeesDialogVisible: Boolean = false,
     val selectedDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
-    val timeSlotsForSelectedDay: List<WorkingTimeSlot> = emptyList()
+    val timeSlotsForSelectedDay: List<WorkingTimeSlot> = emptyList(),
+    val weeklySchedule: Map<DayOfWeek, List<WorkingTimeSlot>> = emptyMap()
 )
