@@ -18,6 +18,10 @@ import com.example.medical.presentation.ui.auth.LoginRoute
 import com.example.medical.presentation.ui.auth.RegisterRoute
 import com.example.medical.presentation.ui.intro.IntroScreen
 import com.example.medical.presentation.ui.welcome.WelcomeScreen
+import com.example.medical.presentation.ui.auth.forgot_password.ForgotPasswordStep1Route
+import com.example.medical.presentation.ui.auth.forgot_password.ForgotPasswordStep2Route
+import com.example.medical.presentation.ui.auth.forgot_password.ForgotPasswordStep3Route
+import com.example.medical.presentation.ui.patient.complete_profile.CompleteProfileRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,19 +53,23 @@ class MainActivity : ComponentActivity() {
                                 val isDoctor = backStackEntry.arguments?.getBoolean("isDoctor") ?: false
                                 LoginRoute(
                                     isDoctor = isDoctor,
+                                    onBackClick = { navController.popBackStack() },
                                     onLoginSuccess = {
                                         if (isDoctor) {
                                             navController.navigate("doctor_home") {
                                                 popUpTo("welcome") { inclusive = true }
                                             }
                                         } else {
-                                            navController.navigate("intro") {
+                                            navController.navigate("patient_home") {
                                                 popUpTo("welcome") { inclusive = true }
                                             }
                                         }
                                     },
                                     onRegisterClick = {
                                         navController.navigate("register/$isDoctor")
+                                    },
+                                    onForgotPasswordClick = {
+                                        navController.navigate("forgot_password_step1")
                                     }
                                 )
                             }
@@ -74,7 +82,47 @@ class MainActivity : ComponentActivity() {
                                     isDoctor = isDoctor,
                                     onBackClick = { navController.popBackStack() },
                                     onLoginClick = { navController.popBackStack() },
-                                    onRegisterSuccess = { navController.popBackStack() }
+                                    onRegisterSuccess = { 
+                                        if (isDoctor) {
+                                            navController.popBackStack() 
+                                        } else {
+                                            navController.navigate("complete_profile") {
+                                                popUpTo("register/$isDoctor") { inclusive = true }
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                            composable("forgot_password_step1") {
+                                ForgotPasswordStep1Route(
+                                    onBackClick = { navController.popBackStack() },
+                                    onNavigateNext = { navController.navigate("forgot_password_step2") }
+                                )
+                            }
+                            composable("forgot_password_step2") {
+                                ForgotPasswordStep2Route(
+                                    onBackClick = { navController.popBackStack() },
+                                    onNavigateNext = { navController.navigate("forgot_password_step3") }
+                                )
+                            }
+                            composable("forgot_password_step3") {
+                                ForgotPasswordStep3Route(
+                                    onBackClick = { navController.popBackStack() },
+                                    onNavigateSuccess = {
+                                        navController.navigate("welcome") {
+                                            popUpTo(0)
+                                        }
+                                    }
+                                )
+                            }
+                            composable("complete_profile") {
+                                CompleteProfileRoute(
+                                    onNavigateBack = { navController.popBackStack() },
+                                    onNavigateNext = {
+                                        navController.navigate("patient_home") {
+                                            popUpTo("welcome") { inclusive = true }
+                                        }
+                                    }
                                 )
                             }
                             composable("intro") {

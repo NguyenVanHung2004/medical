@@ -1,0 +1,478 @@
+package com.example.medical.presentation.ui.auth.forgot_password
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.medical.R
+import com.example.medical.presentation.theme.MedicalAppTheme
+import org.koin.androidx.compose.koinViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ForgotPasswordStep1Route(
+    viewModel: ForgotPasswordViewModel = koinViewModel(),
+    onBackClick: () -> Unit,
+    onNavigateNext: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.isStep1Success) {
+        if (uiState.isStep1Success) {
+            onNavigateNext()
+        }
+    }
+
+    ForgotPasswordStep1Screen(
+        uiState = uiState,
+        onEmailOrPhoneChange = viewModel::onEmailOrPhoneChange,
+        onBackClick = onBackClick,
+        onSubmit = viewModel::submitStep1
+    )
+}
+
+@Composable
+fun ForgotPasswordStep1Screen(
+    uiState: ForgotPasswordUiState,
+    onEmailOrPhoneChange: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    val backgroundColor = MaterialTheme.colorScheme.background
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    text = stringResource(id = R.string.forgot_password_title),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = stringResource(id = R.string.forgot_password_desc),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(48.dp))
+
+            OutlinedTextField(
+                value = uiState.emailOrPhone,
+                onValueChange = onEmailOrPhoneChange,
+                label = { Text(stringResource(id = R.string.email_or_phone_hint)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Email, 
+                        contentDescription = "Email/Phone Icon", 
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onSubmit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(),
+                enabled = !uiState.isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(28.dp), 
+                        color = Color.White, 
+                        strokeWidth = 3.dp
+                    )
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.continue_button),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = uiState.errorMessage != null) {
+                Column {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = uiState.errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ForgotPasswordStep2Route(
+    viewModel: ForgotPasswordViewModel = koinViewModel(),
+    onBackClick: () -> Unit,
+    onNavigateNext: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.isStep2Success) {
+        if (uiState.isStep2Success) {
+            onNavigateNext()
+        }
+    }
+
+    ForgotPasswordStep2Screen(
+        uiState = uiState,
+        onOtpChange = viewModel::onOtpChange,
+        onBackClick = onBackClick,
+        onSubmit = viewModel::submitStep2
+    )
+}
+
+@Composable
+fun ForgotPasswordStep2Screen(
+    uiState: ForgotPasswordUiState,
+    onOtpChange: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    val backgroundColor = MaterialTheme.colorScheme.background
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    text = stringResource(id = R.string.enter_otp_title),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = "${stringResource(id = R.string.enter_otp_desc)}${uiState.emailOrPhone}",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(48.dp))
+
+            OutlinedTextField(
+                value = uiState.otp,
+                onValueChange = onOtpChange,
+                label = { Text(stringResource(id = R.string.otp_hint)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock, 
+                        contentDescription = "OTP Icon", 
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onSubmit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(),
+                enabled = !uiState.isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(28.dp), 
+                        color = Color.White, 
+                        strokeWidth = 3.dp
+                    )
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.verify_button),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = uiState.errorMessage != null) {
+                Column {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = uiState.errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ForgotPasswordStep3Route(
+    viewModel: ForgotPasswordViewModel = koinViewModel(),
+    onBackClick: () -> Unit,
+    onNavigateSuccess: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    ForgotPasswordStep3Screen(
+        uiState = uiState,
+        onNewPasswordChange = viewModel::onNewPasswordChange,
+        onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
+        onBackClick = onBackClick,
+        onSubmit = viewModel::submitStep3,
+        onNavigateSuccess = onNavigateSuccess,
+        onResetState = viewModel::resetState
+    )
+}
+
+@Composable
+fun ForgotPasswordStep3Screen(
+    uiState: ForgotPasswordUiState,
+    onNewPasswordChange: (String) -> Unit,
+    onPasswordVisibilityChange: (Boolean) -> Unit,
+    onBackClick: () -> Unit,
+    onSubmit: () -> Unit,
+    onNavigateSuccess: () -> Unit,
+    onResetState: () -> Unit
+) {
+    val backgroundColor = MaterialTheme.colorScheme.background
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    text = stringResource(id = R.string.reset_password_title),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = stringResource(id = R.string.reset_password_desc),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(48.dp))
+
+            OutlinedTextField(
+                value = uiState.newPassword,
+                onValueChange = onNewPasswordChange,
+                label = { Text(stringResource(id = R.string.new_password_hint)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock, 
+                        contentDescription = "Lock Icon", 
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                trailingIcon = {
+                    val image = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                    IconButton(onClick = { onPasswordVisibilityChange(!uiState.passwordVisible) }) {
+                        Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.primary.copy(alpha=0.7f))
+                    }
+                },
+                visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onSubmit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(),
+                enabled = !uiState.isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(28.dp), 
+                        color = Color.White, 
+                        strokeWidth = 3.dp
+                    )
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.reset_password_button),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = uiState.errorMessage != null) {
+                Column {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = uiState.errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+        
+        if (uiState.isStep3Success) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = stringResource(id = R.string.reset_success_title), style = MaterialTheme.typography.titleLarge) },
+                text = { Text(text = stringResource(id = R.string.reset_success_desc), style = MaterialTheme.typography.bodyLarge) },
+                confirmButton = {
+                    Button(onClick = {
+                        onResetState()
+                        onNavigateSuccess()
+                    }) {
+                        Text(stringResource(id = R.string.close))
+                    }
+                }
+            )
+        }
+    }
+}

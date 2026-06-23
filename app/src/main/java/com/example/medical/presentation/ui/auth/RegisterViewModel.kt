@@ -41,6 +41,14 @@ class RegisterViewModel(
         _uiState.update { it.copy(passwordVisible = isVisible) }
     }
 
+    fun onConfirmPasswordChange(password: String) {
+        _uiState.update { it.copy(confirmPassword = password, errorMessage = null) }
+    }
+
+    fun onConfirmPasswordVisibilityChange(isVisible: Boolean) {
+        _uiState.update { it.copy(confirmPasswordVisible = isVisible) }
+    }
+
     fun onDoctorRoleChange(isDoctor: Boolean) {
         _uiState.update { it.copy(isDoctor = isDoctor) }
     }
@@ -56,6 +64,7 @@ class RegisterViewModel(
                 email = if (currentState.selectedTab == 0) currentState.email else "",
                 phone = if (currentState.selectedTab == 1) currentState.phone else "",
                 password = if (currentState.selectedTab == 0) currentState.password else currentState.otp,
+                confirmPassword = if (currentState.selectedTab == 0) currentState.confirmPassword else currentState.otp,
                 isPhoneTab = currentState.selectedTab == 1
             ).collect { result ->
                 when (result) {

@@ -23,14 +23,34 @@ class AuthRepositoryImpl : AuthRepository {
 
     override fun register(email: String, phone: String, password: String): Flow<Result<User>> = flow {
         emit(Result.Loading)
-        // Simulate network delay
         delay(1500)
         
-        // Mock validation/success
         if (email.isNotBlank() || phone.isNotBlank()) {
             emit(Result.Success(User(id = "2", email = email, phone = phone, fullName = "Người dùng mới", avatarUrl = null, role = com.example.medical.domain.model.UserRole.PATIENT, token = "fake_token_reg")))
         } else {
             emit(Result.Error("Vui lòng nhập Email hoặc Số điện thoại"))
         }
+    }
+
+    override fun sendForgotPasswordOtp(emailOrPhone: String): Flow<Result<Unit>> = flow {
+        emit(Result.Loading)
+        delay(1000)
+        emit(Result.Success(Unit))
+    }
+
+    override fun verifyForgotPasswordOtp(otp: String): Flow<Result<Unit>> = flow {
+        emit(Result.Loading)
+        delay(1000)
+        if (otp == "123456") {
+            emit(Result.Success(Unit))
+        } else {
+            emit(Result.Error("Mã OTP không chính xác"))
+        }
+    }
+
+    override fun resetPassword(newPassword: String): Flow<Result<Unit>> = flow {
+        emit(Result.Loading)
+        delay(1000)
+        emit(Result.Success(Unit))
     }
 }

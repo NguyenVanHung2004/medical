@@ -5,6 +5,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -19,7 +21,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,6 +61,8 @@ fun RegisterRoute(
         onOtpChange = viewModel::onOtpChange,
         onPasswordChange = viewModel::onPasswordChange,
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onConfirmPasswordVisibilityChange = viewModel::onConfirmPasswordVisibilityChange,
         onDoctorRoleChange = viewModel::onDoctorRoleChange,
         onGoogleLoginSuccess = viewModel::onGoogleLoginSuccess,
         onRegisterClick = viewModel::register,
@@ -76,6 +83,8 @@ fun RegisterScreen(
     onOtpChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: (Boolean) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onConfirmPasswordVisibilityChange: (Boolean) -> Unit,
     onDoctorRoleChange: (Boolean) -> Unit,
     onGoogleLoginSuccess: (String) -> Unit,
     onRegisterClick: () -> Unit,
@@ -120,7 +129,7 @@ fun RegisterScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
@@ -128,36 +137,40 @@ fun RegisterScreen(
                 .widthIn(max = 600.dp)
                 .padding(horizontal = 24.dp)
                 .padding(top = 16.dp, bottom = 32.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.padding(top = 8.dp, bottom = 16.dp, start = 0.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurface
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Text(
+                    text = stringResource(id = R.string.create_new_account),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
             Text(
-                text = stringResource(id = R.string.create_new_account),
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 28.sp
-                ),
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
                 text = stringResource(id = R.string.join_platform),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier
@@ -209,18 +222,13 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (uiState.selectedTab == 0) {
-                Text(
-                    text = stringResource(id = R.string.email_address),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = onEmailChange,
+                    label = { Text(stringResource(id = R.string.email_address)) },
                     placeholder = { Text("nguyenvana@example.com", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
                     leadingIcon = {
                         Icon(
@@ -238,18 +246,13 @@ fun RegisterScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = stringResource(id = R.string.password_hint),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = onPasswordChange,
-                    placeholder = { Text(stringResource(id = R.string.create_secure_password), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
+                    label = { Text(stringResource(id = R.string.password_hint)) },
+                    placeholder = { Text("••••••", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Lock,
@@ -264,6 +267,36 @@ fun RegisterScreen(
                         }
                     },
                     visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = uiState.confirmPassword,
+                    onValueChange = onConfirmPasswordChange,
+                    label = { Text(stringResource(id = R.string.confirm_password_hint)) },
+                    placeholder = { Text("••••••", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Lock,
+                            contentDescription = "Lock",
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        )
+                    },
+                    trailingIcon = {
+                        val image = if (uiState.confirmPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
+                        IconButton(onClick = { onConfirmPasswordVisibilityChange(!uiState.confirmPasswordVisible) }) {
+                            Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
+                        }
+                    },
+                    visualTransformation = if (uiState.confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -290,15 +323,10 @@ fun RegisterScreen(
                     )
                 }
             } else {
-                Text(
-                    text = stringResource(id = R.string.phone_hint),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = uiState.phone,
                     onValueChange = onPhoneChange,
+                    label = { Text(stringResource(id = R.string.phone_hint)) },
                     placeholder = { Text("0912345678", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
                     leadingIcon = {
                         Icon(
@@ -316,17 +344,12 @@ fun RegisterScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = "Mã OTP",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = uiState.otp,
                     onValueChange = onOtpChange,
+                    label = { Text("Mã OTP") },
                     placeholder = { Text("Nhập mã OTP", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
                     leadingIcon = {
                         Icon(
@@ -360,12 +383,13 @@ fun RegisterScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
                     if (uiState.selectedTab == 1 && !hasRequestedOtp) {
                         blinkTrigger++
+                        android.widget.Toast.makeText(context, "Hãy nhấn Lấy mã để nhận OTP", android.widget.Toast.LENGTH_SHORT).show()
                     } else {
                         onRegisterClick()
                     }
@@ -406,7 +430,7 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -498,6 +522,8 @@ fun RegisterScreenPreview() {
             onOtpChange = {},
             onPasswordChange = {},
             onPasswordVisibilityChange = {},
+            onConfirmPasswordChange = {},
+            onConfirmPasswordVisibilityChange = {},
             onRegisterClick = {},
             onBackClick = {},
             onLoginClick = {},

@@ -30,7 +30,9 @@
     <string name="join_platform">Tham gia nền tảng chăm sóc sức khỏe thông minh và an toàn.</string>
     <string name="email_address">Địa chỉ Email</string>
     <string name="create_secure_password">Tạo mật khẩu bảo mật</string>
-    <string name="password_requirement_hint">Tối thiểu 8 ký tự, bao gồm số và chữ cái.</string>
+    <string name="password_requirement_hint">Tối thiểu 6 ký tự.</string>
+    <string name="confirm_password_hint">Nhập lại mật khẩu</string>
+    <string name="re_enter_password">Xác nhận mật khẩu bảo mật</string>
     <string name="or_register_with">Hoặc đăng ký bằng</string>
     <string name="already_have_account">Đã có tài khoản?</string>
     <string name="login_now">Đăng nhập ngay</string>
@@ -40,8 +42,43 @@
     <string name="otp_mock_dialog_message">Mã OTP của bạn là: 123456</string>
     <string name="close">Đóng</string>
     
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">Quên Mật Khẩu</string>
+    <string name="forgot_password_desc">Vui lòng nhập Email hoặc Số điện thoại để nhận mã OTP.</string>
+    <string name="email_or_phone_hint">Email hoặc Số điện thoại</string>
+    <string name="continue_button">Tiếp tục</string>
+    <string name="enter_otp_title">Xác Thực OTP</string>
+    <string name="enter_otp_desc">Nhập mã OTP 6 số được gửi đến </string>
+    <string name="verify_button">Xác Nhận</string>
+    <string name="reset_password_title">Mật Khẩu Mới</string>
+    <string name="reset_password_desc">Vui lòng tạo mật khẩu mới cho tài khoản của bạn.</string>
+    <string name="new_password_hint">Mật khẩu mới</string>
+    <string name="reset_password_button">Đặt lại mật khẩu</string>
+    <string name="reset_success_title">Thành công</string>
+    <string name="reset_success_desc">Mật khẩu của bạn đã được thay đổi thành công.</string>
 
-
+    <!-- Complete Profile -->
+    <string name="complete_profile_title">Hoàn thiện hồ sơ</string>
+    <string name="complete_profile_desc">Vui lòng cung cấp thông tin chi tiết để chúng tôi có thể phục vụ bạn tốt nhất.</string>
+    <string name="personal_info_section">Thông tin cá nhân</string>
+    <string name="full_name_hint">HỌ VÀ TÊN</string>
+    <string name="enter_full_name">Nhập họ và tên của bạn</string>
+    <string name="dob_hint">NGÀY SINH</string>
+    <string name="gender_hint">GIỚI TÍNH</string>
+    <string name="select_gender">Chọn giới tính</string>
+    <string name="gender_male">Nam</string>
+    <string name="gender_female">Nữ</string>
+    <string name="gender_other">Khác</string>
+    <string name="address_hint">ĐỊA CHỈ</string>
+    <string name="enter_address">Nhập địa chỉ hiện tại</string>
+    <string name="insurance_info_section">Thông tin bảo hiểm</string>
+    <string name="optional_badge">Tùy chọn</string>
+    <string name="insurance_provider_hint">NHÀ CUNG CẤP BẢO HIỂM</string>
+    <string name="enter_insurance_provider">VD: Bảo Việt, PVI...</string>
+    <string name="insurance_code_hint">MÃ THẺ BẢO HIỂM</string>
+    <string name="enter_insurance_code">Nhập mã số trên thẻ</string>
+    <string name="agree_policy">Tôi đồng ý với Điều khoản và Chính sách bảo mật của MediConnect liên quan đến việc xử lý dữ liệu y tế.</string>
+    <string name="complete_button">Hoàn tất</string>
 
     <!-- Hồ sơ -->
     <string name="profile_title">Hồ Sơ Cá Nhân</string>
