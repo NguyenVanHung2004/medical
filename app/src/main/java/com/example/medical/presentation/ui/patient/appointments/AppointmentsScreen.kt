@@ -1,0 +1,530 @@
+package com.example.medical.presentation.ui.patient.appointments
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.medical.R
+import com.example.medical.domain.model.AppointmentStatus
+import com.example.medical.domain.model.AppointmentType
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun AppointmentsRoute(
+    onNavigateToHome: () -> Unit,
+    onNavigateToAppointments: () -> Unit,
+    onNavigateToDetail: (String) -> Unit,
+    viewModel: AppointmentsViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    AppointmentsScreen(
+        uiState = uiState,
+        onNavigateToHome = onNavigateToHome, 
+        onNavigateToDetail = onNavigateToDetail,
+        onCancelRequest = { id -> viewModel.requestCancelAppointment(id) },
+        onConfirmCancel = { viewModel.confirmCancelAppointment() },
+        onDismissCancel = { viewModel.hideCancelDialog() },
+        onRescheduleClick = { id -> viewModel.rescheduleAppointment(id) }
+    )
+}
+
+@Composable
+fun AppointmentsScreen(
+    uiState: AppointmentsUiState,
+    onNavigateToHome: () -> Unit,
+    onNavigateToDetail: (String) -> Unit,
+    onCancelRequest: (String) -> Unit,
+    onConfirmCancel: () -> Unit,
+    onDismissCancel: () -> Unit,
+    onRescheduleClick: (String) -> Unit
+) {
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val tabs = listOf(
+        stringResource(id = R.string.tab_upcoming_appointments),
+        stringResource(id = R.string.tab_history_appointments)
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.bgLight)),
+    ) {
+        // Custom Top Bar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            IconButton(
+                onClick = onNavigateToHome,
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(id = R.string.back_button_description),
+                    tint = colorResource(id = R.color.primaryBlue)
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.my_appointments_title),
+                modifier = Modifier.align(Alignment.Center),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.primaryBlue)
+            )
+        }
+
+        // Tabs
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            containerColor = colorResource(id = R.color.bgLight),
+            contentColor = colorResource(id = R.color.primaryBlue),
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    color = colorResource(id = R.color.primaryBlue),
+                    height = 3.dp
+                )
+            },
+            divider = {
+                HorizontalDivider(
+                    Modifier,
+                    DividerDefaults.Thickness,
+                    color = colorResource(id = R.color.dividerColor)
+                )
+            }
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = {
+                        Text(
+                            text = title,
+                            fontSize = 16.sp,
+                            color = if (selectedTabIndex == index) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                )
+            }
+        }
+
+        // List
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (selectedTabIndex == 0) {
+                if (uiState.upcomingAppointments.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.no_upcoming_appointments),
+                            modifier = Modifier.padding(16.dp),
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                } else {
+                    items(uiState.upcomingAppointments) { appt ->
+                        AppointmentCard(
+                            doctorName = appt.doctor.name,
+                            specialty = appt.doctor.specialty,
+                            avatarUrl = appt.doctor.avatarUrl,
+                            date = appt.date,
+                            time = appt.timeRange,
+                            location = appt.location,
+                            status = appt.status,
+                            onClickDetail = { onNavigateToDetail(appt.id) },
+                            onCancelClick = { onCancelRequest(appt.id) },
+                            isOnline = appt.type == AppointmentType.ONLINE
+                        )
+                    }
+                }
+            } else {
+                if (uiState.historyAppointments.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.no_history_appointments),
+                            modifier = Modifier.padding(16.dp),
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                } else {
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = { /* TODO */ },
+                                modifier = Modifier.weight(1f).height(40.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                            ) {
+                                Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(id = R.string.export_pdf), fontSize = 12.sp)
+                            }
+                            OutlinedButton(
+                                onClick = { /* TODO */ },
+                                modifier = Modifier.weight(1f).height(40.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                            ) {
+                                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(id = R.string.share_info), fontSize = 12.sp)
+                            }
+                        }
+                    }
+                    items(uiState.historyAppointments) { appt ->
+                        HistoryAppointmentCard(
+                            doctorName = appt.doctor.name,
+                            specialty = appt.doctor.specialty,
+                            avatarUrl = appt.doctor.avatarUrl,
+                            date = appt.date,
+                            time = appt.timeRange,
+                            reason = appt.reason,
+                            notes = "",
+                            onRescheduleClick = { onRescheduleClick(appt.id) }
+                        )
+                    }
+                }
+                }
+            }
+        }
+
+        if (uiState.appointmentToCancel != null) {
+            AlertDialog(
+                onDismissRequest = onDismissCancel,
+                title = { Text("Hủy Lịch Hẹn", fontWeight = FontWeight.Bold) },
+                text = {
+                    Column {
+                        Text("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
+                            "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = onConfirmCancel,
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.errorRed))
+                    ) {
+                        Text("Xác nhận Hủy")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismissCancel) {
+                        Text("Đóng", color = colorResource(id = R.color.textSecondary))
+                    }
+                }
+            )
+        }
+    }
+
+
+@Composable
+fun AppointmentCard(
+    doctorName: String,
+    specialty: String,
+    avatarUrl: String?,
+    date: String,
+    time: String,
+    location: String?,
+    isOnline: Boolean,
+    status: AppointmentStatus,
+    onClickDetail: () -> Unit,
+    onCancelClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Row(modifier = Modifier.weight(1f)) {
+                    AsyncImage(
+                        model = avatarUrl,
+                        contentDescription = doctorName,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            text = doctorName,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(id = R.color.textPrimary)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = specialty,
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                }
+                
+                if (status != null) {
+                    Box(
+                        modifier = Modifier
+                            .background(colorResource(id = R.color.primaryBlueLight), RoundedCornerShape(16.dp))
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = status.name,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(id = R.color.primaryBlue)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Details block
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.bgLight), RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Date",
+                        tint = colorResource(id = R.color.textSecondary),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(text = date, fontSize = 14.sp, color = colorResource(id = R.color.textPrimary))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = "Time",
+                        tint = colorResource(id = R.color.textSecondary),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(text = time, fontSize = 14.sp, color = colorResource(id = R.color.textPrimary))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = if (isOnline) Icons.Default.Videocam else Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        tint = if (isOnline) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.textSecondary),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = if (isOnline) stringResource(id = R.string.online_consultation_type) else (location ?: stringResource(id = R.string.no_address)),
+                        fontSize = 14.sp,
+                        color = if (isOnline) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.textPrimary)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Action Button
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(
+                    onClick = onCancelClick,
+                    modifier = Modifier.weight(1f).height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, androidx.compose.ui.graphics.Color.Red),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.ui.graphics.Color.Red)
+                ) {
+                    Text("Hủy", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+                Button(
+                    onClick = onClickDetail,
+                    modifier = Modifier.weight(1f).height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(
+                        text = if (isOnline) stringResource(id = R.string.btn_enter_clinic) else stringResource(id = R.string.btn_details),
+                        fontSize = 16.sp, 
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HistoryAppointmentCard(
+    doctorName: String,
+    specialty: String,
+    avatarUrl: String?,
+    date: String,
+    time: String,
+    reason: String?,
+    notes: String?,
+    onRescheduleClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = doctorName,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = doctorName,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.textPrimary)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = specialty,
+                        fontSize = 14.sp,
+                        color = colorResource(id = R.color.textSecondary)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Details block
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.bgLight), RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Date",
+                        tint = colorResource(id = R.color.textSecondary),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(text = "$time, $date", fontSize = 14.sp, color = colorResource(id = R.color.textPrimary))
+                }
+                
+                if (reason != null) {
+                    HorizontalDivider(color = colorResource(id = R.color.dividerColor))
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.reason_for_visit_label),
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                        Text(
+                            text = reason,
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.textPrimary)
+                        )
+                    }
+                }
+                
+                if (notes != null) {
+                    HorizontalDivider(color = colorResource(id = R.color.dividerColor))
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.notes_label),
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                        Text(
+                            text = notes,
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.textPrimary)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Action Buttons
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(
+                    onClick = onRescheduleClick,
+                    modifier = Modifier.weight(1f).height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(stringResource(id = R.string.rebook_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                }
+                Button(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier.weight(1f).height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(stringResource(id = R.string.follow_up_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                }
+            }
+        }
+    }
+}

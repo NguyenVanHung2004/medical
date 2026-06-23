@@ -1,10 +1,17 @@
 package com.example.medical.domain.model
 
+enum class UserRole {
+    PATIENT, DOCTOR
+}
+
 data class User(
     val id: String,
     val email: String,
+    val phone: String?,
     val fullName: String,
-    val token: String
+    val avatarUrl: String?,
+    val role: UserRole,
+    val token: String? = null
 )
 
 sealed class Result<out T> {

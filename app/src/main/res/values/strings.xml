@@ -18,6 +18,67 @@
     <string name="login_with_apple">Đăng nhập với Apple</string>
     <string name="terms_and_conditions">Điều khoản Dịch vụ &amp; Chính sách Bảo mật</string>
     <string name="agree_terms">Tôi đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật</string>
+    
+    <!-- Các chuỗi bổ sung cho Login / Register -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="please_enter_info">Vui lòng nhập thông tin để tiếp tục</string>
+    <string name="remember_me">Ghi nhớ tôi</string>
+    <string name="or_login_with">Hoặc đăng nhập với</string>
+    <string name="no_account">Chưa có tài khoản?</string>
+    <string name="register_now">Đăng ký ngay</string>
+    <string name="create_new_account">Tạo tài khoản mới</string>
+    <string name="join_platform">Tham gia nền tảng chăm sóc sức khỏe thông minh và an toàn.</string>
+    <string name="email_address">Địa chỉ Email</string>
+    <string name="create_secure_password">Tạo mật khẩu bảo mật</string>
+    <string name="password_requirement_hint">Tối thiểu 6 ký tự.</string>
+    <string name="confirm_password_hint">Nhập lại mật khẩu</string>
+    <string name="re_enter_password">Xác nhận mật khẩu bảo mật</string>
+    <string name="or_register_with">Hoặc đăng ký bằng</string>
+    <string name="already_have_account">Đã có tài khoản?</string>
+    <string name="login_now">Đăng nhập ngay</string>
+    
+    <string name="get_code">Lấy mã</string>
+    <string name="otp_mock_dialog_title">Mã xác nhận</string>
+    <string name="otp_mock_dialog_message">Mã OTP của bạn là: 123456</string>
+    <string name="close">Đóng</string>
+    
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">Quên Mật Khẩu</string>
+    <string name="forgot_password_desc">Vui lòng nhập Email hoặc Số điện thoại để nhận mã OTP.</string>
+    <string name="email_or_phone_hint">Email hoặc Số điện thoại</string>
+    <string name="continue_button">Tiếp tục</string>
+    <string name="enter_otp_title">Xác Thực OTP</string>
+    <string name="enter_otp_desc">Nhập mã OTP 6 số được gửi đến </string>
+    <string name="verify_button">Xác Nhận</string>
+    <string name="reset_password_title">Mật Khẩu Mới</string>
+    <string name="reset_password_desc">Vui lòng tạo mật khẩu mới cho tài khoản của bạn.</string>
+    <string name="new_password_hint">Mật khẩu mới</string>
+    <string name="reset_password_button">Đặt lại mật khẩu</string>
+    <string name="reset_success_title">Thành công</string>
+    <string name="reset_success_desc">Mật khẩu của bạn đã được thay đổi thành công.</string>
+
+    <!-- Complete Profile -->
+    <string name="complete_profile_title">Hoàn thiện hồ sơ</string>
+    <string name="complete_profile_desc">Vui lòng cung cấp thông tin chi tiết để chúng tôi có thể phục vụ bạn tốt nhất.</string>
+    <string name="personal_info_section">Thông tin cá nhân</string>
+    <string name="full_name_hint">HỌ VÀ TÊN</string>
+    <string name="enter_full_name">Nhập họ và tên của bạn</string>
+    <string name="dob_hint">NGÀY SINH</string>
+    <string name="gender_hint">GIỚI TÍNH</string>
+    <string name="select_gender">Chọn giới tính</string>
+    <string name="gender_male">Nam</string>
+    <string name="gender_female">Nữ</string>
+    <string name="gender_other">Khác</string>
+    <string name="address_hint">ĐỊA CHỈ</string>
+    <string name="enter_address">Nhập địa chỉ hiện tại</string>
+    <string name="insurance_info_section">Thông tin bảo hiểm</string>
+    <string name="optional_badge">Tùy chọn</string>
+    <string name="insurance_provider_hint">NHÀ CUNG CẤP BẢO HIỂM</string>
+    <string name="enter_insurance_provider">VD: Bảo Việt, PVI...</string>
+    <string name="insurance_code_hint">MÃ THẺ BẢO HIỂM</string>
+    <string name="enter_insurance_code">Nhập mã số trên thẻ</string>
+    <string name="agree_policy">Tôi đồng ý với Điều khoản và Chính sách bảo mật của MediConnect liên quan đến việc xử lý dữ liệu y tế.</string>
+    <string name="complete_button">Hoàn tất</string>
 
     <!-- Hồ sơ -->
     <string name="profile_title">Hồ Sơ Cá Nhân</string>
@@ -39,6 +100,10 @@
     <string name="consultation_type">Hình thức khám</string>
     <string name="online_consultation">Khám trực tuyến</string>
     <string name="offline_consultation">Khám trực tiếp</string>
+    <string name="online_consultation_type">Khám tư vấn trực tuyến</string>
+    <string name="offline_consultation_type">Khám trực tiếp tại phòng khám</string>
+    <string name="no_address">Chưa có địa chỉ</string>
+    <string name="view_directions">Xem chỉ đường</string>
     <string name="confirm_booking">Xác nhận đặt lịch</string>
     <string name="cancel_appointment">Hủy lịch hẹn</string>
     <string name="reschedule_appointment">Đặt lại lịch</string>
@@ -47,6 +112,19 @@
     <!-- 3. Thông báo -->
     <string name="notifications_title">Thông Báo</string>
     <string name="reminder_settings">Cài đặt nhắc nhở</string>
+    <string name="mark_all_read">Đánh dấu đã đọc</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_unread">Chưa đọc</string>
+
+    <!-- Notification Item Strings -->
+    <string name="noti_title_new_request">Yêu cầu đặt lịch mới</string>
+    <string name="noti_body_new_request">Bệnh nhân %1$s yêu cầu khám %2$s.</string>
+    <string name="noti_title_cancelled">Lịch khám bị hủy</string>
+    <string name="noti_body_cancelled">Bệnh nhân %1$s đã hủy ca khám %2$s.</string>
+    <string name="noti_title_upcoming">Sắp đến giờ khám</string>
+    <string name="noti_body_upcoming">Ca khám %1$s với %2$s sẽ bắt đầu %3$s.</string>
+    <string name="noti_online">trực tuyến</string>
+    <string name="noti_offline">trực tiếp</string>
 
     <!-- 4. Giao diện & Điều hướng -->
     <string name="tab_home">Trang Chủ</string>
@@ -61,4 +139,113 @@
     <string name="availability">Lịch trống</string>
     <string name="sort_by_rating">Sắp xếp theo đánh giá</string>
     <string name="sort_by_availability">Sắp xếp theo lịch trống</string>
+
+    <!-- Patient Home Screen -->
+    <string name="greeting_morning">Chào buổi sáng,</string>
+    <string name="upcoming_appointment">LỊCH HẸN SẮP TỚI</string>
+    <string name="in_hours">Trong %s giờ</string>
+    <string name="btn_details">Chi tiết</string>
+    <string name="btn_enter_clinic">Vào phòng khám</string>
+    <string name="action_book_new">Đặt lịch mới</string>
+    <string name="action_book_new_desc">Chọn bác sĩ &amp; thời gian</string>
+    <string name="action_telemedicine">Tư vấn từ xa</string>
+    <string name="action_telemedicine_desc">Khám qua video</string>
+    <string name="action_in_person">Khám tại viện</string>
+    <string name="action_in_person_desc">Đặt khám trực tiếp</string>
+    <string name="popular_specialties">Chuyên khoa phổ biến</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="health_corner">Góc sức khỏe</string>
+    <string name="read_now">Đọc ngay</string>
+    
+    <string name="spec_cardiology">Tim mạch</string>
+    <string name="spec_pediatrics">Nhi khoa</string>
+    <string name="spec_dermatology">Da liễu</string>
+    <string name="spec_dentistry">Răng hàm mặt</string>
+
+    <string name="bottom_nav_search">Tìm kiếm</string>
+    <string name="bottom_nav_appointments">Lịch hẹn</string>
+    <string name="bottom_nav_profile">Hồ sơ</string>
+    <string name="bottom_nav_notifications">Thông báo</string>
+    <string name="appointments">Lịch hẹn</string>
+    <string name="my_appointments_title">Lịch hẹn của tôi</string>
+    <string name="tab_upcoming_appointments">Sắp tới</string>
+    <string name="tab_history_appointments">Lịch sử</string>
+    <string name="no_upcoming_appointments">Chưa có lịch hẹn sắp tới.</string>
+    <string name="no_history_appointments">Chưa có lịch sử khám bệnh.</string>
+    <string name="back_button_description">Quay lại</string>
+    <string name="appointment_detail_title">Chi tiết lịch hẹn</string>
+    <string name="status_confirmed">Đã xác nhận</string>
+    <string name="view_profile">Xem hồ sơ</string>
+    <string name="change_doctor">Đổi bác sĩ</string>
+    <string name="time_label">Thời gian</string>
+    <string name="consultation_type_label">Hình thức khám</string>
+    <string name="join_clinic_room">Tham gia phòng khám</string>
+    <string name="patient_label">Bệnh nhân</string>
+    <string name="reason_for_visit_label">Lý do khám</string>
+    <string name="privacy_and_profile">QUYỀN RIÊNG TƯ &amp; HỒ SƠ</string>
+    <string name="allow_view_prescription_history">Cho phép xem lịch sử đơn thuốc</string>
+    <string name="share_test_results">Chia sẻ kết quả xét nghiệm</string>
+    <string name="change_appointment">Đổi lịch hẹn</string>
+    <string name="cancel_appointment_action">Hủy lịch hẹn</string>
+    <string name="notes_label">Ghi chú tư vấn</string>
+    <string name="rebook_appointment">Đặt lại lịch</string>
+    <string name="follow_up_appointment">Tái khám</string>
+    <string name="export_pdf">Xuất PDF/CSV</string>
+    <string name="share_info">Chia sẻ thông tin</string>
+    
+    <!-- Profile Screen -->
+    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="contact_info">Liên hệ</string>
+    <string name="medical_info">Thông tin y tế</string>
+    <string name="blood_type">NHÓM MÁU</string>
+    <string name="allergies">DỊ ỨNG</string>
+    <string name="settings_header">Cài đặt</string>
+    <string name="notification_settings">Cài đặt thông báo</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="privacy_settings">Quyền riêng tư</string>
+    <string name="delete_account">Xóa tài khoản</string>
+    
+    <!-- Notifications Screen -->
+    <string name="notifications_screen_title">Thông báo</string>
+    <string name="no_notifications">Chưa có thông báo nào.</string>
+
+    <string name="good_morning">Chào buổi sáng,</string>
+    <string name="good_afternoon">Chào buổi chiều,</string>
+    <string name="good_evening">Chào buổi tối,</string>
+    <string name="appointments_today">Ca khám hôm nay</string>
+    <string name="pending_requests">Chờ xác nhận</string>
+    <string name="requests_to_process">Yêu cầu chờ xử lý</string>
+    <string name="view_all">Xem tất cả</string>
+    <string name="reason_label">Lý do:</string>
+    <string name="reject">Từ chối</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="schedule_today">Lịch làm việc hôm nay</string>
+    <string name="happening">ĐANG DIỄN RA</string>
+    <string name="online">Trực tuyến</string>
+    <string name="offline">Tại viện</string>
+    <string name="patient_info_format">BN %1$s, %2$d tuổi • ID: %3$s</string>
+    <string name="enter_clinic">Vào phòng khám</string>
+    <string name="view_details">Xem chi tiết</string>
+    <string name="nav_patients">Bệnh nhân</string>
+    <string name="nav_notifications">Thông báo</string>
+    <string name="nav_profile">Hồ sơ</string>
+    <string name="manage_appointments">Quản lý lịch hẹn</string>
+    <string name="scheduled_appointments">Đã lên lịch</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_appointments">Lịch hẹn</string>
+
+    <!-- Doctor Profile Strings -->
+    <string name="services_and_fees">Dịch vụ &amp; Chi phí</string>
+    <string name="online_consultation_service">Tư vấn trực tuyến</string>
+    <string name="in_person_consultation_service">Khám tại viện</string>
+    <string name="working_hours">Thời gian làm việc</string>
+    <string name="update_working_hours">Cập nhật lịch làm việc</string>
+    <string name="account_security">Bảo mật tài khoản</string>
+    <string name="help_and_faq">Hỗ trợ &amp; FAQ</string>
+    <string name="change_date_and_time">Đổi ngày &amp; giờ</string>
+    <string name="morning">Sáng</string>
+    <string name="afternoon">Chiều</string>
+    <string name="confirm_schedule_change">Xác nhận đổi lịch</string>
 </resources>
