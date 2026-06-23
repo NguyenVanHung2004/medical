@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
-import com.example.medical.domain.model.UserProfile
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -162,7 +161,7 @@ fun ProfileScreen(uiState: ProfileUiState) {
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = profile.bloodType,
+                                text = profile.bloodType ?: "N/A",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colorResource(id = R.color.errorRed)
@@ -183,7 +182,7 @@ fun ProfileScreen(uiState: ProfileUiState) {
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = profile.allergies,
+                            text = profile.allergies ?: "N/A",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = colorResource(id = R.color.textPrimary)

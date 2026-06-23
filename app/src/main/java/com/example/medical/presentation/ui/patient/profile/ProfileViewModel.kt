@@ -23,8 +23,20 @@ class ProfileViewModel(
     private fun loadProfile() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            repository.getUserProfile().collect { profile ->
-                _uiState.update { it.copy(profile = profile, isLoading = false) }
+            repository.getUserProfile().collect { (user, patientProfile) ->
+                val uiModel = UserProfileUiModel(
+                    id = user.id,
+                    fullName = user.fullName,
+                    dob = patientProfile.dob,
+                    gender = patientProfile.gender,
+                    email = user.email,
+                    phone = user.phone ?: "",
+                    address = patientProfile.address,
+                    bloodType = patientProfile.bloodType,
+                    allergies = patientProfile.allergies,
+                    avatarUrl = user.avatarUrl
+                )
+                _uiState.update { it.copy(profile = uiModel, isLoading = false) }
             }
         }
     }

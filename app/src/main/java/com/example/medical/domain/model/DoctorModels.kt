@@ -1,7 +1,7 @@
 package com.example.medical.domain.model
 
 enum class ConsultationType {
-    ONLINE, OFFLINE
+    ONLINE, OFFLINE, HOME_VISIT
 }
 
 data class DoctorDetail(
@@ -43,11 +43,11 @@ data class AppointmentRequest(
     val patientInitial: String,
     val timeRange: String,
     val reason: String,
-    val type: AppointmentType = AppointmentType.ONLINE,
+    val type: ConsultationType = ConsultationType.ONLINE,
     val location: String? = null
 )
 
 enum class AppointmentStatus {
-    HAPPENING, UPCOMING, COMPLETED
+    PENDING, CONFIRMED, UPCOMING, HAPPENING, COMPLETED, CANCELLED
 }
 

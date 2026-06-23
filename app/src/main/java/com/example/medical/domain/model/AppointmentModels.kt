@@ -1,8 +1,23 @@
 package com.example.medical.domain.model
 
-enum class AppointmentType {
-    ONLINE, OFFLINE
-}
+// Tham chiếu ConsultationType từ DoctorModels (hoặc Profile) 
+// Enum AppointmentStatus cũng từ DoctorModels. 
+typealias AppointmentType = ConsultationType
+// Nếu chưa có thì sẽ phải tạo.
+
+data class AppointmentDomainModel(
+    val id: String,
+    val patientId: String,
+    val doctorId: String,
+    val type: ConsultationType,
+    val status: AppointmentStatus,
+    val date: String,
+    val startTime: String,
+    val endTime: String,
+    val reason: String,
+    val location: String?,
+    val paymentStatus: String?
+)
 
 data class Appointment(
     val id: String,
@@ -18,5 +33,5 @@ data class Appointment(
     val reason: String,
     val location: String?,
     val status: AppointmentStatus,
-    val type: AppointmentType
+    val type: ConsultationType
 )
