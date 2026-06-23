@@ -44,7 +44,8 @@ fun DoctorHomeRoute(
     DoctorHomeScreen(
         uiState = uiState,
         onNavigateToNotifications = onNavigateToNotifications,
-        onNavigateToAppointments = onNavigateToAppointments
+        onNavigateToAppointments = onNavigateToAppointments,
+        onRequestAction = viewModel::handleRequestAction
     )
 }
 
@@ -53,7 +54,8 @@ fun DoctorHomeRoute(
 fun DoctorHomeScreen(
     uiState: DoctorHomeUIState,
     onNavigateToNotifications: () -> Unit,
-    onNavigateToAppointments: () -> Unit
+    onNavigateToAppointments: () -> Unit,
+    onRequestAction: (String, Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -88,16 +90,17 @@ fun DoctorHomeScreen(
                 )
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* Add event */ },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                shape = CircleShape
-            ) {
-                Icon(Icons.Default.EditCalendar, contentDescription = "Add")
-            }
-        }
+//        floatingActionButton = {
+//            FloatingActionButton(
+//                onClick = { /* Add event */ },
+//                containerColor = MaterialTheme.colorScheme.primary,
+//                contentColor = Color.White,
+//                shape = CircleShape
+//            ) {
+//                Icon(Icons.Default.EditCalendar, contentDescription = "Add")
+//            }
+//        },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -124,7 +127,7 @@ fun DoctorHomeScreen(
                                     Spacer(modifier = Modifier.height(24.dp))
                                     StatsSection()
                                     Spacer(modifier = Modifier.height(24.dp))
-                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
+                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
                                     Spacer(modifier = Modifier.height(24.dp))
                                 }
                             }
@@ -155,7 +158,7 @@ fun DoctorHomeScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             StatsSection()
                             Spacer(modifier = Modifier.height(24.dp))
-                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
+                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
                             Spacer(modifier = Modifier.height(24.dp))
                             AppointmentsSection(appointments = uiState.todayAppointments)
                             Spacer(modifier = Modifier.height(80.dp)) // For FAB
@@ -169,6 +172,13 @@ fun DoctorHomeScreen(
 
 @Composable
 fun GreetingSection(doctorName: String) {
+    val currentHour = remember { java.time.LocalTime.now().hour }
+    val greetingResId = when (currentHour) {
+        in 0..11 -> R.string.good_morning
+        in 12..17 -> R.string.good_afternoon
+        else -> R.string.good_evening
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -178,7 +188,7 @@ fun GreetingSection(doctorName: String) {
     ) {
         Column {
             Text(
-                text = stringResource(R.string.good_morning),
+                text = stringResource(greetingResId),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -284,7 +294,11 @@ fun StatCard(
 }
 
 @Composable
-fun RequestsSection(requests: List<AppointmentRequest>, onViewAllClick: () -> Unit) {
+fun RequestsSection(
+    requests: List<AppointmentRequest>,
+    onViewAllClick: () -> Unit,
+    onRequestAction: (String, Boolean) -> Unit
+) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -308,14 +322,17 @@ fun RequestsSection(requests: List<AppointmentRequest>, onViewAllClick: () -> Un
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(requests) { request ->
-                RequestCard(request = request)
+                RequestCard(request = request, onRequestAction = onRequestAction)
             }
         }
     }
 }
 
 @Composable
-fun RequestCard(request: AppointmentRequest) {
+fun RequestCard(
+    request: AppointmentRequest,
+    onRequestAction: (String, Boolean) -> Unit
+) {
     Card(
         modifier = Modifier.width(280.dp),
         shape = RoundedCornerShape(16.dp),
@@ -385,14 +402,14 @@ fun RequestCard(request: AppointmentRequest) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* Reject */ },
+                    onClick = { onRequestAction(request.id, false) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(stringResource(R.string.reject), color = MaterialTheme.colorScheme.onSurface)
                 }
                 Button(
-                    onClick = { /* Confirm */ },
+                    onClick = { onRequestAction(request.id, true) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -432,7 +449,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
             text = appointment.timeRange.split(" - ")[0],
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.width(48.dp).padding(top = 16.dp),
+            modifier = Modifier.width(48.dp),
             textAlign = TextAlign.End
         )
         
@@ -443,7 +460,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxHeight()
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Box(
                 modifier = Modifier
                     .size(12.dp)
@@ -471,7 +488,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
         Card(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = if (isLast) 0.dp else 16.dp),
+                .padding(top = 4.dp, bottom = if (isLast) 0.dp else 16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -499,7 +516,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Icon(
@@ -566,12 +583,12 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                 // Actions
                 if (appointment.status == AppointmentStatus.HAPPENING) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Button(
                             onClick = { /* Enter clinic */ },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
@@ -584,7 +601,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                         }
                         OutlinedButton(
                             onClick = { /* View details */ },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {

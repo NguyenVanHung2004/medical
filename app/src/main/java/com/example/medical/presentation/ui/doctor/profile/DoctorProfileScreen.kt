@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +28,10 @@ import com.example.medical.domain.model.WorkingTimeSlot
 import org.koin.androidx.compose.koinViewModel
 import java.time.DayOfWeek
 import java.util.*
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
+import coil.compose.AsyncImage
 
 @Composable
 fun DoctorProfileRoute(
@@ -44,7 +49,14 @@ fun DoctorProfileRoute(
         onHideWorkingHoursDialog = viewModel::hideWorkingHoursDialog,
         onSelectDayOfWeek = viewModel::selectDayOfWeek,
         onToggleTimeSlot = viewModel::toggleTimeSlot,
-        onConfirmWorkingHoursUpdate = viewModel::confirmWorkingHoursUpdate
+        onConfirmWorkingHoursUpdate = viewModel::confirmWorkingHoursUpdate,
+        onShowEditProfileDialog = viewModel::showEditProfileDialog,
+        onHideEditProfileDialog = viewModel::hideEditProfileDialog,
+        onSaveProfile = viewModel::saveProfile,
+        onShowEditFeesDialog = viewModel::showEditFeesDialog,
+        onHideEditFeesDialog = viewModel::hideEditFeesDialog,
+        onSaveFees = viewModel::saveFees,
+        onAvatarSelected = viewModel::updateAvatar
     )
 }
 
@@ -59,7 +71,14 @@ fun DoctorProfileScreen(
     onHideWorkingHoursDialog: () -> Unit,
     onSelectDayOfWeek: (DayOfWeek) -> Unit,
     onToggleTimeSlot: (WorkingTimeSlot) -> Unit,
-    onConfirmWorkingHoursUpdate: () -> Unit
+    onConfirmWorkingHoursUpdate: () -> Unit,
+    onShowEditProfileDialog: () -> Unit,
+    onHideEditProfileDialog: () -> Unit,
+    onSaveProfile: (String, String, String, String) -> Unit,
+    onShowEditFeesDialog: () -> Unit,
+    onHideEditFeesDialog: () -> Unit,
+    onSaveFees: (Long, Long) -> Unit,
+    onAvatarSelected: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -68,14 +87,16 @@ fun DoctorProfileScreen(
                     Text(
                         stringResource(R.string.profile_title),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        }
+        },
+        contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -99,13 +120,18 @@ fun DoctorProfileScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         item {
-                            DoctorInfoCard(doctor = doctor)
+                            DoctorInfoCard(
+                                doctor = doctor,
+                                onEditClick = onShowEditProfileDialog,
+                                onAvatarSelected = onAvatarSelected
+                            )
                         }
                         item {
                             ServicesAndFeesCard(
                                 doctor = doctor,
                                 onToggleOnline = onToggleOnline,
-                                onToggleOffline = onToggleOffline
+                                onToggleOffline = onToggleOffline,
+                                onEditClick = onShowEditFeesDialog
                             )
                         }
                         item {
@@ -138,11 +164,35 @@ fun DoctorProfileScreen(
                 onConfirm = onConfirmWorkingHoursUpdate
             )
         }
+
+        if (uiState.isEditProfileDialogVisible && uiState.doctor != null) {
+            EditProfileDialog(
+                doctor = uiState.doctor,
+                onDismiss = onHideEditProfileDialog,
+                onSave = onSaveProfile
+            )
+        }
+
+        if (uiState.isEditFeesDialogVisible && uiState.doctor != null) {
+            EditFeesDialog(
+                doctor = uiState.doctor,
+                onDismiss = onHideEditFeesDialog,
+                onSave = onSaveFees
+            )
+        }
     }
 }
 
 @Composable
-fun DoctorInfoCard(doctor: Doctor) {
+fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onAvatarSelected: (String) -> Unit) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            onAvatarSelected(it.toString())
+        }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -163,12 +213,21 @@ fun DoctorInfoCard(doctor: Doctor) {
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Avatar",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(60.dp)
-                    )
+                    if (doctor.avatarUrl != null) {
+                        AsyncImage(
+                            model = doctor.avatarUrl,
+                            contentDescription = "Avatar",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Avatar",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
                 }
                 Box(
                     modifier = Modifier
@@ -177,7 +236,7 @@ fun DoctorInfoCard(doctor: Doctor) {
                         .size(32.dp)
                         .background(MaterialTheme.colorScheme.primary, CircleShape)
                         .clip(CircleShape)
-                        .clickable { /* Update avatar */ },
+                        .clickable { launcher.launch("image/*") },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -199,6 +258,14 @@ fun DoctorInfoCard(doctor: Doctor) {
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary
             )
+            if (doctor.hospital.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = doctor.hospital,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = doctor.experience,
@@ -207,7 +274,7 @@ fun DoctorInfoCard(doctor: Doctor) {
             )
             Spacer(modifier = Modifier.height(24.dp))
             OutlinedButton(
-                onClick = { /* Edit profile */ },
+                onClick = onEditClick,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
@@ -227,7 +294,8 @@ fun DoctorInfoCard(doctor: Doctor) {
 fun ServicesAndFeesCard(
     doctor: Doctor,
     onToggleOnline: (Boolean) -> Unit,
-    onToggleOffline: (Boolean) -> Unit
+    onToggleOffline: (Boolean) -> Unit,
+    onEditClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -236,11 +304,25 @@ fun ServicesAndFeesCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
-            Text(
-                text = stringResource(R.string.services_and_fees),
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.services_and_fees),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                IconButton(onClick = onEditClick, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Fees",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -323,31 +405,66 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                        RoundedCornerShape(8.dp)
-                    )
-                    .padding(16.dp)
-            ) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Default.AccessTimeFilled,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = doctor.workingHoursSummary,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+            
+            val hasSchedule = DayOfWeek.values().any { day ->
+                doctor.workingSchedule[day]?.any { it.isSelected } == true
+            }
+
+            if (!hasSchedule) {
+                Text(
+                    text = "Chưa có lịch làm việc",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                DayOfWeek.values().forEach { day ->
+                    val slots = doctor.workingSchedule[day]?.filter { it.isSelected } ?: emptyList()
+                    if (slots.isNotEmpty()) {
+                        val dayName = when(day) {
+                            DayOfWeek.MONDAY -> "Thứ 2"
+                            DayOfWeek.TUESDAY -> "Thứ 3"
+                            DayOfWeek.WEDNESDAY -> "Thứ 4"
+                            DayOfWeek.THURSDAY -> "Thứ 5"
+                            DayOfWeek.FRIDAY -> "Thứ 6"
+                            DayOfWeek.SATURDAY -> "Thứ 7"
+                            DayOfWeek.SUNDAY -> "Chủ nhật"
+                        }
+                        
+                        Text(
+                            text = dayName,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        val morningSlots = slots.filter { it.time < "12:00" }
+                        val afternoonSlots = slots.filter { it.time >= "12:00" }
+                        val maxRows = maxOf(morningSlots.size, afternoonSlots.size)
+                        
+                        for (i in 0 until maxRows) {
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                val morningTime = morningSlots.getOrNull(i)?.time ?: ""
+                                val afternoonTime = afternoonSlots.getOrNull(i)?.time ?: ""
+                                
+                                Text(
+                                    text = morningTime,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Text(
+                                    text = afternoonTime,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = onUpdateWorkingHours,
                 modifier = Modifier.fillMaxWidth(),
@@ -607,5 +724,220 @@ fun TimeSlotItem(
             style = MaterialTheme.typography.bodySmall,
             color = contentColor
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditProfileDialog(
+    doctor: Doctor,
+    onDismiss: () -> Unit,
+    onSave: (String, String, String, String) -> Unit
+) {
+    var name by remember { mutableStateOf(doctor.name) }
+    var specialty by remember { mutableStateOf(doctor.specialty) }
+    var hospital by remember { mutableStateOf(doctor.hospital) }
+    var experience by remember { mutableStateOf(doctor.experience) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.edit_profile),
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Cập nhật thông tin cá nhân",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                    ) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Họ và Tên") },
+                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                var expanded by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = specialty,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Chuyên khoa") },
+                        leadingIcon = { Icon(Icons.Default.MedicalServices, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        com.example.medical.domain.model.DoctorSpecialty.values().forEach { spec ->
+                            DropdownMenuItem(
+                                text = { Text(spec.displayName) },
+                                onClick = {
+                                    specialty = spec.displayName
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = hospital,
+                    onValueChange = { hospital = it },
+                    label = { Text("Bệnh viện / Nơi công tác") },
+                    leadingIcon = { Icon(Icons.Default.LocalHospital, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = experience,
+                    onValueChange = { experience = it },
+                    label = { Text("Kinh nghiệm") },
+                    leadingIcon = { Icon(Icons.Default.WorkOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = { onSave(name, specialty, hospital, experience) },
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(text = "Lưu Thay Đổi", style = MaterialTheme.typography.titleMedium, color = Color.White)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditFeesDialog(
+    doctor: Doctor,
+    onDismiss: () -> Unit,
+    onSave: (Long, Long) -> Unit
+) {
+    var onlineFeeStr by remember { mutableStateOf(doctor.onlineConsultationFee.toString()) }
+    var inPersonFeeStr by remember { mutableStateOf(doctor.inPersonConsultationFee.toString()) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Chỉnh sửa chi phí",
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Thiết lập chi phí dịch vụ khám",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                    ) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                OutlinedTextField(
+                    value = onlineFeeStr,
+                    onValueChange = { onlineFeeStr = it },
+                    label = { Text("Chi phí khám trực tuyến (VNĐ)") },
+                    leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = inPersonFeeStr,
+                    onValueChange = { inPersonFeeStr = it },
+                    label = { Text("Chi phí khám tại viện (VNĐ)") },
+                    leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = {
+                        val onlineFee = onlineFeeStr.toLongOrNull() ?: doctor.onlineConsultationFee
+                        val inPersonFee = inPersonFeeStr.toLongOrNull() ?: doctor.inPersonConsultationFee
+                        onSave(onlineFee, inPersonFee)
+                    },
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(text = "Lưu Thay Đổi", style = MaterialTheme.typography.titleMedium, color = Color.White)
+                }
+            }
+        }
     }
 }

@@ -94,9 +94,9 @@ class MainActivity : ComponentActivity() {
                                     isDoctor = isDoctor,
                                     onBackClick = { navController.popBackStack() },
                                     onLoginClick = { navController.popBackStack() },
-                                    onRegisterSuccess = { 
+                                    onRegisterSuccess = {
                                         if (isDoctor) {
-                                            navController.popBackStack() 
+                                            navController.popBackStack()
                                         } else {
                                             navController.navigate("complete_profile") {
                                                 popUpTo("register/$isDoctor") { inclusive = true }
@@ -164,6 +164,9 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate("welcome") {
                                             popUpTo(0) // Xóa toàn bộ stack để về màn welcome an toàn
                                         }
+                                    },
+                                    onNavigateToAppointmentDetail = { appointmentId ->
+                                        navController.navigate("doctor_appointment_detail/$appointmentId")
                                     }
                                 )
                             }
@@ -171,12 +174,10 @@ class MainActivity : ComponentActivity() {
                                 "doctor_list/{type}?specialty={specialty}",
                                 arguments = listOf(
                                     navArgument("type") { type = NavType.StringType },
-                                    navArgument("specialty") {
-                                        type = NavType.StringType; nullable = true
-                                    }
+                                    navArgument("specialty") { type = NavType.StringType; nullable = true }
                                 )
                             ) { backStackEntry ->
-                                DoctorListRoute(
+                                com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToBooking = { doctorId ->
                                         navController.navigate("booking/$doctorId")
@@ -185,17 +186,13 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(
                                 "booking/{doctorId}",
-                                arguments = listOf(navArgument("doctorId") {
-                                    type = NavType.StringType
-                                })
+                                arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
                             ) { backStackEntry ->
-                                BookingRoute(
+                                com.example.medical.presentation.ui.patient.booking.BookingRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToNext = { doctorId, date, time ->
-                                        val encodedDate = android.net.Uri.encode(date)
-                                        val encodedTime = android.net.Uri.encode(time)
-                                        navController.navigate("booking_success/$doctorId/$encodedDate/$encodedTime") {
-                                            popUpTo("patient_home")
+                                        navController.navigate("booking_success/$doctorId/$date/$time") {
+                                            popUpTo("patient_home") // Trở về patient_home sau khi success
                                         }
                                     }
                                 )
@@ -208,7 +205,7 @@ class MainActivity : ComponentActivity() {
                                     navArgument("time") { type = NavType.StringType }
                                 )
                             ) {
-                               BookingSuccessRoute(
+                                com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateHome = {
                                         navController.navigate("patient_home") {
@@ -233,6 +230,15 @@ class MainActivity : ComponentActivity() {
                                     onNavigateToReschedule = { doctorId ->
                                         navController.navigate("booking/$doctorId")
                                     }
+                                )
+                            }
+                            composable(
+                                "doctor_appointment_detail/{appointmentId}",
+                                arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute(
+                                    appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: "",
+                                    onNavigateBack = { navController.popBackStack() }
                                 )
                             }
                         }

@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface DoctorAppointmentRepository {
     fun getPendingRequests(): Flow<List<AppointmentRequest>>
     fun getScheduledAppointments(): Flow<List<Appointment>>
+    fun getAppointmentDetail(id: String): Flow<Appointment?>
+    suspend fun respondToRequest(requestId: String, accept: Boolean): Result<Unit>
 }

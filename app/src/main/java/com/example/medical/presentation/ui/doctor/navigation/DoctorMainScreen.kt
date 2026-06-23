@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -25,7 +26,8 @@ import com.example.medical.presentation.ui.doctor.profile.DoctorProfileRoute
 
 @Composable
 fun DoctorMainScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToAppointmentDetail: (String) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -68,10 +70,35 @@ fun DoctorMainScreen(
             }
         }
     ) { paddingValues ->
+        val items = listOf(
+            BottomNavItem.Home,
+            BottomNavItem.Appointments,
+            BottomNavItem.Notifications,
+            BottomNavItem.Profile
+        )
+
         NavHost(
             navController = navController,
             startDestination = BottomNavItem.Home.route,
-            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
+            enterTransition = {
+                val initialIndex = items.indexOfFirst { it.route == initialState.destination.route }
+                val targetIndex = items.indexOfFirst { it.route == targetState.destination.route }
+                val isForward = targetIndex > initialIndex
+                androidx.compose.animation.slideInHorizontally(
+                    initialOffsetX = { if (isForward) it else -it },
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                ) + androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(300))
+            },
+            exitTransition = {
+                val initialIndex = items.indexOfFirst { it.route == initialState.destination.route }
+                val targetIndex = items.indexOfFirst { it.route == targetState.destination.route }
+                val isForward = targetIndex > initialIndex
+                androidx.compose.animation.slideOutHorizontally(
+                    targetOffsetX = { if (isForward) -it else it },
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                ) + androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
+            }
         ) {
             composable(BottomNavItem.Home.route) {
                 DoctorHomeRoute(
@@ -92,7 +119,9 @@ fun DoctorMainScreen(
                 )
             }
             composable(BottomNavItem.Appointments.route) {
-                DoctorAppointmentRoute()
+                DoctorAppointmentRoute(
+                    onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
+                )
             }
             composable(BottomNavItem.Notifications.route) {
                 DoctorNotificationRoute(

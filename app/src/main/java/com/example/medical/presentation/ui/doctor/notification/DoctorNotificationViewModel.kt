@@ -2,10 +2,10 @@ package com.example.medical.presentation.ui.doctor.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.medical.domain.usecase.ConfirmAppointmentUseCase
-import com.example.medical.domain.usecase.GetNotificationsUseCase
-import com.example.medical.domain.usecase.MarkAllNotificationsAsReadUseCase
-import com.example.medical.domain.usecase.RejectAppointmentUseCase
+import com.example.medical.domain.usecase.doctor.ConfirmAppointmentUseCase
+import com.example.medical.domain.usecase.doctor.GetNotificationsUseCase
+import com.example.medical.domain.usecase.doctor.MarkAllNotificationsAsReadUseCase
+import com.example.medical.domain.usecase.doctor.RejectAppointmentUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -4,6 +4,17 @@ enum class ConsultationType {
     ONLINE, OFFLINE, HOME_VISIT
 }
 
+enum class DoctorSpecialty(val displayName: String) {
+    CARDIOLOGY("TIM MẠCH"),
+    PEDIATRICS("NHI KHOA"),
+    DERMATOLOGY("DA LIỄU"),
+    DENTISTRY("RĂNG HÀM MẶT"),
+    NEUROLOGY("THẦN KINH"),
+    ORTHOPEDICS("CHẤN THƯƠNG CHỈNH HÌNH"),
+    OPHTHALMOLOGY("NHÃN KHOA"),
+    GENERAL("ĐA KHOA")
+}
+
 data class DoctorDetail(
     val id: String,
     val name: String,
@@ -23,12 +34,14 @@ data class Doctor(
     val name: String,
     val avatarUrl: String?,
     val specialty: String = "",
+    val hospital: String = "",
     val experience: String = "",
     val isOnlineConsultationEnabled: Boolean = false,
     val onlineConsultationFee: Long = 0,
     val isInPersonConsultationEnabled: Boolean = false,
     val inPersonConsultationFee: Long = 0,
-    val workingHoursSummary: String = "Thứ 2 - Thứ 6\n08:00 - 11:30\n13:30 - 17:00"
+    val workingHoursSummary: String = "Thứ 2 - Thứ 6\n08:00 - 11:30\n13:30 - 17:00",
+    val workingSchedule: Map<java.time.DayOfWeek, List<WorkingTimeSlot>> = emptyMap()
 )
 
 data class WorkingTimeSlot(

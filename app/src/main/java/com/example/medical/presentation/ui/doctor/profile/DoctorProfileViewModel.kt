@@ -57,6 +57,44 @@ class DoctorProfileViewModel(
         _uiState.update { it.copy(isWorkingHoursDialogVisible = false) }
     }
 
+    fun showEditProfileDialog() {
+        _uiState.update { it.copy(isEditProfileDialogVisible = true) }
+    }
+
+    fun hideEditProfileDialog() {
+        _uiState.update { it.copy(isEditProfileDialogVisible = false) }
+    }
+
+    fun saveProfile(name: String, specialty: String, hospital: String, experience: String) {
+        viewModelScope.launch {
+            repository.updateProfile(name, specialty, hospital, experience).collect {
+                hideEditProfileDialog()
+            }
+        }
+    }
+
+    fun showEditFeesDialog() {
+        _uiState.update { it.copy(isEditFeesDialogVisible = true) }
+    }
+
+    fun hideEditFeesDialog() {
+        _uiState.update { it.copy(isEditFeesDialogVisible = false) }
+    }
+
+    fun saveFees(onlineFee: Long, inPersonFee: Long) {
+        viewModelScope.launch {
+            repository.updateFees(onlineFee, inPersonFee).collect {
+                hideEditFeesDialog()
+            }
+        }
+    }
+
+    fun updateAvatar(uri: String) {
+        viewModelScope.launch {
+            repository.updateAvatar(uri).collect {}
+        }
+    }
+
     fun selectDayOfWeek(dayOfWeek: DayOfWeek) {
         _uiState.update { it.copy(selectedDayOfWeek = dayOfWeek) }
         fetchWorkingTimeSlots(dayOfWeek)
@@ -76,10 +114,6 @@ class DoctorProfileViewModel(
                 dayOfWeek = _uiState.value.selectedDayOfWeek,
                 slots = _uiState.value.timeSlotsForSelectedDay
             ).collect {
-                // To update the summary immediately, we refetch the doctor profile
-                repository.getDoctorProfile().collect { doctor ->
-                     _uiState.update { it.copy(doctor = doctor) }
-                }
                 hideWorkingHoursDialog()
             }
         }

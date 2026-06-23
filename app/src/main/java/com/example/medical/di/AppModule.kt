@@ -47,13 +47,7 @@ val repositoryModule = module {
 val useCaseModule = module {
     factory { LoginUseCase(get()) }
     factory { RegisterUseCase(get()) }
-    factory { ForgotPasswordUseCase(get()) }
-    factory { com.example.medical.domain.usecase.GetDoctorHomeDataUseCase(get()) }
-    factory { com.example.medical.domain.usecase.GetDoctorAppointmentsUseCase(get()) }
-    factory { com.example.medical.domain.usecase.GetNotificationsUseCase(get()) }
-    factory { com.example.medical.domain.usecase.MarkAllNotificationsAsReadUseCase(get()) }
-    factory { com.example.medical.domain.usecase.ConfirmAppointmentUseCase(get()) }
-    factory { com.example.medical.domain.usecase.RejectAppointmentUseCase(get()) }
+
     factory { GetUpcomingAppointmentsUseCase(get()) }
     factory { GetHistoryAppointmentsUseCase(get()) }
     factory { CancelAppointmentUseCase(get()) }
@@ -70,6 +64,7 @@ val viewModelModule = module {
     viewModel { com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.doctor.notification.DoctorNotificationViewModel(get(), get(), get(), get()) }
     viewModel { com.example.medical.presentation.ui.doctor.profile.DoctorProfileViewModel(get()) }
+    viewModel { com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailViewModel(get()) }
     viewModel { RegisterViewModel(get()) }
     viewModel { PatientHomeViewModel(get()) }
     viewModel { DoctorListViewModel(get(), get(), get()) }

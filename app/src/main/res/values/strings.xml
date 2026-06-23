@@ -212,6 +212,8 @@
     <string name="no_notifications">Chưa có thông báo nào.</string>
 
     <string name="good_morning">Chào buổi sáng,</string>
+    <string name="good_afternoon">Chào buổi chiều,</string>
+    <string name="good_evening">Chào buổi tối,</string>
     <string name="appointments_today">Ca khám hôm nay</string>
     <string name="pending_requests">Chờ xác nhận</string>
     <string name="requests_to_process">Yêu cầu chờ xử lý</string>

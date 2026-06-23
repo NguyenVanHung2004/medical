@@ -2,7 +2,7 @@ package com.example.medical.presentation.ui.doctor.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.medical.domain.usecase.GetDoctorHomeDataUseCase
+import com.example.medical.domain.usecase.doctor.GetDoctorHomeDataUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +33,13 @@ class DoctorHomeViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun handleRequestAction(requestId: String, isAccept: Boolean) {
+        viewModelScope.launch {
+            getDoctorHomeDataUseCase.respondToRequest(requestId, isAccept)
+            // Reloading is not needed because the flows will automatically emit new data
         }
     }
 }
