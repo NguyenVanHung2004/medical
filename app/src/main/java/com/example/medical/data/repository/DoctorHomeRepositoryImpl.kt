@@ -16,38 +16,18 @@ class DoctorHomeRepositoryImpl : DoctorHomeRepository {
         emit(Doctor(id = "DOC001", name = "BS. Nguyễn Văn An", avatarUrl = null))
     }
 
-    override fun getPendingRequests(): Flow<List<AppointmentRequest>> = flow {
-        delay(400)
-        emit(listOf(
-            AppointmentRequest(
-                id = "REQ01",
-                patientName = "Trần Thị Bích",
-                patientInitial = "B",
-                timeRange = "09:00 - 09:30",
-                reason = "Tái khám sau phẫu thuật",
-                type = AppointmentType.ONLINE
-            ),
-            AppointmentRequest(
-                id = "REQ02",
-                patientName = "Lê Văn Cường",
-                patientInitial = "L",
-                timeRange = "10:30 - 11:00",
-                reason = "Tư vấn kết quả xét nghiệm",
-                type = AppointmentType.OFFLINE,
-                location = "Phòng 204, Khu A"
-            )
-        ))
-    }
+    override fun getPendingRequests(): Flow<List<AppointmentRequest>> = MockSharedData.pendingRequests
 
     override fun getTodayAppointments(): Flow<List<Appointment>> = flow {
-        delay(500)
-        emit(listOf(
-
-        ))
+        MockSharedData.scheduledAppointments.collect { list ->
+            // Assume today's appointments are ones with date == "Ngày mai" for mock purposes
+            emit(list.filter { it.date == "Ngày mai" || it.date.contains("Hôm nay", ignoreCase = true) })
+        }
     }
 
     override suspend fun respondToRequest(requestId: String, accept: Boolean): Result<Unit> {
         delay(200)
+        MockSharedData.respondToRequest(requestId, accept)
         return Result.success(Unit)
     }
 }

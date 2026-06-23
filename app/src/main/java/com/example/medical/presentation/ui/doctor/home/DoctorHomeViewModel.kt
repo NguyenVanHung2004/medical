@@ -35,4 +35,11 @@ class DoctorHomeViewModel(
             }
         }
     }
+
+    fun handleRequestAction(requestId: String, isAccept: Boolean) {
+        viewModelScope.launch {
+            getDoctorHomeDataUseCase.respondToRequest(requestId, isAccept)
+            // Reloading is not needed because the flows will automatically emit new data
+        }
+    }
 }

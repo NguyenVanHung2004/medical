@@ -4,6 +4,17 @@ enum class ConsultationType {
     ONLINE, OFFLINE, HOME_VISIT
 }
 
+enum class DoctorSpecialty(val displayName: String) {
+    CARDIOLOGY("TIM MẠCH"),
+    PEDIATRICS("NHI KHOA"),
+    DERMATOLOGY("DA LIỄU"),
+    DENTISTRY("RĂNG HÀM MẶT"),
+    NEUROLOGY("THẦN KINH"),
+    ORTHOPEDICS("CHẤN THƯƠNG CHỈNH HÌNH"),
+    OPHTHALMOLOGY("NHÃN KHOA"),
+    GENERAL("ĐA KHOA")
+}
+
 data class DoctorDetail(
     val id: String,
     val name: String,
@@ -23,6 +34,7 @@ data class Doctor(
     val name: String,
     val avatarUrl: String?,
     val specialty: String = "",
+    val hospital: String = "",
     val experience: String = "",
     val isOnlineConsultationEnabled: Boolean = false,
     val onlineConsultationFee: Long = 0,

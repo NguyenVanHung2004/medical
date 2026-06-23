@@ -44,7 +44,8 @@ fun DoctorHomeRoute(
     DoctorHomeScreen(
         uiState = uiState,
         onNavigateToNotifications = onNavigateToNotifications,
-        onNavigateToAppointments = onNavigateToAppointments
+        onNavigateToAppointments = onNavigateToAppointments,
+        onRequestAction = viewModel::handleRequestAction
     )
 }
 
@@ -53,7 +54,8 @@ fun DoctorHomeRoute(
 fun DoctorHomeScreen(
     uiState: DoctorHomeUIState,
     onNavigateToNotifications: () -> Unit,
-    onNavigateToAppointments: () -> Unit
+    onNavigateToAppointments: () -> Unit,
+    onRequestAction: (String, Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -125,7 +127,7 @@ fun DoctorHomeScreen(
                                     Spacer(modifier = Modifier.height(24.dp))
                                     StatsSection()
                                     Spacer(modifier = Modifier.height(24.dp))
-                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
+                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
                                     Spacer(modifier = Modifier.height(24.dp))
                                 }
                             }
@@ -156,7 +158,7 @@ fun DoctorHomeScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             StatsSection()
                             Spacer(modifier = Modifier.height(24.dp))
-                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments)
+                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
                             Spacer(modifier = Modifier.height(24.dp))
                             AppointmentsSection(appointments = uiState.todayAppointments)
                             Spacer(modifier = Modifier.height(80.dp)) // For FAB
@@ -292,7 +294,11 @@ fun StatCard(
 }
 
 @Composable
-fun RequestsSection(requests: List<AppointmentRequest>, onViewAllClick: () -> Unit) {
+fun RequestsSection(
+    requests: List<AppointmentRequest>,
+    onViewAllClick: () -> Unit,
+    onRequestAction: (String, Boolean) -> Unit
+) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -316,14 +322,17 @@ fun RequestsSection(requests: List<AppointmentRequest>, onViewAllClick: () -> Un
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(requests) { request ->
-                RequestCard(request = request)
+                RequestCard(request = request, onRequestAction = onRequestAction)
             }
         }
     }
 }
 
 @Composable
-fun RequestCard(request: AppointmentRequest) {
+fun RequestCard(
+    request: AppointmentRequest,
+    onRequestAction: (String, Boolean) -> Unit
+) {
     Card(
         modifier = Modifier.width(280.dp),
         shape = RoundedCornerShape(16.dp),
@@ -393,14 +402,14 @@ fun RequestCard(request: AppointmentRequest) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* Reject */ },
+                    onClick = { onRequestAction(request.id, false) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(stringResource(R.string.reject), color = MaterialTheme.colorScheme.onSurface)
                 }
                 Button(
-                    onClick = { /* Confirm */ },
+                    onClick = { onRequestAction(request.id, true) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {

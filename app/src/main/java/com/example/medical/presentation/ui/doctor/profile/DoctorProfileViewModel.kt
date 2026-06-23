@@ -65,9 +65,9 @@ class DoctorProfileViewModel(
         _uiState.update { it.copy(isEditProfileDialogVisible = false) }
     }
 
-    fun saveProfile(name: String, specialty: String, experience: String) {
+    fun saveProfile(name: String, specialty: String, hospital: String, experience: String) {
         viewModelScope.launch {
-            repository.updateProfile(name, specialty, experience).collect {
+            repository.updateProfile(name, specialty, hospital, experience).collect {
                 hideEditProfileDialog()
             }
         }
@@ -86,6 +86,12 @@ class DoctorProfileViewModel(
             repository.updateFees(onlineFee, inPersonFee).collect {
                 hideEditFeesDialog()
             }
+        }
+    }
+
+    fun updateAvatar(uri: String) {
+        viewModelScope.launch {
+            repository.updateAvatar(uri).collect {}
         }
     }
 

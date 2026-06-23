@@ -11,6 +11,7 @@ interface DoctorProfileRepository {
     fun toggleInPersonConsultation(isEnabled: Boolean): Flow<Boolean>
     fun getWorkingTimeSlots(dayOfWeek: DayOfWeek): Flow<List<WorkingTimeSlot>>
     fun updateWorkingTimeSlots(dayOfWeek: DayOfWeek, slots: List<WorkingTimeSlot>): Flow<Boolean>
-    fun updateProfile(name: String, specialty: String, experience: String): Flow<Boolean>
+    fun updateProfile(name: String, specialty: String, hospital: String, experience: String): Flow<Boolean>
     fun updateFees(onlineFee: Long, inPersonFee: Long): Flow<Boolean>
+    fun updateAvatar(uri: String): Flow<Boolean>
 }

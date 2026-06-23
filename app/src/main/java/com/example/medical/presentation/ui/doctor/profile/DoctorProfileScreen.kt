@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +31,7 @@ import java.util.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
+import coil.compose.AsyncImage
 
 @Composable
 fun DoctorProfileRoute(
@@ -53,7 +55,8 @@ fun DoctorProfileRoute(
         onSaveProfile = viewModel::saveProfile,
         onShowEditFeesDialog = viewModel::showEditFeesDialog,
         onHideEditFeesDialog = viewModel::hideEditFeesDialog,
-        onSaveFees = viewModel::saveFees
+        onSaveFees = viewModel::saveFees,
+        onAvatarSelected = viewModel::updateAvatar
     )
 }
 
@@ -71,10 +74,11 @@ fun DoctorProfileScreen(
     onConfirmWorkingHoursUpdate: () -> Unit,
     onShowEditProfileDialog: () -> Unit,
     onHideEditProfileDialog: () -> Unit,
-    onSaveProfile: (String, String, String) -> Unit,
+    onSaveProfile: (String, String, String, String) -> Unit,
     onShowEditFeesDialog: () -> Unit,
     onHideEditFeesDialog: () -> Unit,
-    onSaveFees: (Long, Long) -> Unit
+    onSaveFees: (Long, Long) -> Unit,
+    onAvatarSelected: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -115,7 +119,11 @@ fun DoctorProfileScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         item {
-                            DoctorInfoCard(doctor = doctor, onEditClick = onShowEditProfileDialog)
+                            DoctorInfoCard(
+                                doctor = doctor,
+                                onEditClick = onShowEditProfileDialog,
+                                onAvatarSelected = onAvatarSelected
+                            )
                         }
                         item {
                             ServicesAndFeesCard(
@@ -175,11 +183,13 @@ fun DoctorProfileScreen(
 }
 
 @Composable
-fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit) {
+fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onAvatarSelected: (String) -> Unit) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        // TODO: Handle selected image URI
+        uri?.let {
+            onAvatarSelected(it.toString())
+        }
     }
 
     Card(
@@ -202,12 +212,21 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit) {
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Avatar",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(60.dp)
-                    )
+                    if (doctor.avatarUrl != null) {
+                        AsyncImage(
+                            model = doctor.avatarUrl,
+                            contentDescription = "Avatar",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Avatar",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
                 }
                 Box(
                     modifier = Modifier
@@ -238,6 +257,14 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit) {
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary
             )
+            if (doctor.hospital.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = doctor.hospital,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = doctor.experience,
@@ -699,14 +726,16 @@ fun TimeSlotItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileDialog(
     doctor: Doctor,
     onDismiss: () -> Unit,
-    onSave: (String, String, String) -> Unit
+    onSave: (String, String, String, String) -> Unit
 ) {
     var name by remember { mutableStateOf(doctor.name) }
     var specialty by remember { mutableStateOf(doctor.specialty) }
+    var hospital by remember { mutableStateOf(doctor.hospital) }
     var experience by remember { mutableStateOf(doctor.experience) }
 
     Dialog(onDismissRequest = onDismiss) {
@@ -743,10 +772,42 @@ fun EditProfileDialog(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                var expanded by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = specialty,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Chuyên khoa") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        com.example.medical.domain.model.DoctorSpecialty.values().forEach { spec ->
+                            DropdownMenuItem(
+                                text = { Text(spec.displayName) },
+                                onClick = {
+                                    specialty = spec.displayName
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
-                    value = specialty,
-                    onValueChange = { specialty = it },
-                    label = { Text("Chuyên khoa") },
+                    value = hospital,
+                    onValueChange = { hospital = it },
+                    label = { Text("Bệnh viện / Nơi công tác") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -764,7 +825,7 @@ fun EditProfileDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = { onSave(name, specialty, experience) },
+                    onClick = { onSave(name, specialty, hospital, experience) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp)
                 ) {

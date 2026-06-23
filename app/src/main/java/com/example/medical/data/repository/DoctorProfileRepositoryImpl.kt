@@ -17,6 +17,7 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
             name = "BS. Nguyễn Văn An",
             avatarUrl = null,
             specialty = "CHUYÊN KHOA TIM MẠCH",
+            hospital = "Bệnh viện Bạch Mai",
             experience = "15 năm kinh nghiệm",
             isOnlineConsultationEnabled = true,
             onlineConsultationFee = 200000,
@@ -71,13 +72,18 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
         emit(true)
     }
 
-    override fun updateProfile(name: String, specialty: String, experience: String): Flow<Boolean> = flow {
-        _doctorProfile.update { it.copy(name = name, specialty = specialty, experience = experience) }
+    override fun updateProfile(name: String, specialty: String, hospital: String, experience: String): Flow<Boolean> = flow {
+        _doctorProfile.update { it.copy(name = name, specialty = specialty, hospital = hospital, experience = experience) }
         emit(true)
     }
 
     override fun updateFees(onlineFee: Long, inPersonFee: Long): Flow<Boolean> = flow {
         _doctorProfile.update { it.copy(onlineConsultationFee = onlineFee, inPersonConsultationFee = inPersonFee) }
+        emit(true)
+    }
+
+    override fun updateAvatar(uri: String): Flow<Boolean> = flow {
+        _doctorProfile.update { it.copy(avatarUrl = uri) }
         emit(true)
     }
 

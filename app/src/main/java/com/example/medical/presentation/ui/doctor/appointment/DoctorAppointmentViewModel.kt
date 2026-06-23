@@ -36,40 +36,8 @@ class DoctorAppointmentViewModel(
     }
 
     fun handleRequestAction(requestId: String, isAccept: Boolean) {
-        // Giả lập logic architecture: Gọi repository/usecase để update status.
-        // Ở đây ta update UI State để phản hồi ngay lập tức (Mock).
-        val currentPending = _uiState.value.pendingRequests
-        val requestToMove = currentPending.find { it.id == requestId } ?: return
-        val updatedPending = currentPending.filter { it.id != requestId }
-        
-        if (isAccept) {
-            val newAppointment = com.example.medical.domain.model.Appointment(
-                id = requestToMove.id,
-                patientName = requestToMove.patientName,
-                patientInitial = requestToMove.patientInitial,
-                patientGender = "N/A", // Mock data
-                patientAge = 0, // Mock data
-                patientIdStr = "N/A", // Mock data
-                patientAvatarUrl = null,
-                date = requestToMove.timeRange.substringBefore(","), // Extract date from timeRange if formatted like "Ngày mai, 09:00 - 09:30"
-                timeRange = requestToMove.timeRange.substringAfter(", ").trim(),
-                reason = requestToMove.reason,
-                location = requestToMove.location,
-                status = com.example.medical.domain.model.AppointmentStatus.UPCOMING,
-                type = requestToMove.type,
-                doctor = com.example.medical.domain.model.Doctor(
-                    id = "DOC001",
-                    name = "BS. Nguyễn Văn An",
-                    avatarUrl = null
-                )
-            )
-            
-            val updatedScheduled = _uiState.value.scheduledAppointments.toMutableList()
-            updatedScheduled.add(0, newAppointment) // Thêm lên đầu danh sách
-            
-            _uiState.update { it.copy(pendingRequests = updatedPending, scheduledAppointments = updatedScheduled) }
-        } else {
-            _uiState.update { it.copy(pendingRequests = updatedPending) }
+        viewModelScope.launch {
+            getDoctorAppointmentsUseCase.respondToRequest(requestId, isAccept)
         }
     }
 }
