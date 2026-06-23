@@ -26,6 +26,7 @@ import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentRequest
 import com.example.medical.domain.model.AppointmentType
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.ui.text.style.TextAlign
 
@@ -153,10 +154,24 @@ fun DoctorAppointmentScreen(
                             }
                         }
 
-                        if (selectedTabIndex == 0) {
-                            PendingRequestsList(uiState.pendingRequests, onHandleRequest)
-                        } else {
-                            ScheduledAppointmentsList(uiState.scheduledAppointments, onNavigateToAppointmentDetail)
+                        androidx.compose.animation.AnimatedContent(
+                            targetState = selectedTabIndex,
+                            transitionSpec = {
+                                if (targetState > initialState) {
+                                    (androidx.compose.animation.slideInHorizontally { width -> width } + androidx.compose.animation.fadeIn())
+                                        .togetherWith(androidx.compose.animation.slideOutHorizontally { width -> -width } + androidx.compose.animation.fadeOut())
+                                } else {
+                                    (androidx.compose.animation.slideInHorizontally { width -> -width } + androidx.compose.animation.fadeIn())
+                                        .togetherWith(androidx.compose.animation.slideOutHorizontally { width -> width } + androidx.compose.animation.fadeOut())
+                                }
+                            },
+                            label = "tab_transition"
+                        ) { targetIndex ->
+                            if (targetIndex == 0) {
+                                PendingRequestsList(uiState.pendingRequests, onHandleRequest)
+                            } else {
+                                ScheduledAppointmentsList(uiState.scheduledAppointments, onNavigateToAppointmentDetail)
+                            }
                         }
                     }
                 }

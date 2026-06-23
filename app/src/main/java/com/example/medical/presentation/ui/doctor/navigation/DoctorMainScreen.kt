@@ -70,10 +70,35 @@ fun DoctorMainScreen(
             }
         }
     ) { paddingValues ->
+        val items = listOf(
+            BottomNavItem.Home,
+            BottomNavItem.Appointments,
+            BottomNavItem.Notifications,
+            BottomNavItem.Profile
+        )
+
         NavHost(
             navController = navController,
             startDestination = BottomNavItem.Home.route,
-            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
+            enterTransition = {
+                val initialIndex = items.indexOfFirst { it.route == initialState.destination.route }
+                val targetIndex = items.indexOfFirst { it.route == targetState.destination.route }
+                val isForward = targetIndex > initialIndex
+                androidx.compose.animation.slideInHorizontally(
+                    initialOffsetX = { if (isForward) it else -it },
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                ) + androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(300))
+            },
+            exitTransition = {
+                val initialIndex = items.indexOfFirst { it.route == initialState.destination.route }
+                val targetIndex = items.indexOfFirst { it.route == targetState.destination.route }
+                val isForward = targetIndex > initialIndex
+                androidx.compose.animation.slideOutHorizontally(
+                    targetOffsetX = { if (isForward) -it else it },
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                ) + androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
+            }
         ) {
             composable(BottomNavItem.Home.route) {
                 DoctorHomeRoute(
