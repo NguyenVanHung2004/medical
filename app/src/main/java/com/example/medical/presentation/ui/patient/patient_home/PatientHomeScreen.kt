@@ -37,6 +37,8 @@ import com.example.medical.R
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.Specialty
 import com.example.medical.presentation.ui.patient.appointments.AppointmentsRoute
+import com.example.medical.presentation.ui.patient.notifications.NotificationsRoute
+import com.example.medical.presentation.ui.patient.profile.ProfileRoute
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -76,84 +78,89 @@ fun PatientHomeScreen(
         },
         containerColor = colorResource(id = R.color.bgLight)
     ) { paddingValues ->
-        if (currentTab == "home") {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                if (isTablet) {
-                Row(
+        Box(modifier = Modifier.fillMaxSize().padding(bottom = paddingValues.calculateBottomPadding())) {
+            when (currentTab) {
+            "home" -> {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.TopCenter
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        HeaderSection(userName = uiState.userName)
-                        uiState.upcomingAppointment?.let { appointment ->
-                            UpcomingAppointmentCard(appointment)
-                        }
-                        QuickActionsSection(onNavigateToDoctorList)
-                    }
+                    if (isTablet) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 32.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
+                            horizontalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .verticalScroll(rememberScrollState()),
+                                verticalArrangement = Arrangement.spacedBy(24.dp)
+                            ) {
+                                HeaderSection(userName = uiState.userName)
+                                uiState.upcomingAppointment?.let { appointment ->
+                                    UpcomingAppointmentCard(
+                                        appointment,
+                                        onNavigateToAppointmentDetail
+                                    )
+                                }
+                                QuickActionsSection(onNavigateToDoctorList)
+                            }
 
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        PopularSpecialtiesSection(
-                            specialties = uiState.specialties,
-                            onNavigateToDoctorList = onNavigateToDoctorList
-                        )
-                        HealthCornerSection()
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .verticalScroll(rememberScrollState()),
+                                verticalArrangement = Arrangement.spacedBy(24.dp)
+                            ) {
+                                PopularSpecialtiesSection(
+                                    specialties = uiState.specialties,
+                                    onNavigateToDoctorList = onNavigateToDoctorList
+                                )
+                                HealthCornerSection()
+                            }
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState())
+                                .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            HeaderSection(userName = uiState.userName)
+                            uiState.upcomingAppointment?.let { appointment ->
+                                UpcomingAppointmentCard(appointment, onNavigateToAppointmentDetail)
+                            }
+                            QuickActionsSection(onNavigateToDoctorList)
+                            PopularSpecialtiesSection(
+                                specialties = uiState.specialties,
+                                onNavigateToDoctorList = onNavigateToDoctorList
+                            )
+                            HealthCornerSection()
+                        }
                     }
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    HeaderSection(userName = uiState.userName)
-                    uiState.upcomingAppointment?.let { appointment ->
-                        UpcomingAppointmentCard(appointment)
-                    }
-                    QuickActionsSection(onNavigateToDoctorList)
-                    PopularSpecialtiesSection(
-                        specialties = uiState.specialties,
-                        onNavigateToDoctorList = onNavigateToDoctorList
-                    )
-                    HealthCornerSection()
                 }
             }
+
+            "appointments" -> {
+                AppointmentsRoute(
+                    onNavigateToHome = { currentTab = "home" },
+                    onNavigateToAppointments = { currentTab = "appointments" },
+                    onNavigateToDetail = onNavigateToAppointmentDetail
+                )
+            }
+            "profile" -> {
+                ProfileRoute()
+            }
+
+            "notifications" -> {
+                NotificationsRoute()
+            }
         }
-    } else if (currentTab == "appointments") {
-        Box(modifier = Modifier.padding(paddingValues)) {
-            com.example.medical.presentation.ui.patient.appointments.AppointmentsRoute(
-                onNavigateToHome = { currentTab = "home" },
-                onNavigateToAppointments = { currentTab = "appointments" },
-                onNavigateToDetail = onNavigateToAppointmentDetail
-            )
         }
-    } else if (currentTab == "profile") {
-        Box(modifier = Modifier.padding(paddingValues)) {
-            com.example.medical.presentation.ui.patient.profile.ProfileRoute()
-        }
-    } else if (currentTab == "notifications") {
-        Box(modifier = Modifier.padding(paddingValues)) {
-            com.example.medical.presentation.ui.patient.notifications.NotificationsRoute()
-        }
-    }
     }
 }
 
@@ -177,7 +184,7 @@ fun HeaderSection(userName: String) {
                 color = colorResource(id = R.color.textPrimary)
             )
         }
-        
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -196,7 +203,7 @@ fun HeaderSection(userName: String) {
                         .align(Alignment.TopEnd)
                 )
             }
-            
+
             AsyncImage(
                 model = "https://i.pravatar.cc/150?img=11",
                 contentDescription = "Avatar",
@@ -210,7 +217,7 @@ fun HeaderSection(userName: String) {
 }
 
 @Composable
-fun UpcomingAppointmentCard(appointment: Appointment) {
+fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -340,7 +347,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* TODO */ },
+                    onClick = { onClickDetail(appointment.id) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue)),
@@ -354,7 +361,7 @@ fun UpcomingAppointmentCard(appointment: Appointment) {
                     )
                 }
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = { onClickDetail(appointment.id) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue)),
@@ -380,9 +387,11 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Card(
-                modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_telemedicine)) { 
-                    onNavigateToDoctorList("online", null)
-                },
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClickLabel = stringResource(id = R.string.action_telemedicine)) {
+                        onNavigateToDoctorList("online", null)
+                    },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -391,7 +400,10 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .background(colorResource(id = R.color.primaryBlueLight), RoundedCornerShape(8.dp)),
+                            .background(
+                                colorResource(id = R.color.primaryBlueLight),
+                                RoundedCornerShape(8.dp)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -415,9 +427,11 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                 }
             }
             Card(
-                modifier = Modifier.weight(1f).clickable(onClickLabel = stringResource(id = R.string.action_in_person)) { 
-                    onNavigateToDoctorList("offline", null)
-                },
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClickLabel = stringResource(id = R.string.action_in_person)) {
+                        onNavigateToDoctorList("offline", null)
+                    },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -426,7 +440,10 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .background(colorResource(id = R.color.primaryBlueLight), RoundedCornerShape(8.dp)),
+                            .background(
+                                colorResource(id = R.color.primaryBlueLight),
+                                RoundedCornerShape(8.dp)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -474,7 +491,7 @@ fun PopularSpecialtiesSection(
                 text = stringResource(id = R.string.see_all),
                 fontSize = 14.sp,
                 color = colorResource(id = R.color.primaryBlue),
-                modifier = Modifier.clickable { /* TODO */ }
+                modifier = Modifier.clickable { onNavigateToDoctorList("", null) }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -485,8 +502,8 @@ fun PopularSpecialtiesSection(
             items(specialties) { specialty ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable { 
-                        onNavigateToDoctorList("offline", specialty.name) 
+                    modifier = Modifier.clickable {
+                        onNavigateToDoctorList("offline", specialty.name)
                     }
                 ) {
                     Box(
@@ -540,7 +557,7 @@ fun HealthCornerSection() {
                         .fillMaxSize()
                         .background(colorResource(id = R.color.primaryBlueLight))
                 )
-                
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -654,7 +671,11 @@ fun getSpecialtyIcon(name: String): ImageVector {
     return when {
         name.contains("Nhi", ignoreCase = true) -> Icons.Default.ChildCare
         name.contains("Thần kinh", ignoreCase = true) -> Icons.Default.Psychology
-        name.contains("Răng", ignoreCase = true) || name.contains("Nha", ignoreCase = true) -> Icons.Default.Face
+        name.contains("Răng", ignoreCase = true) || name.contains(
+            "Nha",
+            ignoreCase = true
+        ) -> Icons.Default.Face
+
         name.contains("Tim", ignoreCase = true) -> Icons.Default.Favorite
         name.contains("Mắt", ignoreCase = true) -> Icons.Default.Visibility
         name.contains("Da liễu", ignoreCase = true) -> Icons.Default.PanTool

@@ -16,6 +16,13 @@ import org.koin.dsl.module
 import com.example.medical.data.repository.AppointmentRepositoryImpl
 import com.example.medical.domain.repository.AppointmentRepository
 import com.example.medical.presentation.ui.patient.appointments.AppointmentsViewModel
+import com.example.medical.domain.usecase.appointment.GetUpcomingAppointmentsUseCase
+import com.example.medical.domain.usecase.appointment.GetHistoryAppointmentsUseCase
+import com.example.medical.domain.usecase.appointment.CancelAppointmentUseCase
+import com.example.medical.domain.usecase.appointment.RescheduleAppointmentUseCase
+import com.example.medical.domain.usecase.appointment.BookAppointmentUseCase
+import com.example.medical.domain.usecase.appointment.GetAppointmentByIdUseCase
+import com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailViewModel
 
 val networkModule = module {
     // TODO: Cấu hình Retrofit, OkHttpClient ở đây
@@ -43,6 +50,12 @@ val useCaseModule = module {
     factory { com.example.medical.domain.usecase.MarkAllNotificationsAsReadUseCase(get()) }
     factory { com.example.medical.domain.usecase.ConfirmAppointmentUseCase(get()) }
     factory { com.example.medical.domain.usecase.RejectAppointmentUseCase(get()) }
+    factory { GetUpcomingAppointmentsUseCase(get()) }
+    factory { GetHistoryAppointmentsUseCase(get()) }
+    factory { CancelAppointmentUseCase(get()) }
+    factory { RescheduleAppointmentUseCase(get()) }
+    factory { BookAppointmentUseCase(get()) }
+    factory { GetAppointmentByIdUseCase(get()) }
 }
 
 val viewModelModule = module {
@@ -55,8 +68,9 @@ val viewModelModule = module {
     viewModel { PatientHomeViewModel(get()) }
     viewModel { DoctorListViewModel(get(), get()) }
     viewModel { BookingViewModel(get(), get()) }
-    viewModel { BookingSuccessViewModel(get(), get()) }
-    viewModel { AppointmentsViewModel(get()) }
+    viewModel { BookingSuccessViewModel(get(), get(), get()) }
+    viewModel { AppointmentsViewModel(get(), get(), get(), get()) }
+    viewModel { AppointmentDetailViewModel(get(), get()) }
     viewModel { com.example.medical.presentation.ui.patient.profile.ProfileViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.patient.notifications.NotificationsViewModel(get()) }
 }

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.medical.presentation.ui.doctor.navigation.DoctorMainScreen
+import com.example.medical.presentation.ui.patient.booking.BookingRoute
+import com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute
+import com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute
+import com.example.medical.presentation.ui.patient.patient_home.PatientHomeRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MedicalAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
+                    Box(modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding)) {
                         val navController = rememberNavController()
 
                         NavHost(navController = navController, startDestination = "welcome") {
@@ -44,9 +50,12 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(
                                 "login/{isDoctor}",
-                                arguments = listOf(navArgument("isDoctor") { type = NavType.BoolType })
+                                arguments = listOf(navArgument("isDoctor") {
+                                    type = NavType.BoolType
+                                })
                             ) { backStackEntry ->
-                                val isDoctor = backStackEntry.arguments?.getBoolean("isDoctor") ?: false
+                                val isDoctor =
+                                    backStackEntry.arguments?.getBoolean("isDoctor") ?: false
                                 LoginRoute(
                                     isDoctor = isDoctor,
                                     onLoginSuccess = {
@@ -67,9 +76,12 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(
                                 "register/{isDoctor}",
-                                arguments = listOf(navArgument("isDoctor") { type = NavType.BoolType })
+                                arguments = listOf(navArgument("isDoctor") {
+                                    type = NavType.BoolType
+                                })
                             ) { backStackEntry ->
-                                val isDoctor = backStackEntry.arguments?.getBoolean("isDoctor") ?: false
+                                val isDoctor =
+                                    backStackEntry.arguments?.getBoolean("isDoctor") ?: false
                                 RegisterRoute(
                                     isDoctor = isDoctor,
                                     onBackClick = { navController.popBackStack() },
@@ -87,9 +99,10 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable("patient_home") {
-                                com.example.medical.presentation.ui.patient.patient_home.PatientHomeRoute(
+                                PatientHomeRoute(
                                     onNavigateToDoctorList = { type, specialty ->
-                                        val route = if (specialty != null) "doctor_list/$type?specialty=$specialty" else "doctor_list/$type"
+                                        val route =
+                                            if (specialty != null) "doctor_list/$type?specialty=$specialty" else "doctor_list/$type"
                                         navController.navigate(route)
                                     },
                                     onNavigateToAppointmentDetail = { appointmentId ->
@@ -98,7 +111,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable("doctor_home") {
-                                com.example.medical.presentation.ui.doctor.navigation.DoctorMainScreen(
+                              DoctorMainScreen(
                                     onLogout = {
                                         navController.navigate("welcome") {
                                             popUpTo(0) // Xóa toàn bộ stack để về màn welcome an toàn
@@ -110,10 +123,12 @@ class MainActivity : ComponentActivity() {
                                 "doctor_list/{type}?specialty={specialty}",
                                 arguments = listOf(
                                     navArgument("type") { type = NavType.StringType },
-                                    navArgument("specialty") { type = NavType.StringType; nullable = true }
+                                    navArgument("specialty") {
+                                        type = NavType.StringType; nullable = true
+                                    }
                                 )
                             ) { backStackEntry ->
-                                com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute(
+                                DoctorListRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToBooking = { doctorId ->
                                         navController.navigate("booking/$doctorId")
@@ -122,9 +137,11 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(
                                 "booking/{doctorId}",
-                                arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
+                                arguments = listOf(navArgument("doctorId") {
+                                    type = NavType.StringType
+                                })
                             ) { backStackEntry ->
-                                com.example.medical.presentation.ui.patient.booking.BookingRoute(
+                                BookingRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToNext = { doctorId, date, time ->
                                         navController.navigate("booking_success/$doctorId/$date/$time") {
@@ -141,7 +158,7 @@ class MainActivity : ComponentActivity() {
                                     navArgument("time") { type = NavType.StringType }
                                 )
                             ) {
-                                com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute(
+                               BookingSuccessRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateHome = {
                                         navController.navigate("patient_home") {
@@ -152,10 +169,13 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(
                                 "appointment_detail/{appointmentId}",
-                                arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+                                arguments = listOf(navArgument("appointmentId") {
+                                    type = NavType.StringType
+                                })
                             ) { backStackEntry ->
                                 com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailRoute(
-                                    appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: "",
+                                    appointmentId = backStackEntry.arguments?.getString("appointmentId")
+                                        ?: "",
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToChangeDoctor = { /* TODO */ },
                                     onNavigateToReschedule = { /* TODO */ }

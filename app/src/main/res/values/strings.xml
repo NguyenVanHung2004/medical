@@ -63,6 +63,10 @@
     <string name="consultation_type">Hình thức khám</string>
     <string name="online_consultation">Khám trực tuyến</string>
     <string name="offline_consultation">Khám trực tiếp</string>
+    <string name="online_consultation_type">Khám tư vấn trực tuyến</string>
+    <string name="offline_consultation_type">Khám trực tiếp tại phòng khám</string>
+    <string name="no_address">Chưa có địa chỉ</string>
+    <string name="view_directions">Xem chỉ đường</string>
     <string name="confirm_booking">Xác nhận đặt lịch</string>
     <string name="cancel_appointment">Hủy lịch hẹn</string>
     <string name="reschedule_appointment">Đặt lại lịch</string>

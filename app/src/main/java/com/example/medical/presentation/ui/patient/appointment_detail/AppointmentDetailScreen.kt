@@ -25,22 +25,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
+import com.example.medical.domain.model.Appointment
+import com.example.medical.domain.model.AppointmentType
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppointmentDetailRoute(
     appointmentId: String,
     onNavigateBack: () -> Unit,
     onNavigateToChangeDoctor: () -> Unit, // Optional placeholder
-    onNavigateToReschedule: () -> Unit // Optional placeholder
+    onNavigateToReschedule: () -> Unit, // Optional placeholder
+    viewModel: AppointmentDetailViewModel = koinViewModel()
 ) {
-    // Hardcoded mock data to match UI design
-    AppointmentDetailScreen(onNavigateBack = onNavigateBack)
+    val appointment by viewModel.uiState.collectAsState()
+    
+    if (appointment == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = colorResource(id = R.color.primaryBlue))
+        }
+    } else {
+        AppointmentDetailScreen(
+            appointment = appointment!!,
+            onNavigateBack = onNavigateBack,
+            onNavigateToReschedule = onNavigateToReschedule
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentDetailScreen(
-    onNavigateBack: () -> Unit
+    appointment: Appointment,
+    onNavigateBack: () -> Unit,
+    onNavigateToReschedule: () -> Unit
 ) {
     var prescriptionAllowed by remember { mutableStateOf(true) }
     var shareResultsAllowed by remember { mutableStateOf(true) }
@@ -121,7 +138,7 @@ fun AppointmentDetailScreen(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "ID: #MC-2024-89A2",
+                        text = "ID: ${appointment.id}",
                         fontSize = 14.sp,
                         color = colorResource(id = R.color.textSecondary),
                         letterSpacing = 1.sp
@@ -139,7 +156,7 @@ fun AppointmentDetailScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         AsyncImage(
-                            model = "https://i.pravatar.cc/150?img=11",
+                            model = appointment.doctor.avatarUrl,
                             contentDescription = "Avatar",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -149,13 +166,13 @@ fun AppointmentDetailScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
-                                text = "BS. Nguyễn Văn An",
+                                text = appointment.doctor.name,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colorResource(id = R.color.textPrimary)
                             )
                             Text(
-                                text = "TIM MẠCH",
+                                text = appointment.doctor.specialty.uppercase(),
                                 fontSize = 12.sp,
                                 color = colorResource(id = R.color.textSecondary),
                                 modifier = Modifier.padding(vertical = 4.dp)
@@ -231,7 +248,7 @@ fun AppointmentDetailScreen(
                                 color = colorResource(id = R.color.textSecondary)
                             )
                             Text(
-                                text = "09:00 - 09:30\nThứ Ba, 25/10/2024",
+                                text = "${appointment.timeRange}\n${appointment.date}",
                                 fontSize = 16.sp,
                                 color = colorResource(id = R.color.textPrimary)
                             )
@@ -242,7 +259,7 @@ fun AppointmentDetailScreen(
 
                     Row(verticalAlignment = Alignment.Top) {
                         Icon(
-                            imageVector = Icons.Default.Videocam,
+                            imageVector = if (appointment.type == AppointmentType.ONLINE) Icons.Default.Videocam else Icons.Default.LocationOn,
                             contentDescription = "Consultation Type",
                             tint = colorResource(id = R.color.primaryBlue),
                             modifier = Modifier.size(24.dp)
@@ -255,23 +272,40 @@ fun AppointmentDetailScreen(
                                 color = colorResource(id = R.color.textSecondary)
                             )
                             Text(
-                                text = "Khám tư vấn trực tuyến",
+                                text = if (appointment.type == AppointmentType.ONLINE) stringResource(id = R.string.online_consultation_type) else stringResource(id = R.string.offline_consultation_type),
                                 fontSize = 16.sp,
                                 color = colorResource(id = R.color.textPrimary)
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Button(
-                                onClick = { /* TODO */ },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(id = R.color.primaryBlueLight),
-                                    contentColor = colorResource(id = R.color.primaryBlue)
-                                )
-                            ) {
-                                Icon(imageVector = Icons.Default.Link, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(stringResource(id = R.string.join_clinic_room), fontWeight = FontWeight.Medium)
+                            
+                            if (appointment.type == AppointmentType.ONLINE) {
+                                Button(
+                                    onClick = { /* TODO */ },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(id = R.color.primaryBlueLight),
+                                        contentColor = colorResource(id = R.color.primaryBlue)
+                                    )
+                                ) {
+                                    Icon(imageVector = Icons.Default.Link, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(id = R.string.join_clinic_room), fontWeight = FontWeight.Medium)
+                                }
+                            } else {
+                                Button(
+                                    onClick = { /* TODO */ },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(id = R.color.primaryBlueLight),
+                                        contentColor = colorResource(id = R.color.primaryBlue)
+                                    )
+                                ) {
+                                    Icon(imageVector = Icons.Default.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(id = R.string.view_directions), fontWeight = FontWeight.Medium)
+                                }
                             }
                         }
                     }
@@ -292,7 +326,7 @@ fun AppointmentDetailScreen(
                         color = colorResource(id = R.color.textSecondary)
                     )
                     Text(
-                        text = "Trần Thị Bích",
+                        text = appointment.patientName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = colorResource(id = R.color.textPrimary)
@@ -306,7 +340,7 @@ fun AppointmentDetailScreen(
                         color = colorResource(id = R.color.textSecondary)
                     )
                     Text(
-                        text = "Tái khám định kỳ, kiểm tra huyết áp và các triệu chứng mệt mỏi gần đây.",
+                        text = appointment.reason ?: "Không có thông tin",
                         fontSize = 14.sp,
                         color = colorResource(id = R.color.textPrimary),
                         lineHeight = 20.sp
@@ -388,7 +422,7 @@ fun AppointmentDetailScreen(
 
             // Action Buttons
             OutlinedButton(
-                onClick = { /* TODO */ },
+                onClick = onNavigateToReschedule,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),

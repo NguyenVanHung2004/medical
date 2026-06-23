@@ -51,7 +51,7 @@ fun ProfileScreen(uiState: ProfileUiState) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
