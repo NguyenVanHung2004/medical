@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.asStateFlow
 class AppointmentRepositoryImpl : AppointmentRepository {
 
     private val mockDoctor1 = Doctor(
-        id = "d1",
-        name = "Dr. Nguyen Van A",
-        avatarUrl = null,
-        specialty = "Cardiology"
+        id = "1",
+        name = "BS. Phạm Văn A",
+        avatarUrl = "https://i.pravatar.cc/150?img=11",
+        specialty = "Tim mạch"
     )
 
     private val mockDoctor2 = Doctor(
-        id = "d2",
-        name = "Dr. Tran Thi B",
-        avatarUrl = null,
-        specialty = "Dermatology"
+        id = "2",
+        name = "BS. Nguyễn Thị B",
+        avatarUrl = "https://i.pravatar.cc/150?img=5",
+        specialty = "Nhi khoa"
     )
 
     private val _upcomingAppointments = MutableStateFlow(listOf(

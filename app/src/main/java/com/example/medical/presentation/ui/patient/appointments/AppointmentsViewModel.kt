@@ -44,9 +44,26 @@ class AppointmentsViewModel(
         }
     }
 
-    fun cancelAppointment(appointmentId: String) {
+    fun requestCancelAppointment(appointmentId: String) {
+        _uiState.update { it.copy(appointmentToCancel = appointmentId) }
+    }
+
+    fun hideCancelDialog() {
+        _uiState.update { it.copy(appointmentToCancel = null) }
+    }
+
+    fun confirmCancelAppointment() {
+        val appointmentId = _uiState.value.appointmentToCancel ?: return
         viewModelScope.launch {
-            cancelAppointmentUseCase(appointmentId)
+            _uiState.update { it.copy(isLoading = true, appointmentToCancel = null) }
+            try {
+                cancelAppointmentUseCase(appointmentId)
+                _uiState.update { it.copy(isLoading = false) }
+                // loadAppointments() will automatically be triggered if the repository uses flows properly, 
+                // but let's re-trigger it just in case if needed.
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = e.message) }
+            }
         }
     }
 

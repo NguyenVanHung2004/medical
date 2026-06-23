@@ -14,7 +14,7 @@ class DoctorRepositoryImpl : DoctorRepository {
             id = "1",
             name = "PGS. TS. BS. Nguyễn Văn An",
             specialty = "Chuyên khoa Tim mạch",
-            hospital = "Bệnh viện Đại học Y",
+            hospital = "Bệnh viện Đại học Y Hà Nội",
             avatarUrl = "https://i.pravatar.cc/150?img=11",
             rating = 4.9,
             yearsOfExperience = 20,
@@ -27,7 +27,7 @@ class DoctorRepositoryImpl : DoctorRepository {
             id = "2",
             name = "BS. Trần Thị B",
             specialty = "Nhi khoa",
-            hospital = "Bệnh viện Nhi Đồng",
+            hospital = "Bệnh viện Nhi Đồng TP.HCM",
             avatarUrl = "https://i.pravatar.cc/150?img=5",
             rating = 4.8,
             yearsOfExperience = 8,
@@ -40,7 +40,7 @@ class DoctorRepositoryImpl : DoctorRepository {
             id = "3",
             name = "BS. Lê Văn C",
             specialty = "Da liễu",
-            hospital = "Phòng khám tư",
+            hospital = "Phòng khám tư Đà Nẵng",
             avatarUrl = "https://i.pravatar.cc/150?img=13",
             rating = 4.7,
             yearsOfExperience = 12,
@@ -66,15 +66,25 @@ class DoctorRepositoryImpl : DoctorRepository {
     }
 
     override fun getBookingDates(): Flow<List<BookingDate>> {
-        return flowOf(
-            listOf(
-                BookingDate("12", "THL 2", "Tháng 5"),
-                BookingDate("13", "THL 3", "Tháng 5"),
-                BookingDate("14", "THL 4", "Tháng 5"),
-                BookingDate("15", "THL 5", "Tháng 5"),
-                BookingDate("16", "THL 6", "Tháng 5")
+        val today = java.time.LocalDate.now()
+        val dates = (0..4).map { i ->
+            val date = today.plusDays(i.toLong())
+            val dayOfWeek = when (date.dayOfWeek) {
+                java.time.DayOfWeek.MONDAY -> "Th 2"
+                java.time.DayOfWeek.TUESDAY -> "Th 3"
+                java.time.DayOfWeek.WEDNESDAY -> "Th 4"
+                java.time.DayOfWeek.THURSDAY -> "Th 5"
+                java.time.DayOfWeek.FRIDAY -> "Th 6"
+                java.time.DayOfWeek.SATURDAY -> "Th 7"
+                java.time.DayOfWeek.SUNDAY -> "CN"
+            }
+            BookingDate(
+                dateString = date.dayOfMonth.toString(),
+                dayOfWeek = if (i == 0) "Hôm nay" else dayOfWeek,
+                month = "Tháng ${date.monthValue}"
             )
-        )
+        }
+        return flowOf(dates)
     }
 
     override fun getTimeSlots(dateString: String): Flow<List<TimeSlot>> {

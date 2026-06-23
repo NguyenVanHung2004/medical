@@ -503,7 +503,7 @@ fun PopularSpecialtiesSection(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
-                        onNavigateToDoctorList("offline", specialty.name)
+                        onNavigateToDoctorList("all", specialty.name)
                     }
                 ) {
                     Box(
@@ -640,6 +640,18 @@ fun BottomNavigationBar(
             )
         )
         NavigationBarItem(
+            icon = { Icon(Icons.Default.Notifications, contentDescription = "Notifications") },
+            label = { Text(stringResource(id = R.string.bottom_nav_notifications)) },
+            selected = currentTab == "notifications",
+            onClick = { onTabSelected("notifications") },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = colorResource(id = R.color.primaryBlue),
+                selectedTextColor = colorResource(id = R.color.primaryBlue),
+                unselectedIconColor = colorResource(id = R.color.textSecondary),
+                unselectedTextColor = colorResource(id = R.color.textSecondary)
+            )
+        )
+        NavigationBarItem(
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text(stringResource(id = R.string.bottom_nav_profile)) },
             selected = currentTab == "profile",
@@ -650,18 +662,6 @@ fun BottomNavigationBar(
                 unselectedIconColor = colorResource(id = R.color.textSecondary),
                 unselectedTextColor = colorResource(id = R.color.textSecondary),
                 indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Notifications, contentDescription = "Notifications") },
-            label = { Text(stringResource(id = R.string.bottom_nav_notifications)) },
-            selected = currentTab == "notifications",
-            onClick = { onTabSelected("notifications") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary)
             )
         )
     }

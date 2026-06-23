@@ -6,6 +6,7 @@ data class DoctorListUiState(
     val isLoading: Boolean = false,
     val title: String = "Danh sách Bác sĩ",
     val searchQuery: String = "",
+    val allDoctors: List<DoctorDetail> = emptyList(),
     val doctors: List<DoctorDetail> = emptyList(),
     val error: String? = null,
     val selectedSpecialty: String? = null,

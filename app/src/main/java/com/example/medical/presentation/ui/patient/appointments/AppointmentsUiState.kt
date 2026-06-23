@@ -5,5 +5,7 @@ import com.example.medical.domain.model.Appointment
 data class AppointmentsUiState(
     val upcomingAppointments: List<Appointment> = emptyList(),
     val historyAppointments: List<Appointment> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val appointmentToCancel: String? = null,
+    val error: String? = null
 )

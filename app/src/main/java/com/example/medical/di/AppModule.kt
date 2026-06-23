@@ -56,6 +56,7 @@ val useCaseModule = module {
     factory { RescheduleAppointmentUseCase(get()) }
     factory { BookAppointmentUseCase(get()) }
     factory { GetAppointmentByIdUseCase(get()) }
+    factory { com.example.medical.domain.usecase.FilterDoctorsUseCase() }
 }
 
 val viewModelModule = module {
@@ -66,11 +67,11 @@ val viewModelModule = module {
     viewModel { com.example.medical.presentation.ui.doctor.profile.DoctorProfileViewModel(get()) }
     viewModel { RegisterViewModel(get()) }
     viewModel { PatientHomeViewModel(get()) }
-    viewModel { DoctorListViewModel(get(), get()) }
+    viewModel { DoctorListViewModel(get(), get(), get()) }
     viewModel { BookingViewModel(get(), get()) }
     viewModel { BookingSuccessViewModel(get(), get(), get()) }
     viewModel { AppointmentsViewModel(get(), get(), get(), get()) }
-    viewModel { AppointmentDetailViewModel(get(), get()) }
+    viewModel { AppointmentDetailViewModel(get(), get(), get()) }
     viewModel { com.example.medical.presentation.ui.patient.profile.ProfileViewModel(get()) }
     viewModel { com.example.medical.presentation.ui.patient.notifications.NotificationsViewModel(get()) }
 }

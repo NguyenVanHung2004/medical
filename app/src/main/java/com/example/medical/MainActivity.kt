@@ -144,8 +144,10 @@ class MainActivity : ComponentActivity() {
                                 BookingRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToNext = { doctorId, date, time ->
-                                        navController.navigate("booking_success/$doctorId/$date/$time") {
-                                            popUpTo("patient_home") // Trở về patient_home sau khi success
+                                        val encodedDate = android.net.Uri.encode(date)
+                                        val encodedTime = android.net.Uri.encode(time)
+                                        navController.navigate("booking_success/$doctorId/$encodedDate/$encodedTime") {
+                                            popUpTo("patient_home")
                                         }
                                     }
                                 )
@@ -177,8 +179,12 @@ class MainActivity : ComponentActivity() {
                                     appointmentId = backStackEntry.arguments?.getString("appointmentId")
                                         ?: "",
                                     onNavigateBack = { navController.popBackStack() },
-                                    onNavigateToChangeDoctor = { /* TODO */ },
-                                    onNavigateToReschedule = { /* TODO */ }
+                                    onNavigateToChangeDoctor = {
+                                        navController.navigate("doctor_list/all")
+                                    },
+                                    onNavigateToReschedule = { doctorId ->
+                                        navController.navigate("booking/$doctorId")
+                                    }
                                 )
                             }
                         }

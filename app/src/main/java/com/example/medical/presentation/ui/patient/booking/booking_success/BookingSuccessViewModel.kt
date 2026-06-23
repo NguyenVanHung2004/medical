@@ -26,8 +26,8 @@ class BookingSuccessViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val doctorId: String = checkNotNull(savedStateHandle["doctorId"])
-    private val date: String = checkNotNull(savedStateHandle["date"])
-    private val time: String = checkNotNull(savedStateHandle["time"])
+    private val date: String = android.net.Uri.decode(checkNotNull(savedStateHandle["date"]))
+    private val time: String = android.net.Uri.decode(checkNotNull(savedStateHandle["time"]))
 
     private val _uiState = MutableStateFlow(BookingSuccessUiState(date = date, time = time))
     val uiState: StateFlow<BookingSuccessUiState> = _uiState.asStateFlow()

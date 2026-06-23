@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.Appointment
+import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
 import org.koin.androidx.compose.koinViewModel
 
@@ -33,21 +34,26 @@ import org.koin.androidx.compose.koinViewModel
 fun AppointmentDetailRoute(
     appointmentId: String,
     onNavigateBack: () -> Unit,
-    onNavigateToChangeDoctor: () -> Unit, // Optional placeholder
-    onNavigateToReschedule: () -> Unit, // Optional placeholder
+    onNavigateToChangeDoctor: (String) -> Unit,
+    onNavigateToReschedule: (String) -> Unit,
     viewModel: AppointmentDetailViewModel = koinViewModel()
 ) {
-    val appointment by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     
-    if (appointment == null) {
+    if (uiState.isLoading && uiState.appointment == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = colorResource(id = R.color.primaryBlue))
         }
-    } else {
+    } else if (uiState.appointment != null) {
         AppointmentDetailScreen(
-            appointment = appointment!!,
+            appointment = uiState.appointment!!,
+            showCancelDialog = uiState.showCancelDialog,
             onNavigateBack = onNavigateBack,
-            onNavigateToReschedule = onNavigateToReschedule
+            onNavigateToChangeDoctor = { onNavigateToChangeDoctor(uiState.appointment!!.doctor.id) },
+            onNavigateToReschedule = { onNavigateToReschedule(uiState.appointment!!.doctor.id) },
+            onCancelRequest = viewModel::showCancelDialog,
+            onConfirmCancel = viewModel::cancelAppointment,
+            onDismissCancel = viewModel::hideCancelDialog
         )
     }
 }
@@ -56,8 +62,13 @@ fun AppointmentDetailRoute(
 @Composable
 fun AppointmentDetailScreen(
     appointment: Appointment,
+    showCancelDialog: Boolean,
     onNavigateBack: () -> Unit,
-    onNavigateToReschedule: () -> Unit
+    onNavigateToChangeDoctor: () -> Unit,
+    onNavigateToReschedule: () -> Unit,
+    onCancelRequest: () -> Unit,
+    onConfirmCancel: () -> Unit,
+    onDismissCancel: () -> Unit
 ) {
     var prescriptionAllowed by remember { mutableStateOf(true) }
     var shareResultsAllowed by remember { mutableStateOf(true) }
@@ -123,17 +134,17 @@ fun AppointmentDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.CheckCircleOutline,
+                            imageVector = if (appointment.status == AppointmentStatus.CANCELLED) Icons.Default.Cancel else Icons.Default.CheckCircleOutline,
                             contentDescription = null,
-                            tint = colorResource(id = R.color.primaryBlue),
+                            tint = if (appointment.status == AppointmentStatus.CANCELLED) colorResource(id = R.color.errorRed) else colorResource(id = R.color.primaryBlue),
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = stringResource(id = R.string.status_confirmed),
+                            text = if (appointment.status == AppointmentStatus.CANCELLED) "Đã hủy" else stringResource(id = R.string.status_confirmed),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.primaryBlue)
+                            color = if (appointment.status == AppointmentStatus.CANCELLED) colorResource(id = R.color.errorRed) else colorResource(id = R.color.primaryBlue)
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -213,7 +224,7 @@ fun AppointmentDetailScreen(
                             Text(stringResource(id = R.string.view_profile))
                         }
                         OutlinedButton(
-                            onClick = { /* TODO */ },
+                            onClick = onNavigateToChangeDoctor,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
@@ -420,34 +431,68 @@ fun AppointmentDetailScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Action Buttons
-            OutlinedButton(
-                onClick = onNavigateToReschedule,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(8.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
-            ) {
-                Text(stringResource(id = R.string.change_appointment), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            }
+            if (appointment.status != com.example.medical.domain.model.AppointmentStatus.CANCELLED) {
+                // Action Buttons
+                OutlinedButton(
+                    onClick = onNavigateToReschedule,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(stringResource(id = R.string.change_appointment), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
 
-            TextButton(
-                onClick = { /* TODO */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.cancel_appointment_action),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.errorRed)
-                )
+                TextButton(
+                    onClick = onCancelRequest,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.cancel_appointment_action),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.errorRed)
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        if (showCancelDialog) {
+            AlertDialog(
+                onDismissRequest = onDismissCancel,
+                title = { Text("Hủy Lịch Hẹn", fontWeight = FontWeight.Bold) },
+                text = {
+                    Column {
+                        Text("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
+                            "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = onConfirmCancel,
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.errorRed))
+                    ) {
+                        Text("Xác nhận Hủy")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismissCancel) {
+                        Text("Đóng", color = colorResource(id = R.color.textSecondary))
+                    }
+                }
+            )
         }
     }
 }

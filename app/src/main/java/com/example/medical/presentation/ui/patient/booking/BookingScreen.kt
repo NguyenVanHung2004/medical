@@ -162,10 +162,9 @@ fun BookingScreen(
                             color = colorResource(id = R.color.textPrimary)
                         )
                         
-                        // Using fixed height and LazyVerticalGrid with fixed columns
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.height(240.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             userScrollEnabled = false

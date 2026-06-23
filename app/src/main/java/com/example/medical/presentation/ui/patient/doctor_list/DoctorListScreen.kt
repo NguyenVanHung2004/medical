@@ -106,9 +106,6 @@ fun DoctorListScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
             )
         },
-        bottomBar = {
-            BottomNavigationBar()
-        },
         containerColor = colorResource(id = R.color.bgLight)
     ) { paddingValues ->
         Box(

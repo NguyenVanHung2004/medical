@@ -47,7 +47,9 @@ fun AppointmentsRoute(
         uiState = uiState,
         onNavigateToHome = onNavigateToHome, 
         onNavigateToDetail = onNavigateToDetail,
-        onCancelClick = { id -> viewModel.cancelAppointment(id) },
+        onCancelRequest = { id -> viewModel.requestCancelAppointment(id) },
+        onConfirmCancel = { viewModel.confirmCancelAppointment() },
+        onDismissCancel = { viewModel.hideCancelDialog() },
         onRescheduleClick = { id -> viewModel.rescheduleAppointment(id) }
     )
 }
@@ -57,7 +59,9 @@ fun AppointmentsScreen(
     uiState: AppointmentsUiState,
     onNavigateToHome: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
-    onCancelClick: (String) -> Unit,
+    onCancelRequest: (String) -> Unit,
+    onConfirmCancel: () -> Unit,
+    onDismissCancel: () -> Unit,
     onRescheduleClick: (String) -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -158,7 +162,7 @@ fun AppointmentsScreen(
                             location = appt.location,
                             status = appt.status,
                             onClickDetail = { onNavigateToDetail(appt.id) },
-                            onCancelClick = { onCancelClick(appt.id) },
+                            onCancelClick = { onCancelRequest(appt.id) },
                             isOnline = appt.type == AppointmentType.ONLINE
                         )
                     }
@@ -215,10 +219,43 @@ fun AppointmentsScreen(
                         )
                     }
                 }
+                }
             }
         }
+
+        if (uiState.appointmentToCancel != null) {
+            AlertDialog(
+                onDismissRequest = onDismissCancel,
+                title = { Text("Hủy Lịch Hẹn", fontWeight = FontWeight.Bold) },
+                text = {
+                    Column {
+                        Text("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
+                            "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = onConfirmCancel,
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.errorRed))
+                    ) {
+                        Text("Xác nhận Hủy")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismissCancel) {
+                        Text("Đóng", color = colorResource(id = R.color.textSecondary))
+                    }
+                }
+            )
+        }
     }
-}
+
 
 @Composable
 fun AppointmentCard(
