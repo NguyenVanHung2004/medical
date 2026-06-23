@@ -35,12 +35,12 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
         "15:30 - 16:00", "16:00 - 16:30", "16:30 - 17:00"
     )
 
-    private val _workingSlotsForDays = mutableMapOf<DayOfWeek, List<WorkingTimeSlot>>()
-
     init {
+        val initialSchedule = mutableMapOf<DayOfWeek, List<WorkingTimeSlot>>()
         DayOfWeek.values().forEach { day ->
-            _workingSlotsForDays[day] = generateDefaultSlots(isWeekend = day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY)
+            initialSchedule[day] = generateDefaultSlots(isWeekend = day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY)
         }
+        _doctorProfile.update { it.copy(workingSchedule = initialSchedule) }
         updateDoctorProfileSummary()
     }
 
@@ -57,16 +57,16 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
     }
 
     override fun getWorkingTimeSlots(dayOfWeek: DayOfWeek): Flow<List<WorkingTimeSlot>> = flow {
-        val slots = _workingSlotsForDays[dayOfWeek] ?: emptyList()
+        val slots = _doctorProfile.value.workingSchedule[dayOfWeek] ?: emptyList()
         emit(slots)
     }
 
-    override fun getWeeklySchedule(): Flow<Map<DayOfWeek, List<WorkingTimeSlot>>> = flow {
-        emit(_workingSlotsForDays)
-    }
+
 
     override fun updateWorkingTimeSlots(dayOfWeek: DayOfWeek, slots: List<WorkingTimeSlot>): Flow<Boolean> = flow {
-        _workingSlotsForDays[dayOfWeek] = slots
+        val currentSchedule = _doctorProfile.value.workingSchedule.toMutableMap()
+        currentSchedule[dayOfWeek] = slots
+        _doctorProfile.update { it.copy(workingSchedule = currentSchedule) }
         updateDoctorProfileSummary()
         emit(true)
     }
@@ -93,8 +93,9 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
 
     private fun updateDoctorProfileSummary() {
         val summaryBuilder = StringBuilder()
+        val schedule = _doctorProfile.value.workingSchedule
         for (day in DayOfWeek.values()) {
-            val slots = _workingSlotsForDays[day] ?: continue
+            val slots = schedule[day] ?: continue
             val selectedSlots = slots.filter { it.isSelected }.map { it.time }
             val dayName = when(day) {
                 DayOfWeek.MONDAY -> "Thứ 2"

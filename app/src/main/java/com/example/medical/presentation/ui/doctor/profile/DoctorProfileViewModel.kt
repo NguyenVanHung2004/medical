@@ -31,10 +31,7 @@ class DoctorProfileViewModel(
                     _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
                 }
                 .collect { doctor ->
-                    _uiState.update { it.copy(doctor = doctor) }
-                    repository.getWeeklySchedule().collect { schedule ->
-                        _uiState.update { it.copy(isLoading = false, weeklySchedule = schedule) }
-                    }
+                    _uiState.update { it.copy(isLoading = false, doctor = doctor) }
                 }
         }
     }
@@ -72,10 +69,6 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateProfile(name, specialty, experience).collect {
                 hideEditProfileDialog()
-                // Refetch to get updated data
-                repository.getDoctorProfile().collect { doctor ->
-                    _uiState.update { it.copy(doctor = doctor) }
-                }
             }
         }
     }
@@ -92,10 +85,6 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateFees(onlineFee, inPersonFee).collect {
                 hideEditFeesDialog()
-                // Refetch to get updated data
-                repository.getDoctorProfile().collect { doctor ->
-                    _uiState.update { it.copy(doctor = doctor) }
-                }
             }
         }
     }
@@ -119,13 +108,6 @@ class DoctorProfileViewModel(
                 dayOfWeek = _uiState.value.selectedDayOfWeek,
                 slots = _uiState.value.timeSlotsForSelectedDay
             ).collect {
-                // To update the summary immediately, we refetch the doctor profile and weekly schedule
-                repository.getDoctorProfile().collect { doctor ->
-                     _uiState.update { it.copy(doctor = doctor) }
-                     repository.getWeeklySchedule().collect { schedule ->
-                         _uiState.update { it.copy(weeklySchedule = schedule) }
-                     }
-                }
                 hideWorkingHoursDialog()
             }
         }

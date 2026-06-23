@@ -28,7 +28,8 @@ data class Doctor(
     val onlineConsultationFee: Long = 0,
     val isInPersonConsultationEnabled: Boolean = false,
     val inPersonConsultationFee: Long = 0,
-    val workingHoursSummary: String = "Thứ 2 - Thứ 6\n08:00 - 11:30\n13:30 - 17:00"
+    val workingHoursSummary: String = "Thứ 2 - Thứ 6\n08:00 - 11:30\n13:30 - 17:00",
+    val workingSchedule: Map<java.time.DayOfWeek, List<WorkingTimeSlot>> = emptyMap()
 )
 
 data class WorkingTimeSlot(

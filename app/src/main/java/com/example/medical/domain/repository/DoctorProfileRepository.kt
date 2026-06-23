@@ -13,5 +13,4 @@ interface DoctorProfileRepository {
     fun updateWorkingTimeSlots(dayOfWeek: DayOfWeek, slots: List<WorkingTimeSlot>): Flow<Boolean>
     fun updateProfile(name: String, specialty: String, experience: String): Flow<Boolean>
     fun updateFees(onlineFee: Long, inPersonFee: Long): Flow<Boolean>
-    fun getWeeklySchedule(): Flow<Map<DayOfWeek, List<WorkingTimeSlot>>>
 }

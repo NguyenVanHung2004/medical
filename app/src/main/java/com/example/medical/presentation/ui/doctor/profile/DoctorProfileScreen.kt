@@ -128,7 +128,6 @@ fun DoctorProfileScreen(
                         item {
                             WorkingHoursCard(
                                 doctor = doctor,
-                                weeklySchedule = uiState.weeklySchedule,
                                 onUpdateWorkingHours = onShowWorkingHoursDialog
                             )
                         }
@@ -364,7 +363,7 @@ fun ServicesAndFeesCard(
 }
 
 @Composable
-fun WorkingHoursCard(doctor: Doctor, weeklySchedule: Map<DayOfWeek, List<WorkingTimeSlot>>, onUpdateWorkingHours: () -> Unit) {
+fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -380,7 +379,7 @@ fun WorkingHoursCard(doctor: Doctor, weeklySchedule: Map<DayOfWeek, List<Working
             Spacer(modifier = Modifier.height(16.dp))
             
             val hasSchedule = DayOfWeek.values().any { day ->
-                weeklySchedule[day]?.any { it.isSelected } == true
+                doctor.workingSchedule[day]?.any { it.isSelected } == true
             }
 
             if (!hasSchedule) {
@@ -392,7 +391,7 @@ fun WorkingHoursCard(doctor: Doctor, weeklySchedule: Map<DayOfWeek, List<Working
                 Spacer(modifier = Modifier.height(16.dp))
             } else {
                 DayOfWeek.values().forEach { day ->
-                    val slots = weeklySchedule[day]?.filter { it.isSelected } ?: emptyList()
+                    val slots = doctor.workingSchedule[day]?.filter { it.isSelected } ?: emptyList()
                     if (slots.isNotEmpty()) {
                         val dayName = when(day) {
                             DayOfWeek.MONDAY -> "Thứ 2"
