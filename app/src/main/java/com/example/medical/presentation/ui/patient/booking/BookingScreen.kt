@@ -1,5 +1,6 @@
 package com.example.medical.presentation.ui.patient.booking
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,9 +15,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,7 +60,7 @@ fun BookingRoute(
         onTimeSlotSelected = viewModel::selectTimeSlot
     )
 }
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingScreen(
@@ -82,7 +85,7 @@ fun BookingScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = colorResource(id = R.color.primaryBlue)
                         )
@@ -97,7 +100,6 @@ fun BookingScreen(
                 color = colorResource(id = R.color.white),
                 shadowElevation = 8.dp
             ) {
-                PaddingValues(16.dp)
                 Button(
                     onClick = onNavigateToNext,
                     enabled = uiState.selectedTimeSlot != null,
@@ -160,10 +162,9 @@ fun BookingScreen(
                             color = colorResource(id = R.color.textPrimary)
                         )
                         
-                        // Using fixed height and LazyVerticalGrid with fixed columns
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.height(240.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             userScrollEnabled = false
@@ -242,9 +243,13 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                     }
                 }
             }
-            
-            Divider(modifier = Modifier.padding(vertical = 16.dp), color = colorResource(id = R.color.dividerColor))
-            
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = DividerDefaults.Thickness,
+                color = colorResource(id = R.color.dividerColor)
+            )
+
             Text(
                 text = doctor.bio,
                 fontSize = 14.sp,

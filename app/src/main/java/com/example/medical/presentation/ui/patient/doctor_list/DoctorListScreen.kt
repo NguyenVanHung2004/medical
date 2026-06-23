@@ -1,5 +1,6 @@
 package com.example.medical.presentation.ui.patient.doctor_list
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -63,7 +64,7 @@ fun DoctorListRoute(
         onDoctorClick = onNavigateToBooking
     )
 }
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoctorListScreen(
@@ -105,9 +106,6 @@ fun DoctorListScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
             )
         },
-        bottomBar = {
-            BottomNavigationBar()
-        },
         containerColor = colorResource(id = R.color.bgLight)
     ) { paddingValues ->
         Box(
@@ -148,7 +146,7 @@ fun DoctorListScreen(
                     fontWeight = FontWeight.Bold,
                     color = colorResource(id = R.color.textPrimary)
                 )
-                
+
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

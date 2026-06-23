@@ -46,7 +46,7 @@ fun NotificationsScreen(uiState: NotificationsUiState) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -109,9 +109,21 @@ fun NotificationCard(notification: Notification) {
             iconBgColor = Color(0xFFE8F5E9)
         }
 
-        NotificationType.NEW_APPOINTMENT_REQUEST -> TODO()
-        NotificationType.APPOINTMENT_CANCELLED -> TODO()
-        NotificationType.UPCOMING_APPOINTMENT -> TODO()
+        NotificationType.NEW_APPOINTMENT_REQUEST -> {
+            icon = Icons.Default.Event
+            iconTint = colorResource(id = R.color.primaryBlue)
+            iconBgColor = colorResource(id = R.color.primaryBlueLight)
+        }
+        NotificationType.APPOINTMENT_CANCELLED -> {
+            icon = Icons.Default.Cancel
+            iconTint = Color.Red
+            iconBgColor = Color(0xFFFFEBEE)
+        }
+        NotificationType.UPCOMING_APPOINTMENT -> {
+            icon = Icons.Default.EventAvailable
+            iconTint = colorResource(id = R.color.successGreen)
+            iconBgColor = Color(0xFFE8F5E9)
+        }
     }
 
     Card(

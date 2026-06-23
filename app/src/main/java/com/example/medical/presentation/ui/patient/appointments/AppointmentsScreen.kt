@@ -43,14 +43,26 @@ fun AppointmentsRoute(
     viewModel: AppointmentsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    AppointmentsScreen(uiState = uiState, onNavigateToHome = onNavigateToHome, onNavigateToDetail = onNavigateToDetail)
+    AppointmentsScreen(
+        uiState = uiState,
+        onNavigateToHome = onNavigateToHome, 
+        onNavigateToDetail = onNavigateToDetail,
+        onCancelRequest = { id -> viewModel.requestCancelAppointment(id) },
+        onConfirmCancel = { viewModel.confirmCancelAppointment() },
+        onDismissCancel = { viewModel.hideCancelDialog() },
+        onRescheduleClick = { id -> viewModel.rescheduleAppointment(id) }
+    )
 }
 
 @Composable
 fun AppointmentsScreen(
     uiState: AppointmentsUiState,
     onNavigateToHome: () -> Unit,
-    onNavigateToDetail: (String) -> Unit
+    onNavigateToDetail: (String) -> Unit,
+    onCancelRequest: (String) -> Unit,
+    onConfirmCancel: () -> Unit,
+    onDismissCancel: () -> Unit,
+    onRescheduleClick: (String) -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
@@ -61,7 +73,7 @@ fun AppointmentsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.bgLight))
+            .background(colorResource(id = R.color.bgLight)),
     ) {
         // Custom Top Bar
         Box(
@@ -126,7 +138,7 @@ fun AppointmentsScreen(
 
         // List
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -150,6 +162,7 @@ fun AppointmentsScreen(
                             location = appt.location,
                             status = appt.status,
                             onClickDetail = { onNavigateToDetail(appt.id) },
+                            onCancelClick = { onCancelRequest(appt.id) },
                             isOnline = appt.type == AppointmentType.ONLINE
                         )
                     }
@@ -202,13 +215,47 @@ fun AppointmentsScreen(
                             time = appt.timeRange,
                             reason = appt.reason,
                             notes = "",
+                            onRescheduleClick = { onRescheduleClick(appt.id) }
                         )
                     }
                 }
+                }
             }
         }
+
+        if (uiState.appointmentToCancel != null) {
+            AlertDialog(
+                onDismissRequest = onDismissCancel,
+                title = { Text("Hủy Lịch Hẹn", fontWeight = FontWeight.Bold) },
+                text = {
+                    Column {
+                        Text("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
+                            "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textSecondary)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = onConfirmCancel,
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.errorRed))
+                    ) {
+                        Text("Xác nhận Hủy")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismissCancel) {
+                        Text("Đóng", color = colorResource(id = R.color.textSecondary))
+                    }
+                }
+            )
+        }
     }
-}
+
 
 @Composable
 fun AppointmentCard(
@@ -220,7 +267,8 @@ fun AppointmentCard(
     location: String?,
     isOnline: Boolean,
     status: AppointmentStatus,
-    onClickDetail: () -> Unit
+    onClickDetail: () -> Unit,
+    onCancelClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -316,7 +364,7 @@ fun AppointmentCard(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "",
+                        text = if (isOnline) stringResource(id = R.string.online_consultation_type) else (location ?: stringResource(id = R.string.no_address)),
                         fontSize = 14.sp,
                         color = if (isOnline) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.textPrimary)
                     )
@@ -326,14 +374,28 @@ fun AppointmentCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Action Button
-            OutlinedButton(
-                onClick = onClickDetail,
-                modifier = Modifier.fillMaxWidth().height(48.dp),
-                shape = RoundedCornerShape(8.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
-            ) {
-                Text(stringResource(id = R.string.btn_details), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(
+                    onClick = onCancelClick,
+                    modifier = Modifier.weight(1f).height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, androidx.compose.ui.graphics.Color.Red),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.ui.graphics.Color.Red)
+                ) {
+                    Text("Hủy", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+                Button(
+                    onClick = onClickDetail,
+                    modifier = Modifier.weight(1f).height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue))
+                ) {
+                    Text(
+                        text = if (isOnline) stringResource(id = R.string.btn_enter_clinic) else stringResource(id = R.string.btn_details),
+                        fontSize = 16.sp, 
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
@@ -347,7 +409,8 @@ fun HistoryAppointmentCard(
     date: String,
     time: String,
     reason: String?,
-    notes: String?
+    notes: String?,
+    onRescheduleClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -445,7 +508,7 @@ fun HistoryAppointmentCard(
             // Action Buttons
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
-                    onClick = { /* TODO */ },
+                    onClick = onRescheduleClick,
                     modifier = Modifier.weight(1f).height(40.dp),
                     shape = RoundedCornerShape(8.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
