@@ -40,6 +40,8 @@ import com.example.medical.presentation.ui.patient.appointments.AppointmentsRout
 import com.example.medical.presentation.ui.patient.notifications.NotificationsRoute
 import com.example.medical.presentation.ui.patient.profile.ProfileRoute
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 
 @Composable
 fun PatientHomeRoute(
@@ -70,12 +72,13 @@ fun PatientHomeScreen(
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp > 600
 
-    var currentTab by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("home") }
+    var currentTab by remember { mutableStateOf("home") }
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
-                currentTab = currentTab,
+            com.example.medical.presentation.ui.common.MedicalBottomNavigation(
+                currentRoute = currentTab,
+                role = com.example.medical.presentation.ui.common.UserRole.PATIENT,
                 onTabSelected = { currentTab = it }
             )
         },
@@ -607,68 +610,6 @@ fun HealthCornerSection() {
     }
 }
 
-@Composable
-fun BottomNavigationBar(
-    currentTab: String = "home",
-    onTabSelected: (String) -> Unit = {}
-) {
-    NavigationBar(
-        containerColor = colorResource(id = R.color.white),
-        tonalElevation = 8.dp
-    ) {
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-            label = { Text(stringResource(id = R.string.bottom_nav_search)) },
-            selected = currentTab == "home",
-            onClick = { onTabSelected("home") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary),
-                indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.DateRange, contentDescription = "Appointments") },
-            label = { Text(stringResource(id = R.string.bottom_nav_appointments)) },
-            selected = currentTab == "appointments",
-            onClick = { onTabSelected("appointments") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary),
-                indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Notifications, contentDescription = "Notifications") },
-            label = { Text(stringResource(id = R.string.bottom_nav_notifications)) },
-            selected = currentTab == "notifications",
-            onClick = { onTabSelected("notifications") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-            label = { Text(stringResource(id = R.string.bottom_nav_profile)) },
-            selected = currentTab == "profile",
-            onClick = { onTabSelected("profile") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary),
-                indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-    }
-}
 
 fun getSpecialtyIcon(name: String): ImageVector {
     return when {
@@ -686,3 +627,4 @@ fun getSpecialtyIcon(name: String): ImageVector {
         else -> Icons.Default.LocalHospital
     }
 }
+

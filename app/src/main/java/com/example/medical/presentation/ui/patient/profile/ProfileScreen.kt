@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.BorderStroke
+import com.example.medical.presentation.ui.common.SecondaryButton
 
 @Composable
 fun ProfileRoute(
@@ -97,7 +99,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
                 OutlinedButton(
                     onClick = { /* TODO */ },
                     shape = RoundedCornerShape(20.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                    border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
                 ) {
@@ -237,19 +239,12 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Logout Button
-                OutlinedButton(
+                SecondaryButton(
+                    text = stringResource(id = R.string.logout),
                     onClick = onLogout,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(24.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.errorRed)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.errorRed))
-                ) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(id = R.string.logout), fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                }
+                    icon = Icons.AutoMirrored.Filled.Logout,
+                    color = colorResource(id = R.color.errorRed)
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -369,3 +364,4 @@ fun SettingsRow(
         )
     }
 }
+

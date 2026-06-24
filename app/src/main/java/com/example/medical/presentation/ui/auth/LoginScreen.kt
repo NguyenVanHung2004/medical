@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -22,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +33,12 @@ import com.example.medical.domain.model.User
 import com.example.medical.presentation.theme.MedicalAppTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.BorderStroke
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +52,7 @@ fun LoginRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(isDoctor) {
+    LaunchedEffect(isDoctor) {
         viewModel.onDoctorRoleChange(isDoctor)
     }
 
@@ -148,47 +152,25 @@ fun LoginScreen(
             
             Spacer(modifier = Modifier.height(48.dp))
 
-            OutlinedTextField(
+            MedicalTextField(
                 value = uiState.email,
                 onValueChange = onEmailChange,
-                label = { Text(stringResource(id = R.string.email_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email, 
-                        contentDescription = "Email Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
+                label = stringResource(id = R.string.email_hint),
+                leadingIcon = Icons.Default.Email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
+            MedicalTextField(
                 value = uiState.password,
                 onValueChange = onPasswordChange,
-                label = { Text(stringResource(id = R.string.password_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock, 
-                        contentDescription = "Lock Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                trailingIcon = {
-                    val image = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                    IconButton(onClick = { onPasswordVisibilityChange(!uiState.passwordVisible) }) {
-                        Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.primary.copy(alpha=0.7f))
-                    }
-                },
+                label = stringResource(id = R.string.password_hint),
+                leadingIcon = Icons.Default.Lock,
+                trailingIcon = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                onTrailingIconClick = { onPasswordVisibilityChange(!uiState.passwordVisible) },
                 visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -232,32 +214,11 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
+            PrimaryButton(
+                text = stringResource(id = R.string.login_button),
                 onClick = onLoginClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                contentPadding = PaddingValues(),
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(28.dp), 
-                        color = Color.White, 
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.login_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    )
-                }
-            }
+                isLoading = uiState.isLoading
+            )
 
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 Column {
@@ -305,7 +266,7 @@ fun LoginScreen(
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             ) {
                 Text(
                     text = "G",
@@ -380,3 +341,4 @@ fun LoginScreenPreview() {
         )
     }
 }
+

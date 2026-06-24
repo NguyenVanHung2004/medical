@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
 import com.example.medical.domain.model.AppointmentType
+import androidx.compose.foundation.BorderStroke
 
 @Composable
 fun DoctorAppointmentDetailRoute(
@@ -215,7 +216,7 @@ fun DoctorAppointmentDetailScreen(
                                             onClick = { /* TODO */ },
                                             modifier = Modifier.weight(1f),
                                             shape = RoundedCornerShape(8.dp),
-                                            border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                            border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                                             colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                                         ) {
                                             Text(stringResource(id = R.string.view_profile))
@@ -372,3 +373,4 @@ fun DoctorAppointmentDetailScreen(
         }
     }
 }
+

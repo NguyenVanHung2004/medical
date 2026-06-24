@@ -32,6 +32,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import coil.compose.AsyncImage
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun DoctorProfileRoute(
@@ -98,7 +102,8 @@ fun DoctorProfileScreen(
         },
         contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
-        if (uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -179,6 +184,12 @@ fun DoctorProfileScreen(
                 onDismiss = onHideEditFeesDialog,
                 onSave = onSaveFees
             )
+        }
+        
+        com.example.medical.presentation.ui.common.MedicalToast(
+            toastData = uiState.toastData,
+            modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues)
+        )
         }
     }
 }
@@ -773,14 +784,11 @@ fun EditProfileDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Họ và Tên") },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    label = "Họ và Tên",
+                    leadingIcon = Icons.Default.Person
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -819,38 +827,28 @@ fun EditProfileDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = hospital,
                     onValueChange = { hospital = it },
-                    label = { Text("Bệnh viện / Nơi công tác") },
-                    leadingIcon = { Icon(Icons.Default.LocalHospital, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    label = "Bệnh viện / Nơi công tác",
+                    leadingIcon = Icons.Default.LocalHospital
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = experience,
                     onValueChange = { experience = it },
-                    label = { Text("Kinh nghiệm") },
-                    leadingIcon = { Icon(Icons.Default.WorkOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    label = "Kinh nghiệm",
+                    leadingIcon = Icons.Default.WorkOutline
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Button(
-                    onClick = { onSave(name, specialty, hospital, experience) },
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(text = "Lưu Thay Đổi", style = MaterialTheme.typography.titleMedium, color = Color.White)
-                }
+                PrimaryButton(
+                    text = "Lưu Thay Đổi",
+                    onClick = { onSave(name, specialty, hospital, experience) }
+                )
             }
         }
     }
@@ -899,45 +897,36 @@ fun EditFeesDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = onlineFeeStr,
                     onValueChange = { onlineFeeStr = it },
-                    label = { Text("Chi phí khám trực tuyến (VNĐ)") },
-                    leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                    label = "Chi phí khám trực tuyến (VNĐ)",
+                    leadingIcon = Icons.Default.Payments,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = inPersonFeeStr,
                     onValueChange = { inPersonFeeStr = it },
-                    label = { Text("Chi phí khám tại viện (VNĐ)") },
-                    leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                    label = "Chi phí khám tại viện (VNĐ)",
+                    leadingIcon = Icons.Default.Payments,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Button(
+                PrimaryButton(
+                    text = "Lưu Thay Đổi",
                     onClick = {
                         val onlineFee = onlineFeeStr.toLongOrNull() ?: doctor.onlineConsultationFee
                         val inPersonFee = inPersonFeeStr.toLongOrNull() ?: doctor.inPersonConsultationFee
                         onSave(onlineFee, inPersonFee)
-                    },
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(text = "Lưu Thay Đổi", style = MaterialTheme.typography.titleMedium, color = Color.White)
-                }
+                    }
+                )
             }
         }
     }
 }
+

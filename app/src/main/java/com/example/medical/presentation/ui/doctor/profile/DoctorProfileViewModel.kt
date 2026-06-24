@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import kotlinx.coroutines.delay
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
 
 class DoctorProfileViewModel(
     private val repository: DoctorProfileRepository
@@ -69,6 +72,7 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateProfile(name, specialty, hospital, experience).collect {
                 hideEditProfileDialog()
+                showToast("Cập nhật hồ sơ thành công", ToastType.SUCCESS)
             }
         }
     }
@@ -85,6 +89,7 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateFees(onlineFee, inPersonFee).collect {
                 hideEditFeesDialog()
+                showToast("Cập nhật chi phí thành công", ToastType.SUCCESS)
             }
         }
     }
@@ -124,6 +129,14 @@ class DoctorProfileViewModel(
             repository.getWorkingTimeSlots(dayOfWeek).collect { slots ->
                 _uiState.update { it.copy(timeSlotsForSelectedDay = slots) }
             }
+        }
+    }
+
+    private fun showToast(message: String, type: ToastType) {
+        _uiState.update { it.copy(toastData = ToastData(message, type)) }
+        viewModelScope.launch {
+            delay(3000)
+            _uiState.update { it.copy(toastData = null) }
         }
     }
 }

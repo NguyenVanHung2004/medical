@@ -12,5 +12,6 @@ data class DoctorProfileUiState(
     val isEditProfileDialogVisible: Boolean = false,
     val isEditFeesDialogVisible: Boolean = false,
     val selectedDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
-    val timeSlotsForSelectedDay: List<WorkingTimeSlot> = emptyList()
+    val timeSlotsForSelectedDay: List<WorkingTimeSlot> = emptyList(),
+    val toastData: com.example.medical.presentation.ui.common.ToastData? = null
 )
