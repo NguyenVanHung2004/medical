@@ -7,5 +7,7 @@ data class DoctorAppointmentUiState(
     val isLoading: Boolean = false,
     val pendingRequests: List<AppointmentRequest> = emptyList(),
     val scheduledAppointments: List<Appointment> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val selectedDate: java.time.LocalDate = java.time.LocalDate.now(),
+    val availableDates: List<java.time.LocalDate> = emptyList()
 )

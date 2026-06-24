@@ -28,6 +28,7 @@ class BookingSuccessViewModel(
     private val doctorId: String = checkNotNull(savedStateHandle["doctorId"])
     private val date: String = android.net.Uri.decode(checkNotNull(savedStateHandle["date"]))
     private val time: String = android.net.Uri.decode(checkNotNull(savedStateHandle["time"]))
+    private val type: String = checkNotNull(savedStateHandle["type"])
 
     private val _uiState = MutableStateFlow(BookingSuccessUiState(date = date, time = time))
     val uiState: StateFlow<BookingSuccessUiState> = _uiState.asStateFlow()
@@ -42,7 +43,7 @@ class BookingSuccessViewModel(
                         date = date,
                         timeRange = time,
                         reason = "Khám bệnh", // Can be updated if UI adds a reason field
-                        type = "OFFLINE" // Defaulting to offline for now
+                        type = type.uppercase() // ONLINE or OFFLINE
                     )
                 }
             }
