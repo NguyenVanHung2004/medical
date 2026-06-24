@@ -37,6 +37,10 @@ class ForgotPasswordViewModel(
         _uiState.value = ForgotPasswordUiState()
     }
 
+    fun resetNavigation() {
+        _uiState.update { it.copy(isStep1Success = false, isStep2Success = false, isStep3Success = false) }
+    }
+
     fun submitStep1() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }

@@ -14,6 +14,7 @@ val TextPrimaryDark = Color(0xFFFFFFFF)
 val TextSecondaryDark = Color(0xFFBDBDBD)
 val ErrorColor = Color(0xFFEF4444)
 val DividerColor = Color(0xFFE2E8F0)
+val GoogleRed = Color(0xFFDB4437)
 
 // GenZ Theme Colors
 val GenZPrimary = Color(0xFF00FF00) // Xanh lá neon

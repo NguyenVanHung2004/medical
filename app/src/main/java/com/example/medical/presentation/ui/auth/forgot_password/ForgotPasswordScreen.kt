@@ -32,6 +32,8 @@ import org.koin.androidx.compose.koinViewModel
 import com.example.medical.presentation.ui.common.MedicalTextField
 import com.example.medical.presentation.ui.common.PrimaryButton
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.input.KeyboardType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +47,7 @@ fun ForgotPasswordStep1Route(
 
     LaunchedEffect(uiState.isStep1Success) {
         if (uiState.isStep1Success) {
+            viewModel.resetNavigation()
             onNavigateNext()
         }
     }
@@ -69,24 +72,25 @@ fun ForgotPasswordStep1Screen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
-        contentAlignment = Alignment.Center
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .widthIn(max = 600.dp)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 24.dp)
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -96,11 +100,10 @@ fun ForgotPasswordStep1Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.forgot_password_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
                 )
             }
             
@@ -156,6 +159,7 @@ fun ForgotPasswordStep2Route(
 
     LaunchedEffect(uiState.isStep2Success) {
         if (uiState.isStep2Success) {
+            viewModel.resetNavigation()
             onNavigateNext()
         }
     }
@@ -180,24 +184,25 @@ fun ForgotPasswordStep2Screen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
-        contentAlignment = Alignment.Center
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .widthIn(max = 600.dp)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 24.dp)
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -207,11 +212,10 @@ fun ForgotPasswordStep2Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.enter_otp_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
                 )
             }
             
@@ -291,24 +295,25 @@ fun ForgotPasswordStep3Screen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
-        contentAlignment = Alignment.Center
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .widthIn(max = 600.dp)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 24.dp)
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -318,11 +323,10 @@ fun ForgotPasswordStep3Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.reset_password_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
                 )
             }
             

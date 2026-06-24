@@ -41,6 +41,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import com.example.medical.presentation.theme.GoogleRed
 
 @Composable
 fun RegisterRoute(
@@ -97,7 +101,7 @@ fun RegisterScreen(
     onResetState: () -> Unit
 ) {
     val backgroundColor = MaterialTheme.colorScheme.background
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showOtpDialog by remember { mutableStateOf(false) }
     var hasRequestedOtp by remember { mutableStateOf(false) }
@@ -131,24 +135,25 @@ fun RegisterScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .widthIn(max = 600.dp)
-                .padding(horizontal = 24.dp)
-                .padding(top = 16.dp, bottom = 32.dp)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 24.dp)
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -159,22 +164,24 @@ fun RegisterScreen(
 
                 Text(
                     text = stringResource(id = R.string.create_new_account),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
                 )
             }
 
-            Text(
-                text = stringResource(id = R.string.join_platform),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            Image(
+                painter = painterResource(
+                    id = if (uiState.isDoctor) R.drawable.doctor_icon else R.drawable.patient_icon
+                ),
+                contentDescription = "Role Icon",
+                modifier = Modifier
+                    .size(100.dp)
+                    .padding(bottom = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -292,8 +299,8 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = uiState.otp,
                     onValueChange = onOtpChange,
-                    label = { Text("Mã OTP") },
-                    placeholder = { Text("Nhập mã OTP", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
+                    label = { Text(stringResource(id = R.string.otp_hint)) },
+                    placeholder = { Text(stringResource(id = R.string.enter_otp_placeholder), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Lock,
@@ -333,7 +340,7 @@ fun RegisterScreen(
                 onClick = {
                     if (uiState.selectedTab == 1 && !hasRequestedOtp) {
                         blinkTrigger++
-                        android.widget.Toast.makeText(context, "Hãy nhấn Lấy mã để nhận OTP", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, context.getString(R.string.press_get_code), android.widget.Toast.LENGTH_SHORT).show()
                     } else {
                         onRegisterClick()
                     }
@@ -353,7 +360,7 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -369,23 +376,39 @@ fun RegisterScreen(
                 HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                SocialButton(text = "G", color = Color(0xFFDB4437), onClick = {
+            OutlinedButton(
+                onClick = { 
                     scope.launch {
                         val token = GoogleAuthHelper.doGoogleLogin(context)
                         if (token != null) {
                             onGoogleLoginSuccess(token)
                         }
                     }
-                })
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+            ) {
+                Text(
+                    text = "G",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = GoogleRed
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(id = R.string.register_with_google),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

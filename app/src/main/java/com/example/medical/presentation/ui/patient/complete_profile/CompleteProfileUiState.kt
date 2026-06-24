@@ -7,8 +7,10 @@ data class CompleteProfileUiState(
     val address: String = "",
     val insuranceProvider: String = "",
     val insuranceCode: String = "",
+    val isInsuranceEnabled: Boolean = false,
     val isAgreedToPolicy: Boolean = false,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
+    val invalidFields: Set<String> = emptySet(),
     val errorMessage: String? = null
 )
