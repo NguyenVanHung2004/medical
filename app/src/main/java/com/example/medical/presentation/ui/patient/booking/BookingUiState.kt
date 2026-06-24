@@ -11,5 +11,7 @@ data class BookingUiState(
     val timeSlots: List<TimeSlot> = emptyList(),
     val selectedDate: BookingDate? = null,
     val selectedTimeSlot: TimeSlot? = null,
-    val error: String? = null
+    val isSubmitting: Boolean = false,
+    val error: String? = null,
+    val successMessage: String? = null
 )

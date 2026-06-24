@@ -95,7 +95,11 @@ fun PatientHomeScreen(
                         .fillMaxSize(),
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    if (isTablet) {
+                    if (uiState.isLoading) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                        }
+                    } else if (isTablet) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()

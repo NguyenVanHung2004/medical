@@ -48,7 +48,7 @@ fun AppointmentsRoute(
     val uiState by viewModel.uiState.collectAsState()
     AppointmentsScreen(
         uiState = uiState,
-        onNavigateToHome = onNavigateToHome, 
+        onNavigateToHome = onNavigateToHome,
         onNavigateToDetail = onNavigateToDetail,
         onCancelRequest = { id -> viewModel.requestCancelAppointment(id) },
         onConfirmCancel = { viewModel.confirmCancelAppointment() },
@@ -140,124 +140,155 @@ fun AppointmentsScreen(
         }
 
         // List
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            if (selectedTabIndex == 0) {
-                if (uiState.upcomingAppointments.isEmpty()) {
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.no_upcoming_appointments),
-                            modifier = Modifier.padding(16.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    items(uiState.upcomingAppointments) { appt ->
-                        AppointmentCard(
-                            doctorName = appt.doctor.name,
-                            specialty = appt.doctor.specialty,
-                            avatarUrl = appt.doctor.avatarUrl,
-                            date = appt.date,
-                            time = appt.timeRange,
-                            location = appt.location ?: appt.doctor.hospital,
-                            status = appt.status,
-                            onClickDetail = { onNavigateToDetail(appt.id) },
-                            onCancelClick = { onCancelRequest(appt.id) },
-                            isOnline = appt.type == AppointmentType.ONLINE
-                        )
-                    }
-                }
-            } else {
-                if (uiState.historyAppointments.isEmpty()) {
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.no_history_appointments),
-                            modifier = Modifier.padding(16.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            OutlinedButton(
-                                onClick = { /* TODO */ },
-                                modifier = Modifier.weight(1f).height(40.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-                            ) {
-                                Icon(Icons.Default.PictureAsPdf, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(8.dp))
-                                Text(stringResource(id = R.string.export_pdf), fontSize = 12.sp)
-                            }
-                            OutlinedButton(
-                                onClick = { /* TODO */ },
-                                modifier = Modifier.weight(1f).height(40.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
-                            ) {
-                                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(8.dp))
-                                Text(stringResource(id = R.string.share_info), fontSize = 12.sp)
-                            }
+        if (uiState.isLoading) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .weight(1f), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 16.dp),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (selectedTabIndex == 0) {
+                    if (uiState.upcomingAppointments.isEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(id = R.string.no_upcoming_appointments),
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        items(uiState.upcomingAppointments) { appt ->
+                            AppointmentCard(
+                                doctorName = appt.doctor.name,
+                                specialty = appt.doctor.specialty,
+                                avatarUrl = appt.doctor.avatarUrl,
+                                date = appt.date,
+                                time = appt.timeRange,
+                                location = appt.location ?: appt.doctor.hospital,
+                                status = appt.status,
+                                onClickDetail = { onNavigateToDetail(appt.id) },
+                                onCancelClick = { onCancelRequest(appt.id) },
+                                isOnline = appt.type == AppointmentType.ONLINE
+                            )
                         }
                     }
-                    items(uiState.historyAppointments) { appt ->
-                        HistoryAppointmentCard(
-                            doctorName = appt.doctor.name,
-                            specialty = appt.doctor.specialty,
-                            avatarUrl = appt.doctor.avatarUrl,
-                            date = appt.date,
-                            time = appt.timeRange,
-                            reason = appt.reason,
-                            notes = "",
-                            onRescheduleClick = { onRescheduleClick(appt.id) }
-                        )
+                } else {
+                    if (uiState.historyAppointments.isEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(id = R.string.no_history_appointments),
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                OutlinedButton(
+                                    onClick = { /* TODO */ },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(40.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                                ) {
+                                    Icon(
+                                        Icons.Default.PictureAsPdf,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(stringResource(id = R.string.export_pdf), fontSize = 12.sp)
+                                }
+                                OutlinedButton(
+                                    onClick = { /* TODO */ },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(40.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    border = BorderStroke(
+                                        1.dp,
+                                        colorResource(id = R.color.primaryBlue)
+                                    ),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = colorResource(
+                                            id = R.color.primaryBlue
+                                        )
+                                    )
+                                ) {
+                                    Icon(
+                                        Icons.Default.Share,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(stringResource(id = R.string.share_info), fontSize = 12.sp)
+                                }
+                            }
+                        }
+                        items(uiState.historyAppointments) { appt ->
+                            HistoryAppointmentCard(
+                                doctorName = appt.doctor.name,
+                                specialty = appt.doctor.specialty,
+                                avatarUrl = appt.doctor.avatarUrl,
+                                date = appt.date,
+                                time = appt.timeRange,
+                                reason = appt.reason,
+                                notes = "",
+                                onRescheduleClick = { onRescheduleClick(appt.id) }
+                            )
+                        }
                     }
-                }
                 }
             }
         }
-
-        if (uiState.appointmentToCancel != null) {
-            AlertDialog(
-                onDismissRequest = onDismissCancel,
-                title = { Text("Hủy Lịch Hẹn", fontWeight = FontWeight.Bold) },
-                text = {
-                    Column {
-                        Text("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
-                            "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = onConfirmCancel,
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                    ) {
-                        Text("Xác nhận Hủy")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = onDismissCancel) {
-                        Text("Đóng", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            )
-        }
     }
+
+    if (uiState.appointmentToCancel != null) {
+        AlertDialog(
+            onDismissRequest = onDismissCancel,
+            title = { Text("Hủy Lịch Hẹn", fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    Text("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
+                                "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = onConfirmCancel,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Xác nhận Hủy")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissCancel) {
+                    Text("Đóng", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        )
+    }
+}
 
 
 @Composable
@@ -311,11 +342,14 @@ fun AppointmentCard(
                         )
                     }
                 }
-                
+
                 if (status != null) {
                     Box(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.primaryContainer,
+                                RoundedCornerShape(16.dp)
+                            )
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
@@ -367,7 +401,8 @@ fun AppointmentCard(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = if (isOnline) stringResource(id = R.string.online_consultation_type) else (location ?: stringResource(id = R.string.no_address)),
+                        text = if (isOnline) stringResource(id = R.string.online_consultation_type) else (location
+                            ?: stringResource(id = R.string.no_address)),
                         fontSize = 14.sp,
                         color = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -380,24 +415,32 @@ fun AppointmentCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
                     onClick = onCancelClick,
-                    modifier = Modifier.weight(1f).height(48.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, androidx.compose.ui.graphics.Color.Red),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.ui.graphics.Color.Red)
                 ) {
-                    Text("Hủy",
+                    Text(
+                        "Hủy",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center)
+                        textAlign = TextAlign.Center
+                    )
                 }
                 Button(
                     onClick = onClickDetail,
-                    modifier = Modifier.weight(1f).height(48.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
-                        text = if (isOnline) stringResource(id = R.string.btn_enter_clinic) else stringResource(id = R.string.btn_details),
+                        text = if (isOnline) stringResource(id = R.string.btn_enter_clinic) else stringResource(
+                            id = R.string.btn_details
+                        ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center
@@ -474,9 +517,13 @@ fun HistoryAppointmentCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = "$time, $date", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        text = "$time, $date",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
-                
+
                 if (reason != null) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                     Column {
@@ -492,7 +539,7 @@ fun HistoryAppointmentCard(
                         )
                     }
                 }
-                
+
                 if (notes != null) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                     Column {
@@ -516,23 +563,36 @@ fun HistoryAppointmentCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
                     onClick = onRescheduleClick,
-                    modifier = Modifier.weight(1f).height(40.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                 ) {
-                    Text(stringResource(id = R.string.rebook_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        stringResource(id = R.string.rebook_appointment),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
                 Button(
                     onClick = { /* TODO */ },
-                    modifier = Modifier.weight(1f).height(40.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(stringResource(id = R.string.follow_up_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        stringResource(id = R.string.follow_up_appointment),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
         }
     }
 }
+
 

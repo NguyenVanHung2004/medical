@@ -136,8 +136,8 @@ val viewModelModule = module {
     viewModel { RegisterViewModel(get()) }
     viewModel { PatientHomeViewModel(get()) }
     viewModel { DoctorListViewModel(get(), get(), get()) }
-    viewModel { BookingViewModel(get(), get()) }
-    viewModel { BookingSuccessViewModel(get(), get(), get()) }
+    viewModel { BookingViewModel(get(), get(), get()) }
+    viewModel { BookingSuccessViewModel(get(), get()) }
     viewModel { AppointmentsViewModel(get(), get(), get(), get()) }
     viewModel { AppointmentDetailViewModel(get(), get(), get()) }
     viewModel { CompleteProfileViewModel(get()) }

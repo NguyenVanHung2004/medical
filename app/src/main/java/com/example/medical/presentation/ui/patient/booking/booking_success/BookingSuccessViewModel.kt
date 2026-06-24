@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.medical.domain.model.DoctorDetail
-import com.example.medical.domain.usecase.appointment.BookAppointmentUseCase
 import com.example.medical.domain.repository.DoctorRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +21,6 @@ data class BookingSuccessUiState(
 
 class BookingSuccessViewModel(
     private val repository: DoctorRepository,
-    private val bookAppointmentUseCase: BookAppointmentUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val doctorId: String = checkNotNull(savedStateHandle["doctorId"])

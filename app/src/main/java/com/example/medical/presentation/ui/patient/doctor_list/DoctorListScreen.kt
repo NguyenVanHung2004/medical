@@ -195,12 +195,22 @@ fun DoctorListScreen(
                 }
 
                 // Doctor List
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(uiState.doctors) { doctor ->
-                        DoctorCard(doctor = doctor, onClick = { onDoctorClick(doctor.id) })
+                if (uiState.isLoading) {
+                    Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
+                } else if (uiState.doctors.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
+                        Text("Không tìm thấy bác sĩ nào phù hợp.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(uiState.doctors) { doctor ->
+                            DoctorCard(doctor = doctor, onClick = { onDoctorClick(doctor.id) })
+                        }
                     }
                 }
             }

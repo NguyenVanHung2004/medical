@@ -44,15 +44,18 @@ class AppointmentDetailViewModel(
 
     fun cancelAppointment() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, showCancelDialog = false) }
+            _uiState.update { it.copy(isSubmitting = true, showCancelDialog = false, error = null, successMessage = null) }
             try {
                 cancelAppointmentUseCase(appointmentId)
-                _uiState.update { it.copy(isCancelled = true, isLoading = false) }
-                // Reload to get updated status
+                _uiState.update { it.copy(isCancelled = true, isSubmitting = false, successMessage = "Đã hủy lịch hẹn") }
                 loadAppointment()
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message, isLoading = false) }
+                _uiState.update { it.copy(error = e.message ?: "Không thể hủy lịch hẹn", isSubmitting = false) }
             }
         }
+    }
+    
+    fun clearMessages() {
+        _uiState.update { it.copy(error = null, successMessage = null) }
     }
 }

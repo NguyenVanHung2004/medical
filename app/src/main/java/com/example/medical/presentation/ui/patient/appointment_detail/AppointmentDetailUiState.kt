@@ -7,5 +7,7 @@ data class AppointmentDetailUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val showCancelDialog: Boolean = false,
-    val isCancelled: Boolean = false
+    val isCancelled: Boolean = false,
+    val isSubmitting: Boolean = false,
+    val successMessage: String? = null
 )

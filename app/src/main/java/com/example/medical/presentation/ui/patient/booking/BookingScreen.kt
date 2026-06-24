@@ -21,11 +21,16 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -33,13 +38,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.BookingDate
 import com.example.medical.domain.model.DoctorDetail
 import com.example.medical.domain.model.TimeSlot
+import com.example.medical.presentation.ui.common.MedicalToast
 import org.koin.androidx.compose.koinViewModel
 import com.example.medical.presentation.ui.common.PrimaryButton
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
+import kotlinx.coroutines.delay
 
 @Composable
 fun BookingRoute(
@@ -52,13 +62,18 @@ fun BookingRoute(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onNavigateToNext = {
-            val doctorId = uiState.doctor?.id ?: return@BookingScreen
-            val date = uiState.selectedDate?.let { "${it.dateString} ${it.month}" } ?: return@BookingScreen
-            val time = uiState.selectedTimeSlot?.timeRange?.split(" - ")?.firstOrNull() ?: return@BookingScreen
-            onNavigateToNext(doctorId, date, time)
+            viewModel.submitBooking(
+                onSuccess = {
+                    val doctorId = uiState.doctor?.id ?: return@submitBooking
+                    val date = uiState.selectedDate?.let { "${it.dateString} ${it.month}" } ?: return@submitBooking
+                    val time = uiState.selectedTimeSlot?.timeRange?.split(" - ")?.firstOrNull() ?: return@submitBooking
+                    onNavigateToNext(doctorId, date, time)
+                }
+            )
         },
         onDateSelected = viewModel::selectDate,
-        onTimeSlotSelected = viewModel::selectTimeSlot
+        onTimeSlotSelected = viewModel::selectTimeSlot,
+        onClearMessages = viewModel::clearMessages
     )
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -69,7 +84,8 @@ fun BookingScreen(
     onNavigateBack: () -> Unit,
     onNavigateToNext: () -> Unit,
     onDateSelected: (BookingDate) -> Unit,
-    onTimeSlotSelected: (TimeSlot) -> Unit
+    onTimeSlotSelected: (TimeSlot) -> Unit,
+    onClearMessages: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -102,9 +118,9 @@ fun BookingScreen(
                 shadowElevation = 8.dp
             ) {
                 PrimaryButton(
-                    text = "Tiếp tục",
+                    text = if (uiState.isSubmitting) "Đang xử lý..." else "Xác nhận đặt lịch",
                     onClick = onNavigateToNext,
-                    enabled = uiState.selectedTimeSlot != null,
+                    enabled = uiState.selectedTimeSlot != null && !uiState.isSubmitting,
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -112,6 +128,31 @@ fun BookingScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            var toastData by remember { mutableStateOf<ToastData?>(null) }
+            
+//            LaunchedEffect(uiState.successMessage) {
+//                if (uiState.successMessage != null) {
+//                    toastData = ToastData(uiState.successMessage, ToastType.SUCCESS)
+//                    delay(2000)
+//                    toastData = null
+//                    onClearMessages()
+//                }
+//            }
+            
+            LaunchedEffect(uiState.error) {
+                if (uiState.error != null) {
+                    toastData = ToastData(uiState.error, ToastType.ERROR)
+                    delay(3000)
+                    toastData = null
+                    onClearMessages()
+                }
+            }
+            
+            MedicalToast(
+                toastData = toastData,
+                modifier = Modifier.align(Alignment.TopCenter).zIndex(100f)
+            )
+
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
@@ -125,6 +166,7 @@ fun BookingScreen(
                     uiState.doctor?.let { doctor ->
                         DoctorInfoCard(doctor)
                     }
+                // (Closing braces are lower down)
 
                     // Select Date
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
