@@ -39,6 +39,7 @@ import com.example.medical.domain.model.BookingDate
 import com.example.medical.domain.model.DoctorDetail
 import com.example.medical.domain.model.TimeSlot
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.PrimaryButton
 
 @Composable
 fun BookingRoute(
@@ -100,21 +101,12 @@ fun BookingScreen(
                 color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 8.dp
             ) {
-                Button(
+                PrimaryButton(
+                    text = "Tiếp tục",
                     onClick = onNavigateToNext,
                     enabled = uiState.selectedTimeSlot != null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(50.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = Color.LightGray
-                    )
-                ) {
-                    Text("Tiếp tục", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         },
         containerColor = MaterialTheme.colorScheme.background

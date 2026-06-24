@@ -42,8 +42,10 @@ import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.ConsultationType
 import com.example.medical.domain.model.DoctorDetail
-import com.example.medical.presentation.ui.patient.patient_home.BottomNavigationBar
+
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 
 @Composable
 fun DoctorListRoute(
@@ -410,3 +412,4 @@ fun FilterChipWithDropdown(
         }
     }
 }
+

@@ -29,6 +29,11 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeOut
 
 @Composable
 fun DoctorAppointmentRoute(
@@ -154,15 +159,15 @@ fun DoctorAppointmentScreen(
                             }
                         }
 
-                        androidx.compose.animation.AnimatedContent(
+                        AnimatedContent(
                             targetState = selectedTabIndex,
                             transitionSpec = {
                                 if (targetState > initialState) {
-                                    (androidx.compose.animation.slideInHorizontally { width -> width } + androidx.compose.animation.fadeIn())
-                                        .togetherWith(androidx.compose.animation.slideOutHorizontally { width -> -width } + androidx.compose.animation.fadeOut())
+                                    (slideInHorizontally { width -> width } + fadeIn())
+                                        .togetherWith(slideOutHorizontally { width -> -width } + fadeOut())
                                 } else {
-                                    (androidx.compose.animation.slideInHorizontally { width -> -width } + androidx.compose.animation.fadeIn())
-                                        .togetherWith(androidx.compose.animation.slideOutHorizontally { width -> width } + androidx.compose.animation.fadeOut())
+                                    (slideInHorizontally { width -> -width } + fadeIn())
+                                        .togetherWith(slideOutHorizontally { width -> width } + fadeOut())
                                 }
                             },
                             label = "tab_transition"
@@ -590,3 +595,4 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
         }
     }
 }
+

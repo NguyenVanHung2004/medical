@@ -29,6 +29,8 @@ import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.BorderStroke
+import com.example.medical.presentation.ui.common.SecondaryButton
 
 @Composable
 fun AppointmentDetailRoute(
@@ -218,8 +220,8 @@ fun AppointmentDetailScreen(
                             onClick = { /* TODO */ },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                            border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                         ) {
                             Text(stringResource(id = R.string.view_profile))
                         }
@@ -227,8 +229,8 @@ fun AppointmentDetailScreen(
                             onClick = onNavigateToChangeDoctor,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                            border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                         ) {
                             Text(stringResource(id = R.string.change_doctor))
                         }
@@ -433,17 +435,10 @@ fun AppointmentDetailScreen(
 
             if (appointment.status != com.example.medical.domain.model.AppointmentStatus.CANCELLED) {
                 // Action Buttons
-                OutlinedButton(
-                    onClick = onNavigateToReschedule,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(stringResource(id = R.string.change_appointment), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                SecondaryButton(
+                    text = stringResource(id = R.string.change_appointment),
+                    onClick = onNavigateToReschedule
+                )
 
                 TextButton(
                     onClick = onCancelRequest,
@@ -507,3 +502,4 @@ fun getStatusStringRes(status: AppointmentStatus): Int {
         AppointmentStatus.CONFIRMED -> R.string.status_confirmed
     }
 }
+

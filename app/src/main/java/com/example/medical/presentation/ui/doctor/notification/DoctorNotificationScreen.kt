@@ -25,6 +25,7 @@ import com.example.medical.domain.model.AppointmentType
 import com.example.medical.domain.model.DoctorNotification
 import com.example.medical.domain.model.NotificationType
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.BorderStroke
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +185,7 @@ fun NotificationItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = if (notification.isRead) androidx.compose.foundation.BorderStroke(1.dp, borderColor) else null
+        border = if (notification.isRead) BorderStroke(1.dp, borderColor) else null
     ) {
         Row(
             modifier = Modifier
@@ -342,7 +343,7 @@ fun NotificationItem(
                                 containerColor = MaterialTheme.colorScheme.surface,
                                 contentColor = MaterialTheme.colorScheme.onSurface
                             ),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
                         ) {
                             Text(
                                 text = stringResource(id = R.string.reject),
@@ -355,3 +356,4 @@ fun NotificationItem(
         }
     }
 }
+

@@ -13,6 +13,10 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Numbers
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
 
 @Composable
 fun CompleteProfileRoute(
@@ -114,37 +120,11 @@ fun CompleteProfileScreen(
                     .background(backgroundColor)
                     .padding(16.dp)
             ) {
-                Button(
+                PrimaryButton(
+                    text = stringResource(id = R.string.complete_button),
                     onClick = onSubmit,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    enabled = !uiState.isLoading,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    )
-                ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(id = R.string.complete_button),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Default.CheckCircleOutline,
-                            contentDescription = "Complete",
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
+                    isLoading = uiState.isLoading
+                )
             }
         }
     ) { innerPadding ->
@@ -196,22 +176,21 @@ fun CompleteProfileScreen(
                     )
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                     
-                    ProfileTextField(
+                    MedicalTextField(
                         label = stringResource(id = R.string.full_name_hint),
                         value = uiState.fullName,
                         onValueChange = onFullNameChange,
-                        placeholder = stringResource(id = R.string.enter_full_name)
+                        leadingIcon = Icons.Default.Person
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                     
-                    ProfileTextField(
+                    MedicalTextField(
                         label = stringResource(id = R.string.dob_hint),
                         value = uiState.dateOfBirth,
                         onValueChange = onDateOfBirthChange,
-                        placeholder = "mm/dd/yyyy",
-                        leadingIcon = {
-                            Icon(imageVector = Icons.Default.CalendarToday, contentDescription = "DOB", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), modifier = Modifier.size(20.dp))
-                        }
+                        leadingIcon = Icons.Default.CalendarToday
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     var expanded by remember { mutableStateOf(false) }
                     
@@ -269,12 +248,13 @@ fun CompleteProfileScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    ProfileTextField(
+                    MedicalTextField(
                         label = stringResource(id = R.string.address_hint),
                         value = uiState.address,
                         onValueChange = onAddressChange,
-                        placeholder = stringResource(id = R.string.enter_address)
+                        leadingIcon = Icons.Default.LocationOn
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Spacer(modifier = Modifier.height(8.dp))
                     
@@ -304,19 +284,21 @@ fun CompleteProfileScreen(
                     
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                     
-                    ProfileTextField(
+                    MedicalTextField(
                         label = stringResource(id = R.string.insurance_provider_hint),
                         value = uiState.insuranceProvider,
                         onValueChange = onInsuranceProviderChange,
-                        placeholder = stringResource(id = R.string.enter_insurance_provider)
+                        leadingIcon = Icons.Default.Business
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                     
-                    ProfileTextField(
+                    MedicalTextField(
                         label = stringResource(id = R.string.insurance_code_hint),
                         value = uiState.insuranceCode,
                         onValueChange = onInsuranceCodeChange,
-                        placeholder = stringResource(id = R.string.enter_insurance_code)
+                        leadingIcon = Icons.Default.Numbers
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Spacer(modifier = Modifier.height(8.dp))
                     

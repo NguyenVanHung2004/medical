@@ -200,8 +200,8 @@ fun AppointmentsScreen(
                                 onClick = { /* TODO */ },
                                 modifier = Modifier.weight(1f).height(40.dp),
                                 shape = RoundedCornerShape(8.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                                border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                             ) {
                                 Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.width(8.dp))
@@ -518,8 +518,8 @@ fun HistoryAppointmentCard(
                     onClick = onRescheduleClick,
                     modifier = Modifier.weight(1f).height(40.dp),
                     shape = RoundedCornerShape(8.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                    border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                 ) {
                     Text(stringResource(id = R.string.rebook_appointment), fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
@@ -535,3 +535,4 @@ fun HistoryAppointmentCard(
         }
     }
 }
+

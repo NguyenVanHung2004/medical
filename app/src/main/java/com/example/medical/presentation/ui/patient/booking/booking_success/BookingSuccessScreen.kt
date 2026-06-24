@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.SecondaryButton
 
 @Composable
 fun BookingSuccessRoute(
@@ -182,23 +183,11 @@ fun BookingSuccessScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             // Buttons
-            OutlinedButton(
+            SecondaryButton(
+                text = "Thêm vào lịch",
                 onClick = { /* TODO: Add to calendar */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CalendarToday,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Thêm vào lịch", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            }
+                icon = Icons.Default.CalendarToday
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -234,3 +223,4 @@ fun DetailRow(icon: ImageVector, text: String) {
         )
     }
 }
+
