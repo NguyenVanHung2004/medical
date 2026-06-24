@@ -85,7 +85,7 @@ fun DoctorListScreen(
                     Text(
                         text = uiState.title,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.primaryBlue),
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -95,7 +95,7 @@ fun DoctorListScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -103,10 +103,10 @@ fun DoctorListScreen(
                     // Spacer to balance the title centering
                     Spacer(modifier = Modifier.width(48.dp))
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -126,15 +126,15 @@ fun DoctorListScreen(
                     value = uiState.searchQuery,
                     onValueChange = onSearchQueryChange,
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Tìm kiếm bác sĩ, chuyên khoa...", color = colorResource(id = R.color.textSecondary)) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = colorResource(id = R.color.textSecondary)) },
-                    trailingIcon = { Icon(Icons.Default.FilterList, contentDescription = "Filter", tint = colorResource(id = R.color.primaryBlue)) },
+                    placeholder = { Text("Tìm kiếm bác sĩ, chuyên khoa...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    trailingIcon = { Icon(Icons.Default.FilterList, contentDescription = "Filter", tint = MaterialTheme.colorScheme.primary) },
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(id = R.color.white),
-                        unfocusedContainerColor = colorResource(id = R.color.white),
-                        focusedBorderColor = colorResource(id = R.color.dividerColor),
-                        unfocusedBorderColor = colorResource(id = R.color.dividerColor)
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedBorderColor = MaterialTheme.colorScheme.outline,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     ),
                     singleLine = true
                 )
@@ -144,7 +144,7 @@ fun DoctorListScreen(
                     text = "Bộ lọc tìm kiếm",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.textPrimary)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 LazyRow(
@@ -211,7 +211,7 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -234,7 +234,7 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
                         .size(14.dp)
                         .clip(CircleShape)
                         .background(statusColor)
-                        .border(2.dp, colorResource(id = R.color.white), CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
                         .align(Alignment.BottomEnd)
                 )
             }
@@ -252,17 +252,17 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
                         text = doctor.name,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .background(colorResource(id = R.color.primaryBlueLight), RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(4.dp))
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color(0xFFFBBF24), modifier = Modifier.size(12.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = doctor.rating.toString(), fontSize = 12.sp, color = colorResource(id = R.color.textPrimary), fontWeight = FontWeight.Medium)
+                        Text(text = doctor.rating.toString(), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -271,7 +271,7 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
                 Text(
                     text = "${doctor.specialty} • ${doctor.yearsOfExperience} năm KN",
                     fontSize = 14.sp,
-                    color = colorResource(id = R.color.textSecondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -286,27 +286,27 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
                         BadgeItem(
                             icon = Icons.Default.CalendarToday,
                             text = "Kín lịch hôm nay",
-                            backgroundColor = colorResource(id = R.color.primaryBlueLight),
-                            textColor = colorResource(id = R.color.textSecondary),
-                            iconColor = colorResource(id = R.color.textSecondary)
+                            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            iconColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     } else {
                         if (doctor.supportedTypes.contains(ConsultationType.ONLINE)) {
                             BadgeItem(
                                 icon = Icons.Default.Videocam,
                                 text = "Trực tuyến",
-                                backgroundColor = colorResource(id = R.color.primaryBlue),
-                                textColor = colorResource(id = R.color.white),
-                                iconColor = colorResource(id = R.color.white)
+                                backgroundColor = MaterialTheme.colorScheme.primary,
+                                textColor = MaterialTheme.colorScheme.surface,
+                                iconColor = MaterialTheme.colorScheme.surface
                             )
                         }
                         if (doctor.supportedTypes.contains(ConsultationType.OFFLINE)) {
                             BadgeItem(
                                 icon = Icons.Default.Business,
                                 text = "Trực tiếp",
-                                backgroundColor = colorResource(id = R.color.dividerColor),
-                                textColor = colorResource(id = R.color.textSecondary),
-                                iconColor = colorResource(id = R.color.textSecondary)
+                                backgroundColor = MaterialTheme.colorScheme.outline,
+                                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                iconColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -353,11 +353,11 @@ fun FilterChipWithDropdown(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .background(
-                    color = if (isSelected) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.white)
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
                 )
                 .border(
                     width = 1.dp,
-                    color = if (isSelected) Color.Transparent else colorResource(id = R.color.dividerColor),
+                    color = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .clickable { expanded = true }
@@ -366,7 +366,7 @@ fun FilterChipWithDropdown(
         ) {
             Text(
                 text = displayText,
-                color = if (isSelected) colorResource(id = R.color.white) else colorResource(id = R.color.textPrimary),
+                color = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                 fontSize = 14.sp
             )
@@ -374,7 +374,7 @@ fun FilterChipWithDropdown(
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = null,
-                tint = if (isSelected) colorResource(id = R.color.white) else colorResource(id = R.color.textSecondary),
+                tint = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -382,11 +382,11 @@ fun FilterChipWithDropdown(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(colorResource(id = R.color.white))
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
         ) {
             // Option to clear filter
             DropdownMenuItem(
-                text = { Text("Tất cả", color = colorResource(id = R.color.textPrimary)) },
+                text = { Text("Tất cả", color = MaterialTheme.colorScheme.onSurface) },
                 onClick = {
                     onValueSelected(null)
                     expanded = false
@@ -397,7 +397,7 @@ fun FilterChipWithDropdown(
                     text = { 
                         Text(
                             text = option, 
-                            color = if (selectedValue == option) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.textPrimary),
+                            color = if (selectedValue == option) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                             fontWeight = if (selectedValue == option) FontWeight.Bold else FontWeight.Normal
                         ) 
                     },

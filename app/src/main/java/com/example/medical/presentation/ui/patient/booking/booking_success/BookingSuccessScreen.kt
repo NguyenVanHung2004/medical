@@ -60,7 +60,7 @@ fun BookingSuccessScreen(
                     Text(
                         text = "MediConnect",
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.primaryBlue),
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -70,15 +70,15 @@ fun BookingSuccessScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 actions = { Spacer(modifier = Modifier.width(48.dp)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -112,13 +112,13 @@ fun BookingSuccessScreen(
                 text = "Đặt lịch thành công!",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.textPrimary)
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Cảm ơn bạn. Lịch hẹn của bạn đã được xác nhận.",
                 fontSize = 16.sp,
-                color = colorResource(id = R.color.textSecondary),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -129,7 +129,7 @@ fun BookingSuccessScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
@@ -141,20 +141,20 @@ fun BookingSuccessScreen(
                         Text(
                             text = "MÃ THAM CHIẾU",
                             fontSize = 12.sp,
-                            color = colorResource(id = R.color.textSecondary),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
                             text = uiState.referenceCode,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.primaryBlue)
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
 
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 16.dp),
-                        thickness = DividerDefaults.Thickness, color = colorResource(id = R.color.dividerColor)
+                        thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.outline
                     )
 
                     // Doctor Info
@@ -188,8 +188,8 @@ fun BookingSuccessScreen(
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
@@ -210,7 +210,7 @@ fun BookingSuccessScreen(
                     text = "Trở về trang chủ",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.primaryBlue)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -223,14 +223,14 @@ fun DetailRow(icon: ImageVector, text: String) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = colorResource(id = R.color.textSecondary),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = text,
             fontSize = 15.sp,
-            color = colorResource(id = R.color.textPrimary)
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

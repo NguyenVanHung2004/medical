@@ -77,7 +77,7 @@ fun BookingScreen(
                     Text(
                         text = "MediConnect",
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.primaryBlue),
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -87,17 +87,17 @@ fun BookingScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 actions = { Spacer(modifier = Modifier.width(48.dp)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
         bottomBar = {
             Surface(
-                color = colorResource(id = R.color.white),
+                color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 8.dp
             ) {
                 Button(
@@ -109,7 +109,7 @@ fun BookingScreen(
                         .height(50.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.primaryBlue),
+                        containerColor = MaterialTheme.colorScheme.primary,
                         disabledContainerColor = Color.LightGray
                     )
                 ) {
@@ -117,7 +117,7 @@ fun BookingScreen(
                 }
             }
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             if (uiState.isLoading) {
@@ -140,7 +140,7 @@ fun BookingScreen(
                             text = "Chọn ngày khám",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             items(uiState.dates) { date ->
@@ -159,7 +159,7 @@ fun BookingScreen(
                             text = "Khung giờ có sẵn",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         
                         LazyVerticalGrid(
@@ -184,8 +184,8 @@ fun BookingScreen(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            LegendItem(color = colorResource(id = R.color.primaryBlue), text = "Đang chọn", isFilled = true)
-                            LegendItem(color = colorResource(id = R.color.primaryBlue), text = "Còn trống", isFilled = false)
+                            LegendItem(color = MaterialTheme.colorScheme.primary, text = "Đang chọn", isFilled = true)
+                            LegendItem(color = MaterialTheme.colorScheme.primary, text = "Còn trống", isFilled = false)
                             LegendItem(color = Color.LightGray, text = "Kín lịch", isFilled = false, isTextGray = true)
                         }
                     }
@@ -202,7 +202,7 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -221,13 +221,13 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                         text = doctor.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "${doctor.specialty} - ${doctor.hospital}",
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -238,7 +238,7 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                         Text(
                             text = "(${doctor.reviewCount} đánh giá)",
                             fontSize = 14.sp,
-                            color = colorResource(id = R.color.textSecondary)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -247,13 +247,13 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
                 thickness = DividerDefaults.Thickness,
-                color = colorResource(id = R.color.dividerColor)
+                color = MaterialTheme.colorScheme.outline
             )
 
             Text(
                 text = doctor.bio,
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.textSecondary),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -261,7 +261,7 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                 text = "Đọc thêm",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.primaryBlue),
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { /* TODO */ }
             )
         }
@@ -270,9 +270,9 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
 
 @Composable
 fun DateCard(date: BookingDate, isSelected: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isSelected) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.white)
-    val contentColor = if (isSelected) colorResource(id = R.color.white) else colorResource(id = R.color.textPrimary)
-    val borderColor = if (isSelected) Color.Transparent else colorResource(id = R.color.dividerColor)
+    val bgColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
+    val borderColor = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline
 
     Column(
         modifier = Modifier
@@ -295,18 +295,18 @@ fun DateCard(date: BookingDate, isSelected: Boolean, onClick: () -> Unit) {
 @Composable
 fun TimeSlotCard(slot: TimeSlot, isSelected: Boolean, onClick: () -> Unit) {
     val bgColor = when {
-        isSelected -> colorResource(id = R.color.primaryBlue)
-        else -> colorResource(id = R.color.white)
+        isSelected -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.surface
     }
     val contentColor = when {
         !slot.isAvailable -> Color.Gray
-        isSelected -> colorResource(id = R.color.white)
-        else -> colorResource(id = R.color.primaryBlue)
+        isSelected -> MaterialTheme.colorScheme.surface
+        else -> MaterialTheme.colorScheme.primary
     }
     val borderColor = when {
         !slot.isAvailable -> Color.Transparent
         isSelected -> Color.Transparent
-        else -> colorResource(id = R.color.primaryBlue)
+        else -> MaterialTheme.colorScheme.primary
     }
 
     Box(
@@ -342,7 +342,7 @@ fun LegendItem(color: Color, text: String, isFilled: Boolean, isTextGray: Boolea
         Text(
             text = text,
             fontSize = 12.sp,
-            color = if (isTextGray) Color.Gray else colorResource(id = R.color.textSecondary)
+            color = if (isTextGray) Color.Gray else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
