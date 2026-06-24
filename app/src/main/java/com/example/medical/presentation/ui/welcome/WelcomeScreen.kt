@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +39,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
 fun WelcomeScreen(
+    currentLanguage: String = "vi",
+    onLanguageChange: (String) -> Unit = {},
     onRoleSelected: (isDoctor: Boolean) -> Unit
 ) {
     Box(
@@ -110,6 +113,36 @@ Box(
             )
             
             Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .align(Alignment.TopEnd),
+            horizontalArrangement = Arrangement.End
+        ) {
+            if (currentLanguage == "vi") {
+                Text(
+                    text = "EN",
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .clickable { onLanguageChange("en") }
+                        .padding(8.dp)
+                )
+            } else {
+                Text(
+                    text = "VI",
+                    color = Color.Red,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .clickable { onLanguageChange("vi") }
+                        .padding(8.dp)
+                )
+            }
         }
     }
 }

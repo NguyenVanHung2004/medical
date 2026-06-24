@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">MedicalApp</string>
+
+    <!-- 1. Quản lý người dùng - Đăng ký & Đăng nhập -->
+    <string name="login_title">Login</string>
+    <string name="register_title">Register</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="phone_hint">Phone Number</string>
+    <string name="otp_hint">OTP Code</string>
+    <string name="login_button">Log In</string>
+    <string name="register_button">Sign Up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login_with_google">Log in with Google</string>
+    <string name="register_with_google">Sign up with Google</string>
+    <string name="login_with_facebook">Log in with Facebook</string>
+    <string name="login_with_apple">Log in with Apple</string>
+    <string name="terms_and_conditions">Terms of Service &amp; Privacy Policy</string>
+    <string name="agree_terms">I agree to the Terms of Service and Privacy Policy</string>
+    
+    <!-- Các chuỗi bổ sung cho Login / Register -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="please_enter_info">Please enter your information to continue</string>
+    <string name="remember_me">Remember me</string>
+    <string name="or_login_with">Or log in with</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="register_now">Register now</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="join_platform">Join our smart and secure healthcare platform.</string>
+    <string name="email_address">Email Address</string>
+    <string name="create_secure_password">Create secure password</string>
+    <string name="password_requirement_hint">Minimum 6 characters.</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="re_enter_password">Re-enter secure password</string>
+    <string name="or_register_with">Or register with</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="login_now">Log in now</string>
+    
+    <string name="get_code">Get Code</string>
+    <string name="otp_mock_dialog_title">Verification Code</string>
+    <string name="otp_mock_dialog_message">Your OTP code is: 123456</string>
+    <string name="close">Close</string>
+    <string name="press_get_code">Please press Get Code to receive OTP</string>
+    <string name="enter_otp_placeholder">Enter OTP code</string>
+    
+    <string name="for_doctor">For Doctors</string>
+    <string name="for_patient">For Patients</string>
+    <string name="register_now_doctor">Register Now (Doctor)</string>
+    <string name="register_now_patient">Register Now (Patient)</string>
+    <string name="login_doctor_success">Doctor logged in successfully</string>
+    <string name="login_patient_success">Patient logged in successfully</string>
+    <string name="welcome_back_message">Welcome back to Medical APP!</string>
+    <string name="continue_text">Continue</string>
+    <string name="welcome_greeting">Medical is glad to welcome you.</string>
+    <string name="who_are_you">Who are you?</string>
+    <string name="patient_role">Patient</string>
+    <string name="patient_role_desc">Find doctors, book appointments, and track your records</string>
+    <string name="doctor_role">Doctor</string>
+    <string name="doctor_role_desc">Manage appointments, consult, and support patients</string>
+    
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="forgot_password_desc">Please enter your Email or Phone number to receive an OTP.</string>
+    <string name="email_or_phone_hint">Email or Phone Number</string>
+    <string name="continue_button">Continue</string>
+    <string name="enter_otp_title">Verify OTP</string>
+    <string name="enter_otp_desc">Enter the 6-digit OTP sent to </string>
+    <string name="verify_button">Verify</string>
+    <string name="reset_password_title">New Password</string>
+    <string name="reset_password_desc">Please create a new password for your account.</string>
+    <string name="new_password_hint">New password</string>
+    <string name="reset_password_button">Reset Password</string>
+    <string name="reset_success_title">Success</string>
+    <string name="reset_success_desc">Your password has been changed successfully.</string>
+
+    <!-- Complete Profile -->
+    <string name="complete_profile_title">Complete Profile</string>
+    <string name="complete_profile_desc">Please provide detailed information so we can serve you best.</string>
+    <string name="personal_info_section">Personal Information</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="enter_full_name">Enter your full name</string>
+    <string name="dob_hint">Date of Birth</string>
+    <string name="gender_hint">Gender</string>
+    <string name="select_gender">Select gender</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_other">Other</string>
+    <string name="address_hint">Address</string>
+    <string name="enter_address">Enter your current address</string>
+    <string name="insurance_info_section">Insurance Information</string>
+    <string name="optional_badge">Optional</string>
+    <string name="insurance_provider_hint">Insurance Provider</string>
+    <string name="enter_insurance_provider">Ex: Bao Viet, PVI...</string>
+    <string name="insurance_code_hint">Insurance ID</string>
+    <string name="enter_insurance_code">Enter insurance card number</string>
+    <string name="agree_policy">Terms of Service &amp; Privacy Policy</string>
+    <string name="complete_button">Complete</string>
+    <string name="terms_dialog_title">Terms and Conditions</string>
+    <string name="terms_dialog_content">By registering a Medical account, you agree to provide necessary information such as full name, phone number, email, and information related to booking appointments.\n\nMedical uses this information to:\n- Create and manage your account.\n- Book appointments and connect with doctors or medical facilities.\n- Send notifications related to appointments and services.\n- Improve app experience.\n\nMedical is committed to protecting your personal information and only shares it with doctors, medical facilities, or competent authorities when necessary according to law.\n\nUsers are responsible for the accuracy of provided information and account security.</string>
+
+    <!-- Hồ sơ -->
+    <string name="profile_title">Personal Profile</string>
+    <string name="full_name">Full Name</string>
+    <string name="dob">Date of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="address">Address</string>
+    <string name="insurance_info">Insurance Info</string>
+    <string name="medical_history">Medical History / Allergies</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Log Out</string>
+
+    <!-- 2. Quản lý lịch hẹn -->
+    <string name="home_title">Home</string>
+    <string name="appointments_title">Appointments</string>
+    <string name="search_doctor_hint">Search doctors, specialties, clinics...</string>
+    <string name="book_appointment">Book Appointment</string>
+    <string name="appointment_reason">Reason for visit / Symptoms</string>
+    <string name="consultation_type">Consultation Type</string>
+    <string name="online_consultation">Online Consultation</string>
+    <string name="offline_consultation">In-person Consultation</string>
+    <string name="online_consultation_type">Online video consultation</string>
+    <string name="offline_consultation_type">In-person clinic visit</string>
+    <string name="no_address">No address provided</string>
+    <string name="view_directions">View directions</string>
+    <string name="confirm_booking">Confirm Booking</string>
+    <string name="cancel_appointment">Cancel Appointment</string>
+    <string name="reschedule_appointment">Reschedule</string>
+    <string name="appointment_history">Consultation History</string>
+
+    <!-- 3. Thông báo -->
+    <string name="notifications_title">Notifications</string>
+    <string name="reminder_settings">Reminder Settings</string>
+    <string name="mark_all_read">Mark all as read</string>
+    <string name="tab_all">All</string>
+    <string name="tab_unread">Unread</string>
+
+    <!-- Notification Item Strings -->
+    <string name="noti_title_new_request">New booking request</string>
+    <string name="noti_body_new_request">Patient %1$s requested a %2$s consultation.</string>
+    <string name="noti_title_cancelled">Appointment cancelled</string>
+    <string name="noti_body_cancelled">Patient %1$s has cancelled the %2$s consultation.</string>
+    <string name="noti_title_upcoming">Upcoming appointment</string>
+    <string name="noti_body_upcoming">Consultation %1$s with %2$s will start at %3$s.</string>
+    <string name="noti_online">online</string>
+    <string name="noti_offline">in-person</string>
+
+    <!-- 4. Giao diện & Điều hướng -->
+    <string name="tab_home">Home</string>
+    <string name="tab_appointments">Appointments</string>
+    <string name="tab_doctors">Doctors</string>
+    <string name="tab_profile">Profile</string>
+
+    <!-- 5. Bác sĩ -->
+    <string name="specialty">Specialty</string>
+    <string name="experience">Experience</string>
+    <string name="reviews">Reviews</string>
+    <string name="availability">Availability</string>
+    <string name="sort_by_rating">Sort by Rating</string>
+    <string name="sort_by_availability">Sort by Availability</string>
+
+    <!-- Patient Home Screen -->
+    <string name="greeting_morning">Good morning,</string>
+    <string name="upcoming_appointment">UPCOMING APPOINTMENT</string>
+    <string name="in_hours">In %s hours</string>
+    <string name="btn_details">Details</string>
+    <string name="btn_enter_clinic">Enter Clinic</string>
+    <string name="action_book_new">Book New</string>
+    <string name="action_book_new_desc">Choose doctor &amp; time</string>
+    <string name="action_telemedicine">Telemedicine</string>
+    <string name="action_telemedicine_desc">Video consultation</string>
+    <string name="action_in_person">In-person</string>
+    <string name="action_in_person_desc">Book clinic visit</string>
+    <string name="popular_specialties">Popular Specialties</string>
+    <string name="see_all">See all</string>
+    <string name="health_metrics">Health Metrics</string>
+    <string name="medical_records">Medical Records</string>
+    <string name="payment_history">Payment History</string>
+
+    <!-- Cài đặt -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_notifications">Notification Settings</string>
+    <string name="settings_allow_notifications">Allow Notification Sounds</string>
+    <string name="settings_allow_notifications_desc">Play sound for new notifications</string>
+    <string name="settings_in_app_sound_section">App Sounds</string>
+    <string name="settings_in_app_sound">In-app Sounds</string>
+    <string name="settings_in_app_sound_desc">Play sound on button clicks</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_standard">Standard</string>
+    <string name="settings_theme_genz">GenZ (Dark Green)</string>
+    <string name="settings_language">Language</string>
+    <string name="health_corner">Health Corner</string>
+    <string name="read_now">Read now</string>
+    
+    <string name="spec_cardiology">Cardiology</string>
+    <string name="spec_pediatrics">Pediatrics</string>
+    <string name="spec_dermatology">Dermatology</string>
+    <string name="spec_dentistry">Dentistry</string>
+
+    <string name="bottom_nav_search">Search</string>
+    <string name="bottom_nav_appointments">Appointments</string>
+    <string name="bottom_nav_profile">Profile</string>
+    <string name="bottom_nav_notifications">Notifications</string>
+    <string name="appointments">Appointments</string>
+    <string name="my_appointments_title">My Appointments</string>
+    <string name="tab_upcoming_appointments">Upcoming</string>
+    <string name="tab_history_appointments">History</string>
+    <string name="no_upcoming_appointments">No upcoming appointments.</string>
+    <string name="no_history_appointments">No appointment history.</string>
+    <string name="back_button_description">Back</string>
+    <string name="appointment_detail_title">Appointment Details</string>
+    <string name="status_confirmed">Confirmed</string>
+    <string name="view_profile">View Profile</string>
+    <string name="change_doctor">Change Doctor</string>
+    <string name="time_label">Time</string>
+    <string name="consultation_type_label">Consultation Type</string>
+    <string name="join_clinic_room">Join Clinic Room</string>
+    <string name="patient_label">Patient</string>
+    <string name="reason_for_visit_label">Reason for Visit</string>
+    <string name="privacy_and_profile">PRIVACY &amp; PROFILE</string>
+    <string name="allow_view_prescription_history">Allow viewing prescription history</string>
+    <string name="share_test_results">Share test results</string>
+    <string name="change_appointment">Change Appointment</string>
+    <string name="cancel_appointment_action">Cancel Appointment</string>
+    <string name="notes_label">Consultation Notes</string>
+    <string name="rebook_appointment">Rebook</string>
+    <string name="follow_up_appointment">Follow-up</string>
+    <string name="export_pdf">Export PDF/CSV</string>
+    <string name="share_info">Share Info</string>
+    <string name="status_upcoming">Upcoming</string>
+    <string name="status_happening">Ongoing</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_confirm">Confirmed</string>
+    <!-- Profile Screen -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="contact_info">Contact</string>
+    <string name="medical_info">Medical Info</string>
+    <string name="blood_type">BLOOD TYPE</string>
+    <string name="allergies">ALLERGIES</string>
+    <string name="settings_header">Settings</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="language">Language</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="privacy_settings">Privacy</string>
+    <string name="delete_account">Delete Account</string>
+    
+    <!-- Notifications Screen -->
+    <string name="notifications_screen_title">Notifications</string>
+    <string name="no_notifications">No notifications yet.</string>
+
+    <string name="good_morning">Good morning,</string>
+    <string name="good_afternoon">Good afternoon,</string>
+    <string name="good_evening">Good evening,</string>
+    <string name="appointments_today">Appointments Today</string>
+    <string name="pending_requests">Pending</string>
+    <string name="requests_to_process">Pending Requests</string>
+    <string name="view_all">View all</string>
+    <string name="reason_label">Reason:</string>
+    <string name="reject">Reject</string>
+    <string name="confirm">Confirm</string>
+    <string name="schedule_today">Today\'s Schedule</string>
+    <string name="happening">ONGOING</string>
+    <string name="online">Online</string>
+    <string name="offline">In-person</string>
+    <string name="patient_info_format">PT %1$s, %2$d y/o • ID: %3$s</string>
+    <string name="enter_clinic">Enter Clinic</string>
+    <string name="view_details">View Details</string>
+    <string name="nav_patients">Patients</string>
+    <string name="nav_notifications">Notifications</string>
+    <string name="nav_profile">Profile</string>
+    <string name="manage_appointments">Manage Appointments</string>
+    <string name="scheduled_appointments">Scheduled</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_appointments">Appointments</string>
+
+    <!-- Doctor Profile Strings -->
+    <string name="services_and_fees">Services &amp; Fees</string>
+    <string name="online_consultation_service">Online Consultation</string>
+    <string name="in_person_consultation_service">In-person Clinic</string>
+    <string name="working_hours">Working Hours</string>
+    <string name="update_working_hours">Update Working Hours</string>
+    <string name="account_security">Account Security</string>
+    <string name="help_and_faq">Help &amp; FAQ</string>
+    <string name="change_date_and_time">Change Date &amp; Time</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="confirm_schedule_change">Confirm Schedule Change</string>
+</resources>
