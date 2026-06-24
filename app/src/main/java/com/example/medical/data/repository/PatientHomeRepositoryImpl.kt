@@ -8,11 +8,14 @@ import com.example.medical.domain.repository.PatientHomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+import com.example.medical.domain.model.AppointmentStatus
+import kotlinx.coroutines.flow.map
+
 class PatientHomeRepositoryImpl : PatientHomeRepository {
     override fun getUpcomingAppointment(): Flow<Appointment?> {
-        return flowOf(
-
-        )
+        return MockSharedData.appointmentsList.map { list ->
+            list.firstOrNull { it.patientIdStr == MockSharedData.mockPatient.id && (it.status == AppointmentStatus.UPCOMING || it.status == AppointmentStatus.HAPPENING) }
+        }
     }
 
     override fun getPopularSpecialties(): Flow<List<Specialty>> {
@@ -44,6 +47,6 @@ class PatientHomeRepositoryImpl : PatientHomeRepository {
     }
 
     override fun getUserName(): Flow<String> {
-        return flowOf("Minh Tuấn")
+        return flowOf(MockSharedData.mockPatient.fullName)
     }
 }

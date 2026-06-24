@@ -13,15 +13,7 @@ class ProfileRepositoryImpl : ProfileRepository {
         delay(1000)
         emit(
             Pair(
-                User(
-                    id = "u1",
-                    email = "nguyenvana@gmail.com",
-                    phone = "0987654321",
-                    fullName = "Nguyễn Văn A",
-                    avatarUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-                    role = UserRole.PATIENT,
-                    token = "mock_token"
-                ),
+                MockSharedData.mockPatient,
                 PatientProfile(
                     userId = "u1",
                     dob = "15/08/1990",

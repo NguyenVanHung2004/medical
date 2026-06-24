@@ -27,12 +27,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
+import com.example.medical.presentation.ui.patient.appointment_detail.getStatusStringRes
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -316,7 +319,7 @@ fun AppointmentCard(
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = status.name,
+                            text = stringResource(id = getStatusStringRes(status)),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = colorResource(id = R.color.primaryBlue)
@@ -382,7 +385,10 @@ fun AppointmentCard(
                     border = BorderStroke(1.dp, androidx.compose.ui.graphics.Color.Red),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.ui.graphics.Color.Red)
                 ) {
-                    Text("Hủy", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text("Hủy",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center)
                 }
                 Button(
                     onClick = onClickDetail,
@@ -392,8 +398,9 @@ fun AppointmentCard(
                 ) {
                     Text(
                         text = if (isOnline) stringResource(id = R.string.btn_enter_clinic) else stringResource(id = R.string.btn_details),
-                        fontSize = 16.sp, 
-                        fontWeight = FontWeight.Bold
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center
                     )
                 }
             }

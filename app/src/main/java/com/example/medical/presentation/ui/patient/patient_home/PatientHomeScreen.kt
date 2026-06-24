@@ -45,13 +45,15 @@ import org.koin.androidx.compose.koinViewModel
 fun PatientHomeRoute(
     onNavigateToDoctorList: (String, String?) -> Unit,
     onNavigateToAppointmentDetail: (String) -> Unit,
+    onLogout: () -> Unit = {},
     viewModel: PatientHomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     PatientHomeScreen(
         uiState = uiState,
         onNavigateToDoctorList = onNavigateToDoctorList,
-        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
+        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
+        onLogout = onLogout
     )
 }
 
@@ -61,7 +63,8 @@ fun PatientHomeRoute(
 fun PatientHomeScreen(
     uiState: PatientHomeUiState,
     onNavigateToDoctorList: (String, String?) -> Unit,
-    onNavigateToAppointmentDetail: (String) -> Unit
+    onNavigateToAppointmentDetail: (String) -> Unit,
+    onLogout: () -> Unit = {}
 ) {
 
     val configuration = LocalConfiguration.current
@@ -153,7 +156,7 @@ fun PatientHomeScreen(
                 )
             }
             "profile" -> {
-                ProfileRoute()
+                ProfileRoute(onLogout = onLogout)
             }
 
             "notifications" -> {
@@ -246,7 +249,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.in_hours, ""),
+                        text = stringResource(id = R.string.in_hours, "2"),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = colorResource(id = R.color.primaryBlue)

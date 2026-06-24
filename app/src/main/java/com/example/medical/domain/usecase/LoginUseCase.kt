@@ -6,7 +6,7 @@ import com.example.medical.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 
 class LoginUseCase(private val repository: AuthRepository) {
-    operator fun invoke(email: String, password: String): Flow<Result<User>> {
+    operator fun invoke(email: String, password: String, isDoctor: Boolean = false): Flow<Result<User>> {
         if (email.isBlank() || password.isBlank()) {
             return kotlinx.coroutines.flow.flow { 
                 emit(Result.Error("Vui lòng nhập đầy đủ Email và mật khẩu")) 
@@ -17,6 +17,6 @@ class LoginUseCase(private val repository: AuthRepository) {
                 emit(Result.Error("Định dạng Email không hợp lệ")) 
             }
         }
-        return repository.login(email, password)
+        return repository.login(email, password, isDoctor)
     }
 }

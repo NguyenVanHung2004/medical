@@ -11,21 +11,7 @@ import java.time.DayOfWeek
 
 class DoctorProfileRepositoryImpl : DoctorProfileRepository {
 
-    private val _doctorProfile = MutableStateFlow(
-        Doctor(
-            id = "doc123",
-            name = "BS. Nguyễn Văn An",
-            avatarUrl = null,
-            specialty = "CHUYÊN KHOA TIM MẠCH",
-            hospital = "Bệnh viện Bạch Mai",
-            experience = "15 năm kinh nghiệm",
-            isOnlineConsultationEnabled = true,
-            onlineConsultationFee = 200000,
-            isInPersonConsultationEnabled = true,
-            inPersonConsultationFee = 300000,
-            workingHoursSummary = "Tuỳ chỉnh theo ngày"
-        )
-    )
+    private val _doctorProfile = MockSharedData.doctorProfile
 
     private val allTimeSlots = listOf(
         // Morning

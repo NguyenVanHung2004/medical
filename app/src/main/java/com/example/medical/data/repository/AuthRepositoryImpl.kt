@@ -9,13 +9,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class AuthRepositoryImpl : AuthRepository {
-    override fun login(email: String, password: String): Flow<Result<User>> = flow {
+    override fun login(email: String, password: String, isDoctor: Boolean): Flow<Result<User>> = flow {
         emit(Result.Loading)
         // TODO: Replace with actual ApiService call
         delay(1500) // Simulate network delay
         
-        if (email == "test@gmail.com" && password == "123456") {
-            emit(Result.Success(User(id = "1", email = email, phone = null, fullName = "Nguyễn Văn A", avatarUrl = null, role = UserRole.PATIENT, token = "fake_token_xyz")))
+        if (isDoctor && email == "doctor@gmail.com" && password == "123456") {
+            emit(Result.Success(User(id = "DOC001", email = email, phone = null, fullName = "BS. Nguyễn Văn An", avatarUrl = null, role = UserRole.DOCTOR, token = "fake_token_doc")))
+        } else if (!isDoctor && email == "test@gmail.com" && password == "123456") {
+            emit(Result.Success(User(id = "u1", email = email, phone = null, fullName = "Nguyễn Văn A", avatarUrl = null, role = UserRole.PATIENT, token = "fake_token_xyz")))
         } else {
             emit(Result.Error("Email hoặc mật khẩu không chính xác"))
         }

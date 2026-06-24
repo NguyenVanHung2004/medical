@@ -33,14 +33,15 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileRoute(
-    viewModel: ProfileViewModel = koinViewModel()
+    viewModel: ProfileViewModel = koinViewModel(),
+    onLogout: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    ProfileScreen(uiState = uiState)
+    ProfileScreen(uiState = uiState, onLogout = onLogout)
 }
 
 @Composable
-fun ProfileScreen(uiState: ProfileUiState) {
+fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -237,7 +238,7 @@ fun ProfileScreen(uiState: ProfileUiState) {
 
                 // Logout Button
                 OutlinedButton(
-                    onClick = { /* TODO */ },
+                    onClick = onLogout,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),

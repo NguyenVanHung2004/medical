@@ -7,7 +7,7 @@ import com.example.medical.domain.model.TimeSlot
 import com.example.medical.domain.repository.DoctorRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-
+import kotlinx.coroutines.flow.map
 class DoctorRepositoryImpl : DoctorRepository {
     private val allDoctors = listOf(
         DoctorDetail(
@@ -88,17 +88,15 @@ class DoctorRepositoryImpl : DoctorRepository {
     }
 
     override fun getTimeSlots(dateString: String): Flow<List<TimeSlot>> {
-        return flowOf(
-            listOf(
-                TimeSlot("1", "08:00 - 08:30", isAvailable = false),
-                TimeSlot("2", "08:30 - 09:00", isAvailable = false),
-                TimeSlot("3", "09:00 - 09:30", isAvailable = true),
-                TimeSlot("4", "09:30 - 10:00", isAvailable = true),
-                TimeSlot("5", "10:00 - 10:30", isAvailable = true),
-                TimeSlot("6", "10:30 - 11:00", isAvailable = true),
-                TimeSlot("7", "14:00 - 14:30", isAvailable = true),
-                TimeSlot("8", "14:30 - 15:00", isAvailable = true)
-            )
-        )
+        return MockSharedData.doctorProfile.map { doctor ->
+            val scheduleSlots = doctor.workingSchedule.values.firstOrNull { it.isNotEmpty() } ?: emptyList()
+            scheduleSlots.mapIndexed { index, slot ->
+                TimeSlot(
+                    id = index.toString(),
+                    timeRange = slot.time,
+                    isAvailable = slot.isSelected
+                )
+            }
+        }
     }
 }

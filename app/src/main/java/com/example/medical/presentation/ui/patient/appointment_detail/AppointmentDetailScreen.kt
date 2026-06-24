@@ -141,7 +141,7 @@ fun AppointmentDetailScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = if (appointment.status == AppointmentStatus.CANCELLED) "Đã hủy" else stringResource(id = R.string.status_confirmed),
+                            text = stringResource(id = getStatusStringRes(appointment.status)),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (appointment.status == AppointmentStatus.CANCELLED) colorResource(id = R.color.errorRed) else colorResource(id = R.color.primaryBlue)
@@ -494,5 +494,16 @@ fun AppointmentDetailScreen(
                 }
             )
         }
+    }
+}
+
+fun getStatusStringRes(status: AppointmentStatus): Int {
+    return when (status) {
+        AppointmentStatus.UPCOMING -> R.string.status_upcoming
+        AppointmentStatus.HAPPENING -> R.string.status_happening
+        AppointmentStatus.COMPLETED -> R.string.status_completed
+        AppointmentStatus.CANCELLED -> R.string.status_cancelled
+        AppointmentStatus.PENDING -> R.string.status_pending
+        AppointmentStatus.CONFIRMED -> R.string.status_confirmed
     }
 }

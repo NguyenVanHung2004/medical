@@ -192,7 +192,12 @@
     <string name="follow_up_appointment">Tái khám</string>
     <string name="export_pdf">Xuất PDF/CSV</string>
     <string name="share_info">Chia sẻ thông tin</string>
-    
+    <string name="status_upcoming">Sắp tới</string>
+    <string name="status_happening">Đang diễn ra</string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <string name="status_cancelled">Đã hủy</string>
+    <string name="status_pending">Chờ xác nhận</string>
+    <string name="status_confirm">Đã xác nhận</string>
     <!-- Profile Screen -->
     <string name="edit_profile">Chỉnh sửa hồ sơ</string>
     <string name="personal_info">Thông tin cá nhân</string>

@@ -155,6 +155,11 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onNavigateToAppointmentDetail = { appointmentId ->
                                         navController.navigate("appointment_detail/$appointmentId")
+                                    },
+                                    onLogout = {
+                                        navController.navigate("welcome") {
+                                            popUpTo(0)
+                                        }
                                     }
                                 )
                             }

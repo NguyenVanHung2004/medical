@@ -17,29 +17,7 @@ class DoctorAppointmentRepositoryImpl : DoctorAppointmentRepository {
 
     override fun getAppointmentDetail(id: String): Flow<Appointment?> = flow {
         delay(300)
-        // Just return a mock appointment for now based on the id
-        emit(
-            Appointment(
-                id = id,
-                patientName = "Trần Thị Bích",
-                patientInitial = "T",
-                patientGender = "Nữ",
-                patientAge = 35,
-                patientIdStr = "123456",
-                patientAvatarUrl = null,
-                date = "Ngày mai",
-                timeRange = "09:00 - 09:30",
-                reason = "Tái khám sau phẫu thuật. Bệnh nhân thỉnh thoảng thấy nhức nhẹ ở vết mổ.",
-                location = null,
-                status = AppointmentStatus.HAPPENING,
-                type = AppointmentType.ONLINE,
-                doctor = Doctor(
-                    id = "DOC001",
-                    name = "BS. Nguyễn Văn An",
-                    avatarUrl = null
-                )
-            )
-        )
+        emit(MockSharedData.appointmentsList.value.find { it.id == id })
     }
 
     override suspend fun respondToRequest(requestId: String, accept: Boolean): Result<Unit> {
