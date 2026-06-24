@@ -53,6 +53,7 @@ data class WorkingTimeSlotDto(
 
 data class UpdateProfileRequest(
     val fullName: String? = null,
+    val phone: String? = null,
     val dob: String? = null,
     val gender: String? = null,
     val address: String? = null,

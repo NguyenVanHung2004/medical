@@ -15,5 +15,9 @@ data class UserProfileUiModel(
 
 data class ProfileUiState(
     val profile: UserProfileUiModel? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showEditDialog: Boolean = false,
+    val isSubmitting: Boolean = false,
+    val successMessage: String? = null,
+    val error: String? = null
 )

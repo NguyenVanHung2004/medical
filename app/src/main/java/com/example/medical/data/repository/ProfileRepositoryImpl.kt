@@ -57,17 +57,18 @@ class ProfileRepositoryImpl(
         }
     }
 
-    override fun updateProfile(fullName: String, dob: String, gender: String, address: String, insuranceInfo: String?): Flow<Result<Unit>> = flow {
+    override fun updateProfile(fullName: String, phone: String, dob: String, gender: String, address: String, bloodType: String?, allergies: String?, insuranceInfo: String?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         try {
             apiService.updateProfile(
                 UpdateProfileRequest(
                     fullName = fullName,
+                    phone = phone,
                     dob = dob,
                     gender = gender,
                     address = address,
-                    bloodType = null,
-                    allergies = null,
+                    bloodType = bloodType,
+                    allergies = allergies,
                     insuranceInfo = insuranceInfo
                 )
             )

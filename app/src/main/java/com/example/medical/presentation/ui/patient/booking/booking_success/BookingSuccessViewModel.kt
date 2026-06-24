@@ -35,15 +35,6 @@ class BookingSuccessViewModel(
         viewModelScope.launch {
             repository.getDoctorById(doctorId).collect { doctor ->
                 _uiState.update { it.copy(doctor = doctor) }
-                if (doctor != null) {
-                    bookAppointmentUseCase(
-                        doctorId = doctor.id,
-                        date = date,
-                        timeRange = time,
-                        reason = "Khám bệnh", // Can be updated if UI adds a reason field
-                        type = type.uppercase() // ONLINE or OFFLINE
-                    )
-                }
             }
         }
     }
