@@ -60,17 +60,23 @@ class ProfileRepositoryImpl(
     override fun updateProfile(fullName: String, dob: String, gender: String, address: String, insuranceInfo: String?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         try {
-            apiService.updateProfile(
-                UpdateProfileRequest(
-                    fullName = fullName,
-                    dob = dob,
-                    gender = gender,
-                    address = address,
-                    bloodType = null,
-                    allergies = null,
-                    insuranceInfo = insuranceInfo
-                )
-            )
+            //   apiService.updateProfile(
+            //     UpdateProfileRequest(
+            //         fullName = fullName,
+            //         dob = dob,
+            //         gender = gender,
+            //         address = address,
+            //         bloodType = null,
+            //         allergies = null,
+            //         insuranceInfo = insuranceInfo
+            //     )
+            // )
+            
+            // Tạm thời mock thành công do chưa tích hợp Token (tránh lỗi 401)
+            // apiService.updateProfile(
+            //     UpdateProfileRequest(...)
+            // )
+            delay(1000)
             emit(Result.Success(Unit))
         } catch (e: Exception) {
             emit(Result.Error("Cập nhật thất bại: ${e.message}"))

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +73,7 @@ Box(
 }
             
             Text(
-                text = "Medical rất vui được chào đón bạn.",
+                text = stringResource(id = R.string.welcome_greeting),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp
@@ -84,7 +85,7 @@ Box(
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "Bạn là?",
+                text = stringResource(id = R.string.who_are_you),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
@@ -93,8 +94,8 @@ Box(
             Spacer(modifier = Modifier.height(32.dp))
             
             RoleSelectionCard(
-                title = "Bệnh nhân",
-                description = "Tìm kiếm bác sĩ, đặt lịch khám và theo dõi hồ sơ",
+                title = stringResource(id = R.string.patient_role),
+                description = stringResource(id = R.string.patient_role_desc),
                 iconRes = R.drawable.patient_icon,
                 onClick = { onRoleSelected(false) }
             )
@@ -102,8 +103,8 @@ Box(
             Spacer(modifier = Modifier.height(16.dp))
             
             RoleSelectionCard(
-                title = "Bác sĩ",
-                description = "Quản lý lịch hẹn, tư vấn và hỗ trợ bệnh nhân",
+                title = stringResource(id = R.string.doctor_role),
+                description = stringResource(id = R.string.doctor_role_desc),
                 iconRes = R.drawable.doctor_icon,
                 onClick = { onRoleSelected(true) }
             )

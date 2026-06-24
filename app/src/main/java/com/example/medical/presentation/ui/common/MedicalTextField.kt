@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun MedicalTextField(
@@ -26,7 +27,9 @@ fun MedicalTextField(
     onTrailingIconClick: (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
+    textStyle: androidx.compose.ui.text.TextStyle = androidx.compose.ui.text.TextStyle(fontSize = 14.sp),
+    isError: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
@@ -64,7 +67,9 @@ fun MedicalTextField(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         keyboardOptions = keyboardOptions,
-        singleLine = singleLine
+        singleLine = singleLine,
+        textStyle = textStyle,
+        isError = isError
     )
 }
 

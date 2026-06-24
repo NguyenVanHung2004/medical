@@ -44,6 +44,7 @@ import com.example.medical.domain.repository.NotificationRepository
 import com.example.medical.domain.repository.PatientHomeRepository
 import com.example.medical.domain.repository.ProfileRepository
 import com.example.medical.domain.usecase.FilterDoctorsUseCase
+import com.example.medical.domain.usecase.ForgotPasswordUseCase
 import com.example.medical.presentation.ui.patient.appointments.AppointmentsViewModel
 import com.example.medical.domain.usecase.appointment.GetUpcomingAppointmentsUseCase
 import com.example.medical.domain.usecase.appointment.GetHistoryAppointmentsUseCase
@@ -108,6 +109,7 @@ val repositoryModule = module {
 val useCaseModule = module {
     factory { LoginUseCase(get()) }
     factory { RegisterUseCase(get()) }
+    factory { ForgotPasswordUseCase(get()) }
 
     factory { GetUpcomingAppointmentsUseCase(get()) }
     factory { GetHistoryAppointmentsUseCase(get()) }
