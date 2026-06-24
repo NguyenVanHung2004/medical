@@ -69,9 +69,9 @@ private val GenZColorScheme = darkColorScheme(
 @Composable
 fun MedicalAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
-
+    dynamicColor: Boolean = true,
     themeName: String = "standard",
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
