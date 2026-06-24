@@ -37,7 +37,9 @@ class DoctorAppointmentViewModel(
 
     fun handleRequestAction(requestId: String, isAccept: Boolean) {
         viewModelScope.launch {
-            getDoctorAppointmentsUseCase.respondToRequest(requestId, isAccept)
+            getDoctorAppointmentsUseCase.respondToRequest(requestId, isAccept).onSuccess {
+                loadData()
+            }
         }
     }
 }

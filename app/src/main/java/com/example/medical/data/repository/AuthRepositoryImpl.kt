@@ -1,5 +1,9 @@
 package com.example.medical.data.repository
 
+import com.example.medical.data.local.TokenManager
+import com.example.medical.data.remote.ApiService
+import com.example.medical.data.remote.LoginRequest
+import com.example.medical.data.remote.RegisterRequest
 import com.example.medical.domain.model.Result
 import com.example.medical.domain.model.User
 import com.example.medical.domain.model.UserRole
@@ -7,30 +11,70 @@ import com.example.medical.domain.repository.AuthRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.lang.Exception
 
-class AuthRepositoryImpl : AuthRepository {
+class AuthRepositoryImpl(
+    private val apiService: ApiService,
+    private val tokenManager: TokenManager
+) : AuthRepository {
     override fun login(email: String, password: String, isDoctor: Boolean): Flow<Result<User>> = flow {
         emit(Result.Loading)
-        // TODO: Replace with actual ApiService call
-        delay(1500) // Simulate network delay
-        
-        if (isDoctor && email == "doctor@gmail.com" && password == "123456") {
-            emit(Result.Success(User(id = "DOC001", email = email, phone = null, fullName = "BS. Nguyễn Văn An", avatarUrl = null, role = UserRole.DOCTOR, token = "fake_token_doc")))
-        } else if (!isDoctor && email == "test@gmail.com" && password == "123456") {
-            emit(Result.Success(User(id = "u1", email = email, phone = null, fullName = "Nguyễn Văn A", avatarUrl = null, role = UserRole.PATIENT, token = "fake_token_xyz")))
-        } else {
-            emit(Result.Error("Email hoặc mật khẩu không chính xác"))
+        try {
+            val role = if (isDoctor) "DOCTOR" else "PATIENT"
+            val response = apiService.login(LoginRequest(email, password, role))
+            
+            tokenManager.saveToken(response.token)
+            
+            val user = User(
+                id = response.user.id,
+                email = response.user.email,
+                phone = null,
+                fullName = response.user.fullName,
+                avatarUrl = response.user.avatarUrl,
+                role = if (response.user.role == "DOCTOR") UserRole.DOCTOR else UserRole.PATIENT,
+                token = response.token
+            )
+            
+            // Cập nhật MockSharedData để giữ tương thích với các Repo chưa migrate
+            if (!isDoctor) MockSharedData.mockPatient = user
+            
+            emit(Result.Success(user))
+        } catch (e: Exception) {
+            emit(Result.Error("Đăng nhập thất bại: ${e.message ?: "Lỗi mạng"}"))
         }
     }
 
-    override fun register(email: String, phone: String, password: String): Flow<Result<User>> = flow {
+    override fun register(email: String, phone: String, password: String, isDoctor: Boolean): Flow<Result<User>> = flow {
         emit(Result.Loading)
-        delay(1500)
-        
-        if (email.isNotBlank() || phone.isNotBlank()) {
-            emit(Result.Success(User(id = "2", email = email, phone = phone, fullName = "Người dùng mới", avatarUrl = null, role = com.example.medical.domain.model.UserRole.PATIENT, token = "fake_token_reg")))
-        } else {
-            emit(Result.Error("Vui lòng nhập Email hoặc Số điện thoại"))
+        try {
+            val role = if (isDoctor) "DOCTOR" else "PATIENT"
+            val response = apiService.register(
+                RegisterRequest(
+                    email = email,
+                    phone = phone,
+                    password = password,
+                    fullName = "Người dùng mới", // Default name
+                    role = role
+                )
+            )
+            
+            tokenManager.saveToken(response.token)
+            
+            val user = User(
+                id = response.user.id,
+                email = response.user.email,
+                phone = phone,
+                fullName = response.user.fullName,
+                avatarUrl = response.user.avatarUrl,
+                role = if (role == "DOCTOR") UserRole.DOCTOR else UserRole.PATIENT,
+                token = response.token
+            )
+            
+            if (!isDoctor) MockSharedData.mockPatient = user
+            
+            emit(Result.Success(user))
+        } catch (e: Exception) {
+            emit(Result.Error("Đăng ký thất bại: ${e.message ?: "Lỗi mạng"}"))
         }
     }
 

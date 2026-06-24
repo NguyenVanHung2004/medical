@@ -9,7 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CompleteProfileViewModel : ViewModel() {
+import com.example.medical.domain.repository.ProfileRepository
+import com.example.medical.domain.model.Result
+
+class CompleteProfileViewModel(
+    private val profileRepository: ProfileRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CompleteProfileUiState())
     val uiState: StateFlow<CompleteProfileUiState> = _uiState.asStateFlow()
@@ -54,9 +59,19 @@ class CompleteProfileViewModel : ViewModel() {
         }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            delay(1000)
-            _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+            profileRepository.updateProfile(
+                fullName = state.fullName,
+                dob = state.dateOfBirth,
+                gender = state.gender,
+                address = state.address,
+                insuranceInfo = if (state.insuranceProvider.isNotBlank() && state.insuranceCode.isNotBlank()) "${state.insuranceProvider}: ${state.insuranceCode}" else null
+            ).collect { result ->
+                when (result) {
+                    is Result.Loading -> _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                    is Result.Success -> _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                    is Result.Error -> _uiState.update { it.copy(isLoading = false, errorMessage = result.message) }
+                }
+            }
         }
     }
 }

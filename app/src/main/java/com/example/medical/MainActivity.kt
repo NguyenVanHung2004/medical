@@ -96,7 +96,9 @@ class MainActivity : ComponentActivity() {
                                     onLoginClick = { navController.popBackStack() },
                                     onRegisterSuccess = {
                                         if (isDoctor) {
-                                            navController.popBackStack()
+                                            navController.navigate("complete_doctor_profile") {
+                                                popUpTo("register/$isDoctor") { inclusive = true }
+                                            }
                                         } else {
                                             navController.navigate("complete_profile") {
                                                 popUpTo("register/$isDoctor") { inclusive = true }
@@ -132,6 +134,16 @@ class MainActivity : ComponentActivity() {
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateNext = {
                                         navController.navigate("patient_home") {
+                                            popUpTo("welcome") { inclusive = true }
+                                        }
+                                    }
+                                )
+                            }
+                            composable("complete_doctor_profile") {
+                                com.example.medical.presentation.ui.doctor.complete_profile.CompleteDoctorProfileRoute(
+                                    onNavigateBack = { navController.popBackStack() },
+                                    onNavigateNext = {
+                                        navController.navigate("doctor_home") {
                                             popUpTo("welcome") { inclusive = true }
                                         }
                                     }

@@ -162,7 +162,7 @@ fun AppointmentsScreen(
                             avatarUrl = appt.doctor.avatarUrl,
                             date = appt.date,
                             time = appt.timeRange,
-                            location = appt.location,
+                            location = appt.location ?: appt.doctor.hospital,
                             status = appt.status,
                             onClickDetail = { onNavigateToDetail(appt.id) },
                             onCancelClick = { onCancelRequest(appt.id) },

@@ -74,7 +74,7 @@ fun DoctorProfileScreen(
     onConfirmWorkingHoursUpdate: () -> Unit,
     onShowEditProfileDialog: () -> Unit,
     onHideEditProfileDialog: () -> Unit,
-    onSaveProfile: (String, String, String, String) -> Unit,
+    onSaveProfile: (String, String, String, String, String) -> Unit,
     onShowEditFeesDialog: () -> Unit,
     onHideEditFeesDialog: () -> Unit,
     onSaveFees: (Long, Long) -> Unit,
@@ -732,12 +732,13 @@ fun TimeSlotItem(
 fun EditProfileDialog(
     doctor: Doctor,
     onDismiss: () -> Unit,
-    onSave: (String, String, String, String) -> Unit
+    onSave: (String, String, String, String, String) -> Unit
 ) {
     var name by remember { mutableStateOf(doctor.name) }
     var specialty by remember { mutableStateOf(doctor.specialty) }
     var hospital by remember { mutableStateOf(doctor.hospital) }
     var experience by remember { mutableStateOf(doctor.experience) }
+    var bio by remember { mutableStateOf(doctor.bio) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -841,10 +842,23 @@ fun EditProfileDialog(
                     singleLine = true
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = bio,
+                    onValueChange = { bio = it },
+                    label = { Text("Giới thiệu bản thân") },
+                    leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = false,
+                    maxLines = 3
+                )
+
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { onSave(name, specialty, hospital, experience) },
+                    onClick = { onSave(name, specialty, hospital, experience, bio) },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)

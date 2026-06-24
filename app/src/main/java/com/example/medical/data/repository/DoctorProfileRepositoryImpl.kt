@@ -1,5 +1,6 @@
 package com.example.medical.data.repository
 
+import com.example.medical.data.remote.ApiService
 import com.example.medical.domain.model.Doctor
 import com.example.medical.domain.model.WorkingTimeSlot
 import com.example.medical.domain.repository.DoctorProfileRepository
@@ -9,7 +10,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import java.time.DayOfWeek
 
-class DoctorProfileRepositoryImpl : DoctorProfileRepository {
+class DoctorProfileRepositoryImpl(
+    private val apiService: ApiService
+) : DoctorProfileRepository {
 
     private val _doctorProfile = MockSharedData.doctorProfile
 
@@ -31,7 +34,43 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
         updateDoctorProfileSummary()
     }
 
-    override fun getDoctorProfile(): Flow<Doctor> = _doctorProfile
+    override fun getDoctorProfile(): Flow<Doctor> = flow {
+        try {
+            val user = apiService.getProfile()
+            
+            // Convert string keys back to DayOfWeek
+            val serverSchedule = user.doctorProfile?.workingSchedule
+            val scheduleMap = mutableMapOf<DayOfWeek, List<WorkingTimeSlot>>()
+            if (serverSchedule != null) {
+                serverSchedule.forEach { (key, value) ->
+                    try {
+                        val day = DayOfWeek.valueOf(key)
+                        scheduleMap[day] = value.map { WorkingTimeSlot(it.time, it.isSelected, it.isAvailable) }
+                    } catch (e: Exception) {
+                        // Ignore invalid keys
+                    }
+                }
+            } else {
+                // Keep initial mock schedule if none from server
+                scheduleMap.putAll(_doctorProfile.value.workingSchedule)
+            }
+            
+            _doctorProfile.update { it.copy(
+                id = user.id, 
+                name = user.fullName, 
+                avatarUrl = user.avatarUrl,
+                specialty = user.doctorProfile?.specialty ?: "",
+                hospital = user.doctorProfile?.hospital ?: "",
+                experience = "${user.doctorProfile?.yearsOfExperience ?: 0} năm",
+                bio = user.doctorProfile?.bio ?: "",
+                workingSchedule = scheduleMap
+            ) }
+            updateDoctorProfileSummary()
+            emit(_doctorProfile.value)
+        } catch (e: Exception) {
+            emit(_doctorProfile.value)
+        }
+    }
 
     override fun toggleOnlineConsultation(isEnabled: Boolean): Flow<Boolean> = flow {
         _doctorProfile.update { it.copy(isOnlineConsultationEnabled = isEnabled) }
@@ -51,16 +90,54 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
 
 
     override fun updateWorkingTimeSlots(dayOfWeek: DayOfWeek, slots: List<WorkingTimeSlot>): Flow<Boolean> = flow {
-        val currentSchedule = _doctorProfile.value.workingSchedule.toMutableMap()
-        currentSchedule[dayOfWeek] = slots
-        _doctorProfile.update { it.copy(workingSchedule = currentSchedule) }
-        updateDoctorProfileSummary()
-        emit(true)
+        try {
+            val currentSchedule = _doctorProfile.value.workingSchedule.toMutableMap()
+            currentSchedule[dayOfWeek] = slots
+            
+            // Map to string keys for API
+            val scheduleDto = currentSchedule.mapKeys { it.key.name }.mapValues { entry ->
+                entry.value.map { com.example.medical.data.remote.WorkingTimeSlotDto(it.time, it.isSelected, it.isAvailable) }
+            }
+            
+            apiService.updateProfile(
+                com.example.medical.data.remote.UpdateProfileRequest(
+                    workingSchedule = scheduleDto
+                )
+            )
+            
+            _doctorProfile.update { it.copy(workingSchedule = currentSchedule) }
+            updateDoctorProfileSummary()
+            emit(true)
+        } catch (e: Exception) {
+            emit(false)
+        }
     }
 
-    override fun updateProfile(name: String, specialty: String, hospital: String, experience: String): Flow<Boolean> = flow {
-        _doctorProfile.update { it.copy(name = name, specialty = specialty, hospital = hospital, experience = experience) }
-        emit(true)
+    override fun updateProfile(name: String, specialty: String, hospital: String, experience: String, bio: String): Flow<Boolean> = flow {
+        try {
+            val years = experience.filter { it.isDigit() }.toIntOrNull() ?: 0
+            val user = apiService.updateProfile(
+                com.example.medical.data.remote.UpdateProfileRequest(
+                    fullName = name,
+                    specialty = specialty,
+                    hospital = hospital,
+                    yearsOfExperience = years,
+                    bio = bio
+                )
+            )
+            _doctorProfile.update { 
+                it.copy(
+                    name = user.fullName, 
+                    specialty = user.doctorProfile?.specialty ?: specialty, 
+                    hospital = user.doctorProfile?.hospital ?: hospital, 
+                    experience = "${user.doctorProfile?.yearsOfExperience ?: years} năm",
+                    bio = user.doctorProfile?.bio ?: bio
+                ) 
+            }
+            emit(true)
+        } catch (e: Exception) {
+            emit(false)
+        }
     }
 
     override fun updateFees(onlineFee: Long, inPersonFee: Long): Flow<Boolean> = flow {
@@ -75,10 +152,11 @@ class DoctorProfileRepositoryImpl : DoctorProfileRepository {
 
     private fun generateDefaultSlots(isWeekend: Boolean): List<WorkingTimeSlot> {
         return allTimeSlots.map { time ->
+            val isSelected = if (isWeekend) false else time in listOf("08:00 - 08:30", "08:30 - 09:00", "09:00 - 09:30", "09:30 - 10:00", "10:00 - 10:30", "10:30 - 11:00", "11:00 - 11:30", "13:30 - 14:00", "14:00 - 14:30", "14:30 - 15:00", "15:00 - 15:30", "15:30 - 16:00", "16:00 - 16:30", "16:30 - 17:00")
             WorkingTimeSlot(
                 time = time,
-                isSelected = if (isWeekend) false else time in listOf("08:00 - 08:30", "08:30 - 09:00", "09:00 - 09:30", "09:30 - 10:00", "10:00 - 10:30", "10:30 - 11:00", "11:00 - 11:30", "13:30 - 14:00", "14:00 - 14:30", "14:30 - 15:00", "15:00 - 15:30", "15:30 - 16:00", "16:00 - 16:30", "16:30 - 17:00"),
-                isAvailable = true
+                isSelected = isSelected,
+                isAvailable = isSelected
             )
         }
     }

@@ -27,7 +27,8 @@ data class DoctorDetail(
     val supportedTypes: List<ConsultationType>,
     val isFullyBookedToday: Boolean = false,
     val reviewCount: Int = 0,
-    val bio: String = ""
+    val bio: String = "",
+    val workingSchedule: Map<java.time.DayOfWeek, List<WorkingTimeSlot>> = emptyMap()
 )
 data class Doctor(
     val id: String,
@@ -36,6 +37,7 @@ data class Doctor(
     val specialty: String = "",
     val hospital: String = "",
     val experience: String = "",
+    val bio: String = "",
     val isOnlineConsultationEnabled: Boolean = false,
     val onlineConsultationFee: Long = 0,
     val isInPersonConsultationEnabled: Boolean = false,

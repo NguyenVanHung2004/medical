@@ -1,20 +1,29 @@
 package com.example.medical.data.repository
 
+import com.example.medical.data.remote.ApiService
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.Article
-import com.example.medical.domain.model.Doctor
 import com.example.medical.domain.model.Specialty
 import com.example.medical.domain.repository.PatientHomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-
+import kotlinx.coroutines.flow.flow
 import com.example.medical.domain.model.AppointmentStatus
-import kotlinx.coroutines.flow.map
 
-class PatientHomeRepositoryImpl : PatientHomeRepository {
-    override fun getUpcomingAppointment(): Flow<Appointment?> {
-        return MockSharedData.appointmentsList.map { list ->
-            list.firstOrNull { it.patientIdStr == MockSharedData.mockPatient.id && (it.status == AppointmentStatus.UPCOMING || it.status == AppointmentStatus.HAPPENING) }
+class PatientHomeRepositoryImpl(
+    private val apiService: ApiService
+) : PatientHomeRepository {
+    override fun getUpcomingAppointment(): Flow<Appointment?> = flow {
+        try {
+            val appointments = apiService.getAppointments()
+            val upcoming = appointments.firstOrNull { 
+                it.status == AppointmentStatus.UPCOMING || 
+                it.status == AppointmentStatus.CONFIRMED || 
+                it.status == AppointmentStatus.HAPPENING 
+            }
+            emit(upcoming)
+        } catch (e: Exception) {
+            emit(null)
         }
     }
 
@@ -46,7 +55,13 @@ class PatientHomeRepositoryImpl : PatientHomeRepository {
         )
     }
 
-    override fun getUserName(): Flow<String> {
-        return flowOf(MockSharedData.mockPatient.fullName)
+    override fun getUserName(): Flow<String> = flow {
+        try {
+            val profile = apiService.getProfile()
+            emit(profile.fullName)
+        } catch (e: Exception) {
+            // Nếu lỗi chưa có token hoặc chưa đăng nhập, dùng tạm mock
+            emit(MockSharedData.mockPatient.fullName)
+        }
     }
 }

@@ -514,7 +514,8 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
                         }
                         
                         // Location (if offline)
-                        if (appointment.type == AppointmentType.OFFLINE && appointment.location != null) {
+                        val locationText = appointment.location ?: appointment.doctor.hospital
+                        if (appointment.type == AppointmentType.OFFLINE && locationText.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(2.dp))
                             Row(verticalAlignment = Alignment.Top) {
                                 Icon(
@@ -525,7 +526,7 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = appointment.location,
+                                    text = locationText,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )

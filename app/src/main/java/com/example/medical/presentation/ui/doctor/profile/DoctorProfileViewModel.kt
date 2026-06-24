@@ -65,9 +65,9 @@ class DoctorProfileViewModel(
         _uiState.update { it.copy(isEditProfileDialogVisible = false) }
     }
 
-    fun saveProfile(name: String, specialty: String, hospital: String, experience: String) {
+    fun saveProfile(name: String, specialty: String, hospital: String, experience: String, bio: String) {
         viewModelScope.launch {
-            repository.updateProfile(name, specialty, hospital, experience).collect {
+            repository.updateProfile(name, specialty, hospital, experience, bio).collect {
                 hideEditProfileDialog()
             }
         }
@@ -102,8 +102,10 @@ class DoctorProfileViewModel(
 
     fun toggleTimeSlot(timeSlot: WorkingTimeSlot) {
         val updatedSlots = _uiState.value.timeSlotsForSelectedDay.map {
-            if (it.time == timeSlot.time) it.copy(isSelected = !it.isSelected)
-            else it
+            if (it.time == timeSlot.time) {
+                val newState = !it.isSelected
+                it.copy(isSelected = newState, isAvailable = newState)
+            } else it
         }
         _uiState.update { it.copy(timeSlotsForSelectedDay = updatedSlots) }
     }
