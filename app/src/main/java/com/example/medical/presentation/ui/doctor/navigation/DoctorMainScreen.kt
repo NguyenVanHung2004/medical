@@ -32,7 +32,8 @@ import androidx.compose.animation.core.tween
 @Composable
 fun DoctorMainScreen(
     onLogout: () -> Unit,
-    onNavigateToAppointmentDetail: (String) -> Unit
+    onNavigateToAppointmentDetail: (String) -> Unit,
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val navController = rememberNavController()
 
@@ -118,7 +119,8 @@ fun DoctorMainScreen(
             }
             composable(BottomNavItem.Profile.route) {
                 DoctorProfileRoute(
-                    onLogout = onLogout
+                    onLogout = onLogout,
+                    onNavigateToSettings = onNavigateToSettings
                 )
             }
         }

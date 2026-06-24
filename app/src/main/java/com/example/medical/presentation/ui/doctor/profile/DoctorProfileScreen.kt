@@ -40,7 +40,8 @@ import androidx.compose.ui.text.input.KeyboardType
 @Composable
 fun DoctorProfileRoute(
     viewModel: DoctorProfileViewModel = koinViewModel(),
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -60,7 +61,8 @@ fun DoctorProfileRoute(
         onShowEditFeesDialog = viewModel::showEditFeesDialog,
         onHideEditFeesDialog = viewModel::hideEditFeesDialog,
         onSaveFees = viewModel::saveFees,
-        onAvatarSelected = viewModel::updateAvatar
+        onAvatarSelected = viewModel::updateAvatar,
+        onNavigateToSettings = onNavigateToSettings
     )
 }
 
@@ -82,7 +84,8 @@ fun DoctorProfileScreen(
     onShowEditFeesDialog: () -> Unit,
     onHideEditFeesDialog: () -> Unit,
     onSaveFees: (Long, Long) -> Unit,
-    onAvatarSelected: (String) -> Unit
+    onAvatarSelected: (String) -> Unit,
+    onNavigateToSettings: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -146,7 +149,7 @@ fun DoctorProfileScreen(
                             )
                         }
                         item {
-                            SettingsList()
+                            SettingsList(onNavigateToSettings = onNavigateToSettings)
                         }
                         item {
                             LogoutButton(onLogout = onLogout)
@@ -494,7 +497,7 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
 }
 
 @Composable
-fun SettingsList() {
+fun SettingsList(onNavigateToSettings: () -> Unit = {}) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -503,29 +506,20 @@ fun SettingsList() {
     ) {
         Column {
             SettingItem(
-                icon = Icons.Default.NotificationsNone,
-                title = stringResource(R.string.notification_settings)
-            )
-            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-            SettingItem(
-                icon = Icons.Default.Security,
-                title = stringResource(R.string.account_security)
-            )
-            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-            SettingItem(
-                icon = Icons.Default.HelpOutline,
-                title = stringResource(R.string.help_and_faq)
+                icon = Icons.Default.Settings,
+                title = "Cài đặt",
+                onClick = onNavigateToSettings
             )
         }
     }
 }
 
 @Composable
-fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String) {
+fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Navigate */ }
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

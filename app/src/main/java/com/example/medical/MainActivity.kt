@@ -1,6 +1,7 @@
 package com.example.medical
 
 import android.os.Bundle
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -33,13 +34,18 @@ import com.example.medical.presentation.ui.patient.booking.BookingRoute
 import com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute
 import com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute
 import com.example.medical.presentation.ui.patient.patient_home.PatientHomeRoute
+import com.example.medical.presentation.ui.settings.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MedicalAppTheme {
+            val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            var selectedTheme by remember { 
+                mutableStateOf(sharedPreferences.getString("theme", "standard") ?: "standard") 
+            }
+            MedicalAppTheme(themeName = selectedTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding)) {
                         val navController = rememberNavController()
@@ -172,6 +178,9 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate("welcome") {
                                             popUpTo(0)
                                         }
+                                    },
+                                    onNavigateToSettings = {
+                                        navController.navigate("settings")
                                     }
                                 )
                             }
@@ -184,6 +193,9 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onNavigateToAppointmentDetail = { appointmentId ->
                                         navController.navigate("doctor_appointment_detail/$appointmentId")
+                                    },
+                                    onNavigateToSettings = {
+                                        navController.navigate("settings")
                                     }
                                 )
                             }
@@ -255,13 +267,20 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
-                            composable(
-                                "doctor_appointment_detail/{appointmentId}",
-                                arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
-                            ) { backStackEntry ->
+                            composable("doctor_appointment_detail/{appointmentId}") { backStackEntry ->
                                 com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute(
                                     appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: "",
                                     onNavigateBack = { navController.popBackStack() }
+                                )
+                            }
+                            composable("settings") {
+                                SettingsScreen(
+                                    currentTheme = selectedTheme,
+                                    onThemeChange = { newTheme -> 
+                                        selectedTheme = newTheme
+                                        sharedPreferences.edit().putString("theme", newTheme).apply()
+                                    },
+                                    onBackClick = { navController.popBackStack() }
                                 )
                             }
                         }

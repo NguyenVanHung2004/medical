@@ -36,14 +36,19 @@ import com.example.medical.presentation.ui.common.SecondaryButton
 @Composable
 fun ProfileRoute(
     viewModel: ProfileViewModel = koinViewModel(),
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    ProfileScreen(uiState = uiState, onLogout = onLogout)
+    ProfileScreen(uiState = uiState, onLogout = onLogout, onNavigateToSettings = onNavigateToSettings)
 }
 
 @Composable
-fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
+fun ProfileScreen(
+    uiState: ProfileUiState, 
+    onLogout: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -195,21 +200,6 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Settings Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.settings_header),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 // Settings Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -219,19 +209,9 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
                 ) {
                     Column {
                         SettingsRow(
-                            icon = Icons.Default.NotificationsNone,
-                            title = stringResource(id = R.string.notification_settings)
-                        )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-                        SettingsRow(
-                            icon = Icons.Default.Language,
-                            title = stringResource(id = R.string.language),
-                            value = stringResource(id = R.string.language_vietnamese)
-                        )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-                        SettingsRow(
-                            icon = Icons.Default.Security,
-                            title = stringResource(id = R.string.privacy_settings)
+                            icon = Icons.Default.Settings,
+                            title = stringResource(id = R.string.settings_header),
+                            onClick = onNavigateToSettings
                         )
                     }
                 }
@@ -326,12 +306,13 @@ fun InfoRow(label: String, value: String) {
 fun SettingsRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
-    value: String? = null
+    value: String? = null,
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO */ }
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
