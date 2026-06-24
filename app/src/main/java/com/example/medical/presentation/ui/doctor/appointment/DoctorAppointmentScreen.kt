@@ -369,14 +369,20 @@ fun ScheduledAppointmentsList(appointments: List<Appointment>, onNavigateToAppoi
 
         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
 
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(appointments.size) { index ->
-                val appointment = appointments[index]
-                val isLast = index == appointments.size - 1
-                ScheduledAppointmentCard(appointment, isLast, onNavigateToAppointmentDetail)
+        if (appointments.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "Không có lịch hẹn nào.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(appointments.size) { index ->
+                    val appointment = appointments[index]
+                    val isLast = index == appointments.size - 1
+                    ScheduledAppointmentCard(appointment, isLast, onNavigateToAppointmentDetail)
+                }
             }
         }
     }
@@ -520,7 +526,7 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
                         
                         // Location (if offline)
                         val locationText = appointment.location ?: appointment.doctor.hospital
-                        if (appointment.type == AppointmentType.OFFLINE && locationText.isNotEmpty()) {
+                        if (appointment.type == AppointmentType.OFFLINE && !locationText.isNullOrEmpty()) {
                             Spacer(modifier = Modifier.height(2.dp))
                             Row(verticalAlignment = Alignment.Top) {
                                 Icon(

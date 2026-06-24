@@ -505,7 +505,7 @@ fun PopularSpecialtiesSection(
                 text = stringResource(id = R.string.see_all),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onNavigateToDoctorList("", null) }
+                modifier = Modifier.clickable { onNavigateToDoctorList("ALL", null) }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

@@ -277,10 +277,11 @@ fun DoctorAppointmentDetailScreen(
                                                 color = colorResource(id = R.color.textPrimary)
                                             )
                                             
-                                            if (appointment.type == AppointmentType.OFFLINE && !appointment.location.isNullOrEmpty()) {
+                                            val locationText = appointment.location ?: appointment.doctor.hospital
+                                            if (appointment.type == AppointmentType.OFFLINE && !locationText.isNullOrEmpty()) {
                                                 Spacer(modifier = Modifier.height(8.dp))
                                                 Text(
-                                                    text = appointment.location,
+                                                    text = locationText,
                                                     fontSize = 14.sp,
                                                     color = colorResource(id = R.color.textPrimary)
                                                 )
