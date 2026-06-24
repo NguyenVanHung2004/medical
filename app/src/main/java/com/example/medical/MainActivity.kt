@@ -197,29 +197,35 @@ class MainActivity : ComponentActivity() {
                                 com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToBooking = { doctorId ->
-                                        navController.navigate("booking/$doctorId")
+                                        val type = backStackEntry.arguments?.getString("type") ?: "offline"
+                                        navController.navigate("booking/$doctorId/$type")
                                     }
                                 )
                             }
                             composable(
-                                "booking/{doctorId}",
-                                arguments = listOf(navArgument("doctorId") { type = NavType.StringType })
+                                "booking/{doctorId}/{type}",
+                                arguments = listOf(
+                                    navArgument("doctorId") { type = NavType.StringType },
+                                    navArgument("type") { type = NavType.StringType }
+                                )
                             ) { backStackEntry ->
                                 com.example.medical.presentation.ui.patient.booking.BookingRoute(
                                     onNavigateBack = { navController.popBackStack() },
                                     onNavigateToNext = { doctorId, date, time ->
-                                        navController.navigate("booking_success/$doctorId/$date/$time") {
+                                        val type = backStackEntry.arguments?.getString("type") ?: "offline"
+                                        navController.navigate("booking_success/$doctorId/$date/$time/$type") {
                                             popUpTo("patient_home") // Trở về patient_home sau khi success
                                         }
                                     }
                                 )
                             }
                             composable(
-                                "booking_success/{doctorId}/{date}/{time}",
+                                "booking_success/{doctorId}/{date}/{time}/{type}",
                                 arguments = listOf(
                                     navArgument("doctorId") { type = NavType.StringType },
                                     navArgument("date") { type = NavType.StringType },
-                                    navArgument("time") { type = NavType.StringType }
+                                    navArgument("time") { type = NavType.StringType },
+                                    navArgument("type") { type = NavType.StringType }
                                 )
                             ) {
                                 com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute(
@@ -245,7 +251,7 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate("doctor_list/all")
                                     },
                                     onNavigateToReschedule = { doctorId ->
-                                        navController.navigate("booking/$doctorId")
+                                        navController.navigate("booking/$doctorId/offline")
                                     }
                                 )
                             }

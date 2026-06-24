@@ -11,6 +11,8 @@ import com.example.medical.domain.model.User
 import com.example.medical.domain.model.UserRole
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object MockSharedData {
     var mockPatient = User(
@@ -48,6 +50,9 @@ object MockSharedData {
     
     val doctorsList = listOf(doctorProfile.value, mockDoctor2)
 
+    private val today = LocalDate.now()
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     val appointmentsList = MutableStateFlow(
         listOf(
             Appointment(
@@ -58,7 +63,7 @@ object MockSharedData {
                 patientAge = 35,
                 patientIdStr = mockPatient.id,
                 patientAvatarUrl = mockPatient.avatarUrl,
-                date = "2026-06-25",
+                date = today.format(dateFormatter),
                 timeRange = "09:00 - 09:30",
                 reason = "Tái khám định kỳ",
                 location = "Phòng 204, Khu A",
@@ -74,7 +79,7 @@ object MockSharedData {
                 patientAge = 35,
                 patientIdStr = mockPatient.id,
                 patientAvatarUrl = mockPatient.avatarUrl,
-                date = "2026-06-26",
+                date = today.plusDays(1).format(dateFormatter),
                 timeRange = "10:00 - 10:30",
                 reason = "Khám tổng quát",
                 location = "Phòng khám số 12, Tầng 3",
@@ -90,7 +95,7 @@ object MockSharedData {
                 patientAge = 28,
                 patientIdStr = "u2",
                 patientAvatarUrl = null,
-                date = "2026-06-27",
+                date = today.plusDays(2).format(dateFormatter),
                 timeRange = "09:00 - 09:30",
                 reason = "Tái khám sau phẫu thuật",
                 location = null,

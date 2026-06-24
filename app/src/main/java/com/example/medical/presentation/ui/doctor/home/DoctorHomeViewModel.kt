@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class DoctorHomeViewModel(
     private val getDoctorHomeDataUseCase: GetDoctorHomeDataUseCase
@@ -24,12 +26,20 @@ class DoctorHomeViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             getDoctorHomeDataUseCase().collect { data ->
+                val today = LocalDate.now()
+                val todayStr1 = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val todayStr2 = "${today.dayOfMonth} Tháng ${today.monthValue}"
+                
+                val filteredAndSortedTodayAppointments = data.todayAppointments
+                    .filter { it.date == todayStr1 || it.date == todayStr2 }
+                    .sortedBy { it.timeRange.split(" - ").firstOrNull() ?: it.timeRange }
+                    
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         doctor = data.doctor,
                         pendingRequests = data.pendingRequests,
-                        todayAppointments = data.todayAppointments
+                        todayAppointments = filteredAndSortedTodayAppointments
                     )
                 }
             }

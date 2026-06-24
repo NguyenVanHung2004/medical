@@ -47,6 +47,9 @@ fun DoctorAppointmentRoute(
         onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
         onHandleRequest = { id, isAccept ->
             viewModel.handleRequestAction(id, isAccept)
+        },
+        onSelectDate = { date ->
+            viewModel.selectDate(date)
         }
     )
 }
@@ -56,7 +59,8 @@ fun DoctorAppointmentRoute(
 fun DoctorAppointmentScreen(
     uiState: DoctorAppointmentUiState,
     onNavigateToAppointmentDetail: (String) -> Unit,
-    onHandleRequest: (String, Boolean) -> Unit
+    onHandleRequest: (String, Boolean) -> Unit,
+    onSelectDate: (java.time.LocalDate) -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
@@ -120,7 +124,11 @@ fun DoctorAppointmentScreen(
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
-                            ScheduledAppointmentsList(uiState.scheduledAppointments, onNavigateToAppointmentDetail)
+                            ScheduledAppointmentsList(
+                                uiState = uiState,
+                                onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
+                                onSelectDate = onSelectDate
+                            )
                         }
                     }
                 } else {
@@ -175,7 +183,11 @@ fun DoctorAppointmentScreen(
                             if (targetIndex == 0) {
                                 PendingRequestsList(uiState.pendingRequests, onHandleRequest)
                             } else {
-                                ScheduledAppointmentsList(uiState.scheduledAppointments, onNavigateToAppointmentDetail)
+                                ScheduledAppointmentsList(
+                                    uiState = uiState,
+                                    onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
+                                    onSelectDate = onSelectDate
+                                )
                             }
                         }
                     }
@@ -333,33 +345,43 @@ fun PendingRequestCard(request: AppointmentRequest, onHandleRequest: (String, Bo
 }
 
 @Composable
-fun ScheduledAppointmentsList(appointments: List<Appointment>, onNavigateToAppointmentDetail: (String) -> Unit) {
+fun ScheduledAppointmentsList(
+    uiState: DoctorAppointmentUiState, 
+    onNavigateToAppointmentDetail: (String) -> Unit,
+    onSelectDate: (java.time.LocalDate) -> Unit
+) {
+    val appointments = uiState.scheduledAppointments
+    val availableDates = uiState.availableDates
+    val selectedDate = uiState.selectedDate
+
     Column(modifier = Modifier.fillMaxSize()) {
-        // Mock Calendar Strip
-        val dates = listOf("15" to "T2", "16" to "T3", "17" to "T4", "18" to "T5", "19" to "T6")
+        val daysOfWeek = listOf("CN", "T2", "T3", "T4", "T5", "T6", "T7")
+        
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(dates.size) { index ->
-                val (day, dayOfWeek) = dates[index]
-                val isSelected = index == 1 // Hardcode selection for mockup
+            items(availableDates.size) { index ->
+                val date = availableDates[index]
+                val isSelected = date == selectedDate
+                val dayOfWeekStr = daysOfWeek[date.dayOfWeek.value % 7]
+                
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape)
                         .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
-                        .clickable { /* Select date */ },
+                        .clickable { onSelectDate(date) },
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = dayOfWeek,
+                        text = dayOfWeekStr,
                         style = MaterialTheme.typography.bodySmall,
                         color = if (isSelected) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
-                        text = day,
+                        text = date.dayOfMonth.toString(),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
                     )
