@@ -219,19 +219,9 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
                 ) {
                     Column {
                         SettingsRow(
-                            icon = Icons.Default.NotificationsNone,
-                            title = stringResource(id = R.string.notification_settings)
-                        )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-                        SettingsRow(
-                            icon = Icons.Default.Language,
-                            title = stringResource(id = R.string.language),
-                            value = stringResource(id = R.string.language_vietnamese)
-                        )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-                        SettingsRow(
-                            icon = Icons.Default.Security,
-                            title = stringResource(id = R.string.privacy_settings)
+                            icon = Icons.Default.Settings,
+                            title = "Cài đặt",
+                            onClick = onNavigateToSettings
                         )
                     }
                 }
