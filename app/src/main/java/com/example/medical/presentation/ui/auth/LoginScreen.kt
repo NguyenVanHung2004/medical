@@ -104,6 +104,11 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(id = R.drawable.medical_app_logo),
+                contentDescription = "Medical Logo",
+                modifier = Modifier.size(80.dp).padding(bottom = 16.dp)
+            )
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically

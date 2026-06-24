@@ -1,5 +1,6 @@
 package com.example.medical.presentation.ui.welcome
 
+import com.example.medical.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -42,10 +43,9 @@ fun WelcomeScreen(
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.LocalHospital,
+                Image(
+                    painter = androidx.compose.ui.res.painterResource(id = R.drawable.medical_app_logo),
                     contentDescription = "Medical Logo",
-                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(60.dp)
                 )
             }
