@@ -156,10 +156,9 @@ fun BookingScreen(
                         
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
-                            modifier = Modifier.height(240.dp),
+                            modifier = Modifier.heightIn(max = 400.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            userScrollEnabled = false
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(uiState.timeSlots) { slot ->
                                 TimeSlotCard(

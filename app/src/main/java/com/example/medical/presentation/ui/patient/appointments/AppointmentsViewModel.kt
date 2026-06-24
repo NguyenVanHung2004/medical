@@ -59,8 +59,7 @@ class AppointmentsViewModel(
             try {
                 cancelAppointmentUseCase(appointmentId)
                 _uiState.update { it.copy(isLoading = false) }
-                // loadAppointments() will automatically be triggered if the repository uses flows properly, 
-                // but let's re-trigger it just in case if needed.
+                loadAppointments()
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
@@ -70,6 +69,7 @@ class AppointmentsViewModel(
     fun rescheduleAppointment(appointmentId: String) {
         viewModelScope.launch {
             rescheduleAppointmentUseCase(appointmentId)
+            loadAppointments()
         }
     }
 }
