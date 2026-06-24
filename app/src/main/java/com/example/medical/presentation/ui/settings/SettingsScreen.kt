@@ -21,23 +21,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.medical.presentation.theme.MedicalAppTheme
 
+import androidx.compose.ui.res.stringResource
+import com.example.medical.R
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     currentTheme: String = "standard",
     onThemeChange: (String) -> Unit = {},
+    currentLanguage: String = "vi",
+    onLanguageChange: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     // States for UI simulation (no actual logic implemented yet)
     var isNotificationSoundEnabled by remember { mutableStateOf(true) }
     var isInAppSoundEnabled by remember { mutableStateOf(true) }
 
-    var selectedLanguage by remember { mutableStateOf("vi") }
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Cài đặt", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(id = R.string.settings_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -58,52 +61,52 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // 1. Cài đặt thông báo
-            SettingsSection(title = "Cài đặt thông báo") {
+            SettingsSection(title = stringResource(id = R.string.settings_notifications)) {
                 SwitchSettingItem(
-                    title = "Cho phép tiếng thông báo",
-                    subtitle = "Phát âm thanh khi có thông báo mới",
+                    title = stringResource(id = R.string.settings_allow_notifications),
+                    subtitle = stringResource(id = R.string.settings_allow_notifications_desc),
                     checked = isNotificationSoundEnabled,
                     onCheckedChange = { isNotificationSoundEnabled = it }
                 )
             }
 
             // 2. Cài đặt âm thanh trong ứng dụng
-            SettingsSection(title = "Âm thanh ứng dụng") {
+            SettingsSection(title = stringResource(id = R.string.settings_in_app_sound_section)) {
                 SwitchSettingItem(
-                    title = "Âm thanh trong ứng dụng",
-                    subtitle = "Phát âm thanh khi nhấn nút hoặc tương tác",
+                    title = stringResource(id = R.string.settings_in_app_sound),
+                    subtitle = stringResource(id = R.string.settings_in_app_sound_desc),
                     checked = isInAppSoundEnabled,
                     onCheckedChange = { isInAppSoundEnabled = it }
                 )
             }
 
             // 3. Cài đặt Theme
-            SettingsSection(title = "Giao diện (Theme)") {
+            SettingsSection(title = stringResource(id = R.string.settings_theme)) {
                 ThemeOptionItem(
-                    title = "Tiêu chuẩn (Standard)",
+                    title = stringResource(id = R.string.settings_theme_standard),
                     isSelected = currentTheme == "standard",
                     onClick = { onThemeChange("standard") }
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                 ThemeOptionItem(
-                    title = "GenZ (Xanh lá cây đen)",
+                    title = stringResource(id = R.string.settings_theme_genz),
                     isSelected = currentTheme == "genz",
                     onClick = { onThemeChange("genz") }
                 )
             }
 
             // 4. Cài đặt ngôn ngữ
-            SettingsSection(title = "Ngôn ngữ") {
+            SettingsSection(title = stringResource(id = R.string.settings_language)) {
                 LanguageOptionItem(
                     title = "Tiếng Việt",
-                    isSelected = selectedLanguage == "vi",
-                    onClick = { selectedLanguage = "vi" }
+                    isSelected = currentLanguage == "vi",
+                    onClick = { onLanguageChange("vi") }
                 )
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                 LanguageOptionItem(
                     title = "English",
-                    isSelected = selectedLanguage == "en",
-                    onClick = { selectedLanguage = "en" }
+                    isSelected = currentLanguage == "en",
+                    onClick = { onLanguageChange("en") }
                 )
             }
         }
