@@ -103,6 +103,15 @@ data class DoctorDetailDto(
     val doctorProfile: DoctorProfileDto? = null
 )
 
+data class NotificationDto(
+    val id: String,
+    val title: String,
+    val message: String,
+    val time: String, // or Date, assuming string for simplicity
+    val isRead: Boolean,
+    val type: String?
+)
+
 interface ApiService {
     @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
@@ -130,4 +139,12 @@ interface ApiService {
 
     @PATCH("api/appointments/{id}/status")
     suspend fun updateAppointmentStatus(@Path("id") appointmentId: String, @Body request: UpdateAppointmentStatusRequest): Appointment
+
+    @GET("api/notifications")
+    suspend fun getNotifications(): List<NotificationDto>
+
+    @PATCH("api/notifications/read-all")
+    suspend fun markAllNotificationsAsRead(): SimpleResponse
 }
+
+data class SimpleResponse(val message: String)

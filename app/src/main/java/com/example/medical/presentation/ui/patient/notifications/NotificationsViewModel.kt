@@ -23,8 +23,28 @@ class NotificationsViewModel(
     private fun loadNotifications() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            repository.getNotifications().collect { notifications ->
-                _uiState.update { it.copy(notifications = notifications, isLoading = false) }
+            repository.getNotifications().collect { result ->
+                when (result) {
+                    is com.example.medical.domain.model.Result.Success -> {
+                        _uiState.update { it.copy(notifications = result.data, isLoading = false) }
+                    }
+                    is com.example.medical.domain.model.Result.Error -> {
+                        _uiState.update { it.copy(isLoading = false) }
+                    }
+                    is com.example.medical.domain.model.Result.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
+        }
+    }
+
+    fun markAllAsRead() {
+        viewModelScope.launch {
+            repository.markAllAsRead().collect { result ->
+                if (result is com.example.medical.domain.model.Result.Success) {
+                    loadNotifications() // reload
+                }
             }
         }
     }
