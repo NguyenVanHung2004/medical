@@ -2,13 +2,15 @@ package com.example.medical.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PrimaryBlue = Color(0xFF1976D2)
+val PrimaryBlue = Color(0xFF0052CC)
+val PrimaryBlueLight = Color(0xFFE0E7FF)
 val PrimaryDark = Color(0xFF115293)
 val AccentColor = Color(0xFF4CAF50)
-val BackgroundLight = Color(0xFFF5F5F5)
+val BackgroundLight = Color(0xFFF8F9FD)
 val BackgroundDark = Color(0xFF121212)
-val TextPrimaryLight = Color(0xFF212121)
-val TextSecondaryLight = Color(0xFF757575)
+val TextPrimaryLight = Color(0xFF1E293B)
+val TextSecondaryLight = Color(0xFF64748B)
 val TextPrimaryDark = Color(0xFFFFFFFF)
 val TextSecondaryDark = Color(0xFFBDBDBD)
-val ErrorColor = Color(0xFFD32F2F)
+val ErrorColor = Color(0xFFEF4444)
+val DividerColor = Color(0xFFE2E8F0)

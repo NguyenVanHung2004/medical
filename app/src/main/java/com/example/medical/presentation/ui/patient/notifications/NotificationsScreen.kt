@@ -40,7 +40,7 @@ fun NotificationsScreen(uiState: NotificationsUiState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.bgLight))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Top Bar
         Row(
@@ -52,7 +52,7 @@ fun NotificationsScreen(uiState: NotificationsUiState) {
             Icon(
                 imageVector = Icons.Default.Notifications,
                 contentDescription = "Notifications",
-                tint = colorResource(id = R.color.primaryBlue),
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -60,7 +60,7 @@ fun NotificationsScreen(uiState: NotificationsUiState) {
                 text = stringResource(id = R.string.notifications_screen_title),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.primaryBlue)
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -68,7 +68,7 @@ fun NotificationsScreen(uiState: NotificationsUiState) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
                     text = stringResource(id = R.string.no_notifications),
-                    color = colorResource(id = R.color.textSecondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 16.sp
                 )
             }
@@ -95,8 +95,8 @@ fun NotificationCard(notification: Notification) {
     when (notification.type) {
         NotificationType.REMINDER -> {
             icon = Icons.Default.Schedule
-            iconTint = colorResource(id = R.color.primaryBlue)
-            iconBgColor = colorResource(id = R.color.primaryBlueLight)
+            iconTint = MaterialTheme.colorScheme.primary
+            iconBgColor = MaterialTheme.colorScheme.primaryContainer
         }
         NotificationType.UPDATE -> {
             icon = Icons.Default.Sync
@@ -111,8 +111,8 @@ fun NotificationCard(notification: Notification) {
 
         NotificationType.NEW_APPOINTMENT_REQUEST -> {
             icon = Icons.Default.Event
-            iconTint = colorResource(id = R.color.primaryBlue)
-            iconBgColor = colorResource(id = R.color.primaryBlueLight)
+            iconTint = MaterialTheme.colorScheme.primary
+            iconBgColor = MaterialTheme.colorScheme.primaryContainer
         }
         NotificationType.APPOINTMENT_CANCELLED -> {
             icon = Icons.Default.Cancel
@@ -130,7 +130,7 @@ fun NotificationCard(notification: Notification) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (notification.isUnread) Color.White else colorResource(id = R.color.bgLight)
+            containerColor = if (notification.isUnread) Color.White else MaterialTheme.colorScheme.background
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (notification.isUnread) 2.dp else 0.dp)
     ) {
@@ -156,20 +156,20 @@ fun NotificationCard(notification: Notification) {
                     text = notification.title,
                     fontSize = 16.sp,
                     fontWeight = if (notification.isUnread) FontWeight.Bold else FontWeight.Medium,
-                    color = colorResource(id = R.color.textPrimary)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = notification.message,
                     fontSize = 14.sp,
-                    color = colorResource(id = R.color.textSecondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 20.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = notification.timeAgo,
                     fontSize = 12.sp,
-                    color = colorResource(id = R.color.textSecondary)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             
@@ -178,7 +178,7 @@ fun NotificationCard(notification: Notification) {
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(colorResource(id = R.color.primaryBlue))
+                        .background(MaterialTheme.colorScheme.primary)
                 )
             }
         }
