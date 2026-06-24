@@ -17,28 +17,40 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryBlue,
+    primaryContainer = PrimaryDark,
     secondary = AccentColor,
     tertiary = PrimaryDark,
     background = BackgroundDark,
     surface = BackgroundDark,
+    surfaceVariant = BackgroundDark,
     onPrimary = TextPrimaryDark,
     onSecondary = TextPrimaryDark,
     onTertiary = TextPrimaryDark,
     onBackground = TextPrimaryDark,
     onSurface = TextPrimaryDark,
+    onSurfaceVariant = TextSecondaryDark,
+    error = ErrorColor,
+    outline = DividerColor,
+    outlineVariant = DividerColor
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryBlue,
+    primaryContainer = PrimaryBlueLight,
     secondary = AccentColor,
     tertiary = PrimaryDark,
     background = BackgroundLight,
-    surface = BackgroundLight,
-    onPrimary = TextPrimaryDark,
+    surface = androidx.compose.ui.graphics.Color.White,
+    surfaceVariant = BackgroundLight,
+    onPrimary = androidx.compose.ui.graphics.Color.White,
     onSecondary = TextPrimaryDark,
     onTertiary = TextPrimaryDark,
     onBackground = TextPrimaryLight,
     onSurface = TextPrimaryLight,
+    onSurfaceVariant = TextSecondaryLight,
+    error = ErrorColor,
+    outline = DividerColor,
+    outlineVariant = DividerColor
 )
 
 private val GenZColorScheme = darkColorScheme(
@@ -57,7 +69,8 @@ private val GenZColorScheme = darkColorScheme(
 @Composable
 fun MedicalAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
+
     themeName: String = "standard",
     content: @Composable () -> Unit
 ) {

@@ -4,7 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +29,10 @@ import androidx.compose.ui.unit.sp
 import com.example.medical.R
 import com.example.medical.presentation.theme.MedicalAppTheme
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +96,10 @@ fun ForgotPasswordStep1Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.forgot_password_title),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -108,51 +115,21 @@ fun ForgotPasswordStep1Screen(
             
             Spacer(modifier = Modifier.height(48.dp))
 
-            OutlinedTextField(
+            MedicalTextField(
                 value = uiState.emailOrPhone,
                 onValueChange = onEmailOrPhoneChange,
-                label = { Text(stringResource(id = R.string.email_or_phone_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email, 
-                        contentDescription = "Email/Phone Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
+                label = stringResource(id = R.string.email_or_phone_hint),
+                leadingIcon = Icons.Default.Email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
+            PrimaryButton(
+                text = stringResource(id = R.string.continue_button),
                 onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large,
-                contentPadding = PaddingValues(),
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(28.dp), 
-                        color = Color.White, 
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.continue_button),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+                isLoading = uiState.isLoading
+            )
 
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 Column {
@@ -230,7 +207,10 @@ fun ForgotPasswordStep2Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.enter_otp_title),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -246,51 +226,21 @@ fun ForgotPasswordStep2Screen(
             
             Spacer(modifier = Modifier.height(48.dp))
 
-            OutlinedTextField(
+            MedicalTextField(
                 value = uiState.otp,
                 onValueChange = onOtpChange,
-                label = { Text(stringResource(id = R.string.otp_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock, 
-                        contentDescription = "OTP Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true
+                label = stringResource(id = R.string.otp_hint),
+                leadingIcon = Icons.Default.Lock,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
+            PrimaryButton(
+                text = stringResource(id = R.string.verify_button),
                 onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large,
-                contentPadding = PaddingValues(),
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(28.dp), 
-                        color = Color.White, 
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.verify_button),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+                isLoading = uiState.isLoading
+            )
 
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 Column {
@@ -368,7 +318,10 @@ fun ForgotPasswordStep3Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.reset_password_title),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 26.sp
+                    ),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -384,58 +337,24 @@ fun ForgotPasswordStep3Screen(
             
             Spacer(modifier = Modifier.height(48.dp))
 
-            OutlinedTextField(
+            MedicalTextField(
                 value = uiState.newPassword,
                 onValueChange = onNewPasswordChange,
-                label = { Text(stringResource(id = R.string.new_password_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock, 
-                        contentDescription = "Lock Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                trailingIcon = {
-                    val image = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                    IconButton(onClick = { onPasswordVisibilityChange(!uiState.passwordVisible) }) {
-                        Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.primary.copy(alpha=0.7f))
-                    }
-                },
+                label = stringResource(id = R.string.new_password_hint),
+                leadingIcon = Icons.Default.Lock,
+                trailingIcon = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                onTrailingIconClick = { onPasswordVisibilityChange(!uiState.passwordVisible) },
                 visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
+            PrimaryButton(
+                text = stringResource(id = R.string.reset_password_button),
                 onClick = onSubmit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large,
-                contentPadding = PaddingValues(),
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(28.dp), 
-                        color = Color.White, 
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.reset_password_button),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+                isLoading = uiState.isLoading
+            )
 
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 Column {
@@ -443,7 +362,7 @@ fun ForgotPasswordStep3Screen(
                     Text(
                         text = uiState.errorMessage ?: "",
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -467,3 +386,4 @@ fun ForgotPasswordStep3Screen(
         }
     }
 }
+

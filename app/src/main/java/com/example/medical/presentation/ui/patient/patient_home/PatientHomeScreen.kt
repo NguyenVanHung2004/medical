@@ -40,6 +40,8 @@ import com.example.medical.presentation.ui.patient.appointments.AppointmentsRout
 import com.example.medical.presentation.ui.patient.notifications.NotificationsRoute
 import com.example.medical.presentation.ui.patient.profile.ProfileRoute
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 
 @Composable
 fun PatientHomeRoute(
@@ -73,16 +75,17 @@ fun PatientHomeScreen(
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp > 600
 
-    var currentTab by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("home") }
+    var currentTab by remember { mutableStateOf("home") }
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
-                currentTab = currentTab,
+            com.example.medical.presentation.ui.common.MedicalBottomNavigation(
+                currentRoute = currentTab,
+                role = com.example.medical.presentation.ui.common.UserRole.PATIENT,
                 onTabSelected = { currentTab = it }
             )
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(bottom = paddingValues.calculateBottomPadding())) {
             when (currentTab) {
@@ -180,18 +183,26 @@ fun HeaderSection(userName: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
-            Text(
-                text = stringResource(id = R.string.greeting_morning),
-                fontSize = 14.sp,
-                color = colorResource(id = R.color.textSecondary)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(id = R.drawable.medical_app_logo),
+                contentDescription = "Logo",
+                modifier = Modifier.size(40.dp)
             )
-            Text(
-                text = userName,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.textPrimary)
-            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = stringResource(id = R.string.greeting_morning),
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = userName,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
 
         Row(
@@ -202,13 +213,13 @@ fun HeaderSection(userName: String) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
-                    tint = colorResource(id = R.color.textPrimary)
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(colorResource(id = R.color.errorRed))
+                        .background(MaterialTheme.colorScheme.error)
                         .align(Alignment.TopEnd)
                 )
             }
@@ -230,7 +241,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -244,12 +255,12 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                     text = stringResource(id = R.string.upcoming_appointment),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.textSecondary)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Box(
                     modifier = Modifier
                         .background(
-                            color = colorResource(id = R.color.primaryBlueLight),
+                            color = MaterialTheme.colorScheme.primaryContainer,
                             shape = RoundedCornerShape(16.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 6.dp)
@@ -258,7 +269,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                         text = stringResource(id = R.string.in_hours, "2"),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = colorResource(id = R.color.primaryBlue)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -281,12 +292,12 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                         text = appointment.doctor.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = appointment.doctor.specialty,
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.textSecondary),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -303,7 +314,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .background(colorResource(id = R.color.bgLight), RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -311,7 +322,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                         Icon(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = "Ngày khám",
-                            tint = colorResource(id = R.color.primaryBlue),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -319,14 +330,14 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                             text = appointment.date,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .background(colorResource(id = R.color.bgLight), RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -334,7 +345,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                         Icon(
                             imageVector = Icons.Default.Info, // Use time icon if available
                             contentDescription = "Thời gian",
-                            tint = colorResource(id = R.color.primaryBlue),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -342,7 +353,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                             text = appointment.timeRange,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -359,7 +370,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                     onClick = { onClickDetail(appointment.id) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                     contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     Text(
@@ -373,7 +384,7 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
                     onClick = { onClickDetail(appointment.id) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.primaryBlue)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     Text(
@@ -402,7 +413,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         onNavigateToDoctorList("online", null)
                     },
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -410,7 +421,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         modifier = Modifier
                             .size(40.dp)
                             .background(
-                                colorResource(id = R.color.primaryBlueLight),
+                                MaterialTheme.colorScheme.primaryContainer,
                                 RoundedCornerShape(8.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -418,7 +429,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         Icon(
                             imageVector = Icons.Default.Call,
                             contentDescription = stringResource(id = R.string.action_telemedicine),
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -426,12 +437,12 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         text = stringResource(id = R.string.action_telemedicine),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(id = R.string.action_telemedicine_desc),
                         fontSize = 12.sp,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -442,7 +453,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         onNavigateToDoctorList("offline", null)
                     },
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -450,7 +461,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         modifier = Modifier
                             .size(40.dp)
                             .background(
-                                colorResource(id = R.color.primaryBlueLight),
+                                MaterialTheme.colorScheme.primaryContainer,
                                 RoundedCornerShape(8.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -458,7 +469,7 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             contentDescription = stringResource(id = R.string.action_in_person),
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -466,12 +477,12 @@ fun QuickActionsSection(onNavigateToDoctorList: (String, String?) -> Unit) {
                         text = stringResource(id = R.string.action_in_person),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(id = R.string.action_in_person_desc),
                         fontSize = 12.sp,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -494,13 +505,13 @@ fun PopularSpecialtiesSection(
                 text = stringResource(id = R.string.popular_specialties),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.textPrimary)
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = stringResource(id = R.string.see_all),
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.primaryBlue),
-                modifier = Modifier.clickable { onNavigateToDoctorList("", null) }
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { onNavigateToDoctorList("ALL", null) }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -518,21 +529,21 @@ fun PopularSpecialtiesSection(
                     Box(
                         modifier = Modifier
                             .size(64.dp)
-                            .background(colorResource(id = R.color.white), CircleShape)
-                            .border(1.dp, colorResource(id = R.color.dividerColor), CircleShape),
+                            .background(MaterialTheme.colorScheme.surface, CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = getSpecialtyIcon(specialty.name),
                             contentDescription = specialty.name,
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = specialty.name,
                         fontSize = 12.sp,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -547,7 +558,7 @@ fun HealthCornerSection() {
             text = stringResource(id = R.string.health_corner),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.textPrimary)
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
         Card(
@@ -556,7 +567,7 @@ fun HealthCornerSection() {
                 .height(160.dp)
                 .clickable(onClickLabel = stringResource(id = R.string.read_now)) { /* TODO */ },
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.primaryBlueLight)), // Fallback background
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer), // Fallback background
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -564,7 +575,7 @@ fun HealthCornerSection() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(colorResource(id = R.color.primaryBlueLight))
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                 )
 
                 Column(
@@ -575,14 +586,14 @@ fun HealthCornerSection() {
                 ) {
                     Box(
                         modifier = Modifier
-                            .background(colorResource(id = R.color.white), RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.health_corner),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.primaryBlue)
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -590,7 +601,7 @@ fun HealthCornerSection() {
                         text = "5 cách phòng ngừa\ncúm mùa hiệu quả",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -598,12 +609,12 @@ fun HealthCornerSection() {
                             text = stringResource(id = R.string.read_now),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.primaryBlue)
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = stringResource(id = R.string.read_now),
-                            tint = colorResource(id = R.color.primaryBlue),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -613,68 +624,6 @@ fun HealthCornerSection() {
     }
 }
 
-@Composable
-fun BottomNavigationBar(
-    currentTab: String = "home",
-    onTabSelected: (String) -> Unit = {}
-) {
-    NavigationBar(
-        containerColor = colorResource(id = R.color.white),
-        tonalElevation = 8.dp
-    ) {
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-            label = { Text(stringResource(id = R.string.bottom_nav_search)) },
-            selected = currentTab == "home",
-            onClick = { onTabSelected("home") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary),
-                indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.DateRange, contentDescription = "Appointments") },
-            label = { Text(stringResource(id = R.string.bottom_nav_appointments)) },
-            selected = currentTab == "appointments",
-            onClick = { onTabSelected("appointments") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary),
-                indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Notifications, contentDescription = "Notifications") },
-            label = { Text(stringResource(id = R.string.bottom_nav_notifications)) },
-            selected = currentTab == "notifications",
-            onClick = { onTabSelected("notifications") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary)
-            )
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-            label = { Text(stringResource(id = R.string.bottom_nav_profile)) },
-            selected = currentTab == "profile",
-            onClick = { onTabSelected("profile") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = colorResource(id = R.color.primaryBlue),
-                selectedTextColor = colorResource(id = R.color.primaryBlue),
-                unselectedIconColor = colorResource(id = R.color.textSecondary),
-                unselectedTextColor = colorResource(id = R.color.textSecondary),
-                indicatorColor = colorResource(id = R.color.primaryBlueLight)
-            )
-        )
-    }
-}
 
 fun getSpecialtyIcon(name: String): ImageVector {
     return when {
@@ -692,3 +641,4 @@ fun getSpecialtyIcon(name: String): ImageVector {
         else -> Icons.Default.LocalHospital
     }
 }
+

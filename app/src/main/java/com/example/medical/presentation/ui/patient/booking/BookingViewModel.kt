@@ -42,10 +42,17 @@ class BookingViewModel(
 
     fun selectDate(date: BookingDate) {
         _uiState.update { it.copy(selectedDate = date, selectedTimeSlot = null) }
-        viewModelScope.launch {
-            repository.getTimeSlots(date.dateString).collect { slots ->
-                _uiState.update { it.copy(timeSlots = slots) }
+        val doctor = _uiState.value.doctor
+        if (doctor != null) {
+            val scheduleSlots = doctor.workingSchedule[date.dayOfWeekEnum] ?: emptyList()
+            val slots = scheduleSlots.mapIndexed { index, slot ->
+                TimeSlot(
+                    id = index.toString(),
+                    timeRange = slot.time,
+                    isAvailable = slot.isAvailable
+                )
             }
+            _uiState.update { it.copy(timeSlots = slots) }
         }
     }
 

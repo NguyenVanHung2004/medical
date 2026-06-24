@@ -38,11 +38,11 @@ class BookingSuccessViewModel(
                 _uiState.update { it.copy(doctor = doctor) }
                 if (doctor != null) {
                     bookAppointmentUseCase(
-                        doctorName = doctor.name,
-                        avatarUrl = doctor.avatarUrl,
-                        specialty = doctor.specialty,
+                        doctorId = doctor.id,
                         date = date,
-                        timeRange = time
+                        timeRange = time,
+                        reason = "Khám bệnh", // Can be updated if UI adds a reason field
+                        type = "OFFLINE" // Defaulting to offline for now
                     )
                 }
             }

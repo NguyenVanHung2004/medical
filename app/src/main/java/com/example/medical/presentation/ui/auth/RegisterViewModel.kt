@@ -65,7 +65,8 @@ class RegisterViewModel(
                 phone = if (currentState.selectedTab == 1) currentState.phone else "",
                 password = if (currentState.selectedTab == 0) currentState.password else currentState.otp,
                 confirmPassword = if (currentState.selectedTab == 0) currentState.confirmPassword else currentState.otp,
-                isPhoneTab = currentState.selectedTab == 1
+                isPhoneTab = currentState.selectedTab == 1,
+                isDoctor = currentState.isDoctor
             ).collect { result ->
                 when (result) {
                     is Result.Loading -> {

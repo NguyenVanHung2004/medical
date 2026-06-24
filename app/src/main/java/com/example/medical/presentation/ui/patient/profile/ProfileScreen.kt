@@ -30,23 +30,24 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.BorderStroke
+import com.example.medical.presentation.ui.common.SecondaryButton
 
 @Composable
 fun ProfileRoute(
     viewModel: ProfileViewModel = koinViewModel(),
-    onLogout: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onLogout: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    ProfileScreen(uiState = uiState, onLogout = onLogout, onNavigateToSettings = onNavigateToSettings)
+    ProfileScreen(uiState = uiState, onLogout = onLogout)
 }
 
 @Composable
-fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigateToSettings: () -> Unit = {}) {
+fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.bgLight))
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
     ) {
         // Top Bar
@@ -59,7 +60,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
             Icon(
                 imageVector = Icons.Default.LocalHospital,
                 contentDescription = "Logo",
-                tint = colorResource(id = R.color.primaryBlue),
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -67,7 +68,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                 text = "MediConnect",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.primaryBlue)
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -92,20 +93,20 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                     text = profile.fullName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.textPrimary)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedButton(
                     onClick = { /* TODO */ },
                     shape = RoundedCornerShape(20.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                    border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = null,
-                        tint = colorResource(id = R.color.primaryBlue),
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -113,7 +114,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                         text = stringResource(id = R.string.edit_profile),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.primaryBlue)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -122,9 +123,9 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                 // Section 1: Personal Info
                 InfoCard(title = stringResource(id = R.string.personal_info), icon = Icons.Default.PersonOutline) {
                     InfoRow(label = stringResource(id = R.string.full_name), value = profile.fullName)
-                    HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline, modifier = Modifier.padding(vertical = 12.dp))
                     InfoRow(label = stringResource(id = R.string.dob), value = profile.dob)
-                    HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline, modifier = Modifier.padding(vertical = 12.dp))
                     InfoRow(label = stringResource(id = R.string.gender), value = profile.gender)
                 }
 
@@ -133,32 +134,32 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                 // Section 2: Contact
                 InfoCard(title = stringResource(id = R.string.contact_info), icon = Icons.Default.ContactMail) {
                     InfoRow(label = "Email", value = profile.email)
-                    HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline, modifier = Modifier.padding(vertical = 12.dp))
                     InfoRow(label = stringResource(id = R.string.phone_hint), value = profile.phone)
-                    HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline, modifier = Modifier.padding(vertical = 12.dp))
                     InfoRow(label = stringResource(id = R.string.address), value = profile.address)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Section 3: Medical Info
-                InfoCard(title = stringResource(id = R.string.medical_info), icon = Icons.Default.FavoriteBorder, iconTint = colorResource(id = R.color.errorRed)) {
+                InfoCard(title = stringResource(id = R.string.medical_info), icon = Icons.Default.FavoriteBorder, iconTint = MaterialTheme.colorScheme.error) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(colorResource(id = R.color.bgLight), RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                             .padding(12.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.blood_type),
                             fontSize = 12.sp,
-                            color = colorResource(id = R.color.textSecondary)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.WaterDrop,
                                 contentDescription = null,
-                                tint = colorResource(id = R.color.errorRed),
+                                tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
@@ -166,7 +167,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                                 text = profile.bloodType ?: "N/A",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = colorResource(id = R.color.errorRed)
+                                color = MaterialTheme.colorScheme.error
                             )
                         }
                     }
@@ -174,20 +175,20 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(colorResource(id = R.color.bgLight), RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                             .padding(12.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.allergies),
                             fontSize = 12.sp,
-                            color = colorResource(id = R.color.textSecondary)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = profile.allergies ?: "N/A",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -203,7 +204,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                         text = stringResource(id = R.string.settings_header),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -213,14 +214,24 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column {
                         SettingsRow(
-                            icon = Icons.Default.Settings,
-                            title = "Cài đặt",
-                            onClick = onNavigateToSettings
+                            icon = Icons.Default.NotificationsNone,
+                            title = stringResource(id = R.string.notification_settings)
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                        SettingsRow(
+                            icon = Icons.Default.Language,
+                            title = stringResource(id = R.string.language),
+                            value = stringResource(id = R.string.language_vietnamese)
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                        SettingsRow(
+                            icon = Icons.Default.Security,
+                            title = stringResource(id = R.string.privacy_settings)
                         )
                     }
                 }
@@ -228,19 +239,12 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Logout Button
-                OutlinedButton(
+                SecondaryButton(
+                    text = stringResource(id = R.string.logout),
                     onClick = onLogout,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(24.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.errorRed)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.errorRed))
-                ) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(id = R.string.logout), fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                }
+                    icon = Icons.AutoMirrored.Filled.Logout,
+                    color = colorResource(id = R.color.errorRed)
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -248,7 +252,7 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
                 Text(
                     text = stringResource(id = R.string.delete_account),
                     fontSize = 12.sp,
-                    color = colorResource(id = R.color.textSecondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable { /* TODO */ }
                 )
@@ -263,13 +267,13 @@ fun ProfileScreen(uiState: ProfileUiState, onLogout: () -> Unit = {}, onNavigate
 fun InfoCard(
     title: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    iconTint: Color = colorResource(id = R.color.primaryBlue),
+    iconTint: Color = MaterialTheme.colorScheme.primary,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -285,7 +289,7 @@ fun InfoCard(
                     text = title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.textPrimary)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -304,14 +308,14 @@ fun InfoRow(label: String, value: String) {
         Text(
             text = label,
             fontSize = 12.sp,
-            color = colorResource(id = R.color.textSecondary),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
         )
         Text(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = colorResource(id = R.color.textPrimary),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(2f),
             textAlign = TextAlign.End
         )
@@ -322,42 +326,42 @@ fun InfoRow(label: String, value: String) {
 fun SettingsRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
-    value: String? = null,
-    onClick: () -> Unit = {}
+    value: String? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { /* TODO */ }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = colorResource(id = R.color.primaryBlue),
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = title,
             fontSize = 14.sp,
-            color = colorResource(id = R.color.textPrimary),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )
         if (value != null) {
             Text(
                 text = value,
                 fontSize = 12.sp,
-                color = colorResource(id = R.color.textSecondary)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = colorResource(id = R.color.textSecondary),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
     }
 }
+

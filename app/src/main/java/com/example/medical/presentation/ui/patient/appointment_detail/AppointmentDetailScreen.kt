@@ -29,6 +29,8 @@ import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.BorderStroke
+import com.example.medical.presentation.ui.common.SecondaryButton
 
 @Composable
 fun AppointmentDetailRoute(
@@ -42,7 +44,7 @@ fun AppointmentDetailRoute(
     
     if (uiState.isLoading && uiState.appointment == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = colorResource(id = R.color.primaryBlue))
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
     } else if (uiState.appointment != null) {
         AppointmentDetailScreen(
@@ -80,7 +82,7 @@ fun AppointmentDetailScreen(
                     Text(
                         text = stringResource(id = R.string.appointment_detail_title),
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 navigationIcon = {
@@ -88,7 +90,7 @@ fun AppointmentDetailScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_button_description),
-                            tint = colorResource(id = R.color.textPrimary)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -97,14 +99,14 @@ fun AppointmentDetailScreen(
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = "More",
-                            tint = colorResource(id = R.color.textPrimary)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -118,7 +120,7 @@ fun AppointmentDetailScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -129,14 +131,14 @@ fun AppointmentDetailScreen(
                 ) {
                     Row(
                         modifier = Modifier
-                            .background(colorResource(id = R.color.primaryBlueLight), RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = if (appointment.status == AppointmentStatus.CANCELLED) Icons.Default.Cancel else Icons.Default.CheckCircleOutline,
                             contentDescription = null,
-                            tint = if (appointment.status == AppointmentStatus.CANCELLED) colorResource(id = R.color.errorRed) else colorResource(id = R.color.primaryBlue),
+                            tint = if (appointment.status == AppointmentStatus.CANCELLED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -144,14 +146,14 @@ fun AppointmentDetailScreen(
                             text = stringResource(id = getStatusStringRes(appointment.status)),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (appointment.status == AppointmentStatus.CANCELLED) colorResource(id = R.color.errorRed) else colorResource(id = R.color.primaryBlue)
+                            color = if (appointment.status == AppointmentStatus.CANCELLED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "ID: ${appointment.id}",
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.textSecondary),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         letterSpacing = 1.sp
                     )
                 }
@@ -161,7 +163,7 @@ fun AppointmentDetailScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -180,12 +182,12 @@ fun AppointmentDetailScreen(
                                 text = appointment.doctor.name,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = colorResource(id = R.color.textPrimary)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = appointment.doctor.specialty.uppercase(),
                                 fontSize = 12.sp,
-                                color = colorResource(id = R.color.textSecondary),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -200,25 +202,25 @@ fun AppointmentDetailScreen(
                                     text = "4.9",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = colorResource(id = R.color.textPrimary)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = " (120 đánh giá)",
                                     fontSize = 14.sp,
-                                    color = colorResource(id = R.color.textSecondary)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = colorResource(id = R.color.dividerColor))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = MaterialTheme.colorScheme.outline)
 
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         OutlinedButton(
                             onClick = { /* TODO */ },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                            border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                         ) {
                             Text(stringResource(id = R.string.view_profile))
@@ -227,7 +229,7 @@ fun AppointmentDetailScreen(
                             onClick = onNavigateToChangeDoctor,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                            border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                         ) {
                             Text(stringResource(id = R.string.change_doctor))
@@ -240,7 +242,7 @@ fun AppointmentDetailScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -248,7 +250,7 @@ fun AppointmentDetailScreen(
                         Icon(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = "Time",
-                            tint = colorResource(id = R.color.primaryBlue),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
@@ -256,23 +258,23 @@ fun AppointmentDetailScreen(
                             Text(
                                 text = stringResource(id = R.string.time_label),
                                 fontSize = 12.sp,
-                                color = colorResource(id = R.color.textSecondary)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
                                 text = "${appointment.timeRange}\n${appointment.date}",
                                 fontSize = 16.sp,
-                                color = colorResource(id = R.color.textPrimary)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = colorResource(id = R.color.dividerColor))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = MaterialTheme.colorScheme.outline)
 
                     Row(verticalAlignment = Alignment.Top) {
                         Icon(
                             imageVector = if (appointment.type == AppointmentType.ONLINE) Icons.Default.Videocam else Icons.Default.LocationOn,
                             contentDescription = "Consultation Type",
-                            tint = colorResource(id = R.color.primaryBlue),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
@@ -280,12 +282,12 @@ fun AppointmentDetailScreen(
                             Text(
                                 text = stringResource(id = R.string.consultation_type_label),
                                 fontSize = 12.sp,
-                                color = colorResource(id = R.color.textSecondary)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
                                 text = if (appointment.type == AppointmentType.ONLINE) stringResource(id = R.string.online_consultation_type) else stringResource(id = R.string.offline_consultation_type),
                                 fontSize = 16.sp,
-                                color = colorResource(id = R.color.textPrimary)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             
@@ -295,8 +297,8 @@ fun AppointmentDetailScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(8.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = colorResource(id = R.color.primaryBlueLight),
-                                        contentColor = colorResource(id = R.color.primaryBlue)
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.primary
                                     )
                                 ) {
                                     Icon(imageVector = Icons.Default.Link, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -309,8 +311,8 @@ fun AppointmentDetailScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(8.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = colorResource(id = R.color.primaryBlueLight),
-                                        contentColor = colorResource(id = R.color.primaryBlue)
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.primary
                                     )
                                 ) {
                                     Icon(imageVector = Icons.Default.Map, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -327,33 +329,33 @@ fun AppointmentDetailScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = stringResource(id = R.string.patient_label),
                         fontSize = 12.sp,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = appointment.patientName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = colorResource(id = R.color.dividerColor))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outline)
 
                     Text(
                         text = stringResource(id = R.string.reason_for_visit_label),
                         fontSize = 12.sp,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = appointment.reason ?: "Không có thông tin",
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.textPrimary),
+                        color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
                     )
                 }
@@ -363,7 +365,7 @@ fun AppointmentDetailScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -371,7 +373,7 @@ fun AppointmentDetailScreen(
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = null,
-                            tint = colorResource(id = R.color.textPrimary),
+                            tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -379,7 +381,7 @@ fun AppointmentDetailScreen(
                             text = stringResource(id = R.string.privacy_and_profile),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
@@ -393,7 +395,7 @@ fun AppointmentDetailScreen(
                         Text(
                             text = stringResource(id = R.string.allow_view_prescription_history),
                             fontSize = 14.sp,
-                            color = colorResource(id = R.color.textPrimary),
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f)
                         )
                         Switch(
@@ -414,7 +416,7 @@ fun AppointmentDetailScreen(
                         Text(
                             text = stringResource(id = R.string.share_test_results),
                             fontSize = 14.sp,
-                            color = colorResource(id = R.color.textPrimary),
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f)
                         )
                         Switch(
@@ -433,17 +435,10 @@ fun AppointmentDetailScreen(
 
             if (appointment.status != com.example.medical.domain.model.AppointmentStatus.CANCELLED) {
                 // Action Buttons
-                OutlinedButton(
-                    onClick = onNavigateToReschedule,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
-                ) {
-                    Text(stringResource(id = R.string.change_appointment), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                SecondaryButton(
+                    text = stringResource(id = R.string.change_appointment),
+                    onClick = onNavigateToReschedule
+                )
 
                 TextButton(
                     onClick = onCancelRequest,
@@ -455,7 +450,7 @@ fun AppointmentDetailScreen(
                         text = stringResource(id = R.string.cancel_appointment_action),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.errorRed)
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -475,21 +470,21 @@ fun AppointmentDetailScreen(
                             "Chính sách hủy: Nếu bạn hủy trước 24 giờ, bạn sẽ được hoàn tiền 100%. " +
                             "Hủy trong vòng 24 giờ sẽ chịu phí 30%.",
                             fontSize = 12.sp,
-                            color = colorResource(id = R.color.textSecondary)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
                 confirmButton = {
                     Button(
                         onClick = onConfirmCancel,
-                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.errorRed))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text("Xác nhận Hủy")
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = onDismissCancel) {
-                        Text("Đóng", color = colorResource(id = R.color.textSecondary))
+                        Text("Đóng", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             )
@@ -507,3 +502,4 @@ fun getStatusStringRes(status: AppointmentStatus): Int {
         AppointmentStatus.CONFIRMED -> R.string.status_confirmed
     }
 }
+
