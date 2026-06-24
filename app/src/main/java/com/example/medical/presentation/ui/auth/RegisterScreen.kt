@@ -156,10 +156,7 @@ fun RegisterScreen(
 
                 Text(
                     text = stringResource(id = R.string.create_new_account),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -178,7 +175,7 @@ fun RegisterScreen(
                     .height(48.dp)
                     .background(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = MaterialTheme.shapes.medium
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -189,7 +186,7 @@ fun RegisterScreen(
                         .padding(4.dp)
                         .background(
                             color = if (uiState.selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Transparent,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = MaterialTheme.shapes.small
                         )
                         .clickable { onTabChange(0) },
                     contentAlignment = Alignment.Center
@@ -208,7 +205,7 @@ fun RegisterScreen(
                         .padding(4.dp)
                         .background(
                             color = if (uiState.selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Transparent,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = MaterialTheme.shapes.small
                         )
                         .clickable { onTabChange(1) },
                     contentAlignment = Alignment.Center
@@ -238,7 +235,7 @@ fun RegisterScreen(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -268,7 +265,7 @@ fun RegisterScreen(
                     },
                     visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -298,7 +295,7 @@ fun RegisterScreen(
                     },
                     visualTransformation = if (uiState.confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -336,7 +333,7 @@ fun RegisterScreen(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -374,7 +371,7 @@ fun RegisterScreen(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -397,7 +394,7 @@ fun RegisterScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -413,7 +410,7 @@ fun RegisterScreen(
                 } else {
                     Text(
                         text = stringResource(id = R.string.register_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -424,7 +421,7 @@ fun RegisterScreen(
                     Text(
                         text = uiState.errorMessage ?: "",
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -498,13 +495,13 @@ fun SocialButton(text: String, color: Color, onClick: () -> Unit = {}) {
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.size(56.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         contentPadding = PaddingValues(0.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleLarge,
             color = color
         )
     }

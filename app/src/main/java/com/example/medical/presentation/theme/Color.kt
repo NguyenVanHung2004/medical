@@ -12,3 +12,10 @@ val TextSecondaryLight = Color(0xFF757575)
 val TextPrimaryDark = Color(0xFFFFFFFF)
 val TextSecondaryDark = Color(0xFFBDBDBD)
 val ErrorColor = Color(0xFFD32F2F)
+
+// GenZ Theme Colors
+val GenZPrimary = Color(0xFF00FF00) // Xanh lá neon
+val GenZBackground = Color(0xFF000000) // Đen tuyền
+val GenZSurface = Color(0xFF1A1A1A)
+val GenZText = Color(0xFFFFFFFF)
+val GenZSecondaryText = Color(0xFFBDBDBD)

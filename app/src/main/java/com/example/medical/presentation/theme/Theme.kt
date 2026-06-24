@@ -41,13 +41,28 @@ private val LightColorScheme = lightColorScheme(
     onSurface = TextPrimaryLight,
 )
 
+private val GenZColorScheme = darkColorScheme(
+    primary = GenZPrimary,
+    secondary = GenZPrimary,
+    tertiary = GenZPrimary,
+    background = GenZBackground,
+    surface = GenZSurface,
+    onPrimary = GenZBackground,
+    onSecondary = GenZBackground,
+    onTertiary = GenZBackground,
+    onBackground = GenZText,
+    onSurface = GenZText,
+)
+
 @Composable
 fun MedicalAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    themeName: String = "standard",
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
+        themeName == "genz" -> GenZColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -66,6 +81,8 @@ fun MedicalAppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

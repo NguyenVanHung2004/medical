@@ -92,10 +92,7 @@ fun ForgotPasswordStep1Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.forgot_password_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -123,7 +120,7 @@ fun ForgotPasswordStep1Screen(
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true
             )
@@ -135,7 +132,7 @@ fun ForgotPasswordStep1Screen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(),
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
@@ -152,7 +149,7 @@ fun ForgotPasswordStep1Screen(
                 } else {
                     Text(
                         text = stringResource(id = R.string.continue_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -233,10 +230,7 @@ fun ForgotPasswordStep2Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.enter_otp_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -264,7 +258,7 @@ fun ForgotPasswordStep2Screen(
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true
             )
@@ -276,7 +270,7 @@ fun ForgotPasswordStep2Screen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(),
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
@@ -293,7 +287,7 @@ fun ForgotPasswordStep2Screen(
                 } else {
                     Text(
                         text = stringResource(id = R.string.verify_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -374,10 +368,7 @@ fun ForgotPasswordStep3Screen(
                 }
                 Text(
                     text = stringResource(id = R.string.reset_password_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -412,7 +403,7 @@ fun ForgotPasswordStep3Screen(
                 },
                 visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true
             )
@@ -424,7 +415,7 @@ fun ForgotPasswordStep3Screen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(),
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
@@ -441,7 +432,7 @@ fun ForgotPasswordStep3Screen(
                 } else {
                     Text(
                         text = stringResource(id = R.string.reset_password_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -452,7 +443,7 @@ fun ForgotPasswordStep3Screen(
                     Text(
                         text = uiState.errorMessage ?: "",
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center
                     )
                 }

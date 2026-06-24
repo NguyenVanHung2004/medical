@@ -46,6 +46,7 @@ fun PatientHomeRoute(
     onNavigateToDoctorList: (String, String?) -> Unit,
     onNavigateToAppointmentDetail: (String) -> Unit,
     onLogout: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     viewModel: PatientHomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -53,7 +54,8 @@ fun PatientHomeRoute(
         uiState = uiState,
         onNavigateToDoctorList = onNavigateToDoctorList,
         onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
-        onLogout = onLogout
+        onLogout = onLogout,
+        onNavigateToSettings = onNavigateToSettings
     )
 }
 
@@ -64,7 +66,8 @@ fun PatientHomeScreen(
     uiState: PatientHomeUiState,
     onNavigateToDoctorList: (String, String?) -> Unit,
     onNavigateToAppointmentDetail: (String) -> Unit,
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
 
     val configuration = LocalConfiguration.current
@@ -156,7 +159,10 @@ fun PatientHomeScreen(
                 )
             }
             "profile" -> {
-                ProfileRoute(onLogout = onLogout)
+                ProfileRoute(
+                    onLogout = onLogout,
+                    onNavigateToSettings = onNavigateToSettings
+                )
             }
 
             "notifications" -> {
