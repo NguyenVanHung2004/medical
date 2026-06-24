@@ -23,6 +23,11 @@ import com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentR
 import com.example.medical.presentation.ui.doctor.home.DoctorHomeRoute
 import com.example.medical.presentation.ui.doctor.notification.DoctorNotificationRoute
 import com.example.medical.presentation.ui.doctor.profile.DoctorProfileRoute
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.tween
 
 @Composable
 fun DoctorMainScreen(
@@ -35,40 +40,21 @@ fun DoctorMainScreen(
     Scaffold(
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
+            val currentRoute = navBackStackEntry?.destination?.route ?: "doctor_home"
 
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface
-            ) {
-                val items = listOf(
-                    BottomNavItem.Home,
-                    BottomNavItem.Appointments,
-                    BottomNavItem.Notifications,
-                    BottomNavItem.Profile
-                )
-
-                items.forEach { screen ->
-                    val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                    NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = stringResource(screen.titleResId)) },
-                        label = { Text(stringResource(screen.titleResId)) },
-                        selected = isSelected,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                        )
-                    )
+            com.example.medical.presentation.ui.common.MedicalBottomNavigation(
+                currentRoute = currentRoute,
+                role = com.example.medical.presentation.ui.common.UserRole.DOCTOR,
+                onTabSelected = { route ->
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            }
+            )
         }
     ) { paddingValues ->
         val items = listOf(
@@ -86,19 +72,19 @@ fun DoctorMainScreen(
                 val initialIndex = items.indexOfFirst { it.route == initialState.destination.route }
                 val targetIndex = items.indexOfFirst { it.route == targetState.destination.route }
                 val isForward = targetIndex > initialIndex
-                androidx.compose.animation.slideInHorizontally(
+                slideInHorizontally(
                     initialOffsetX = { if (isForward) it else -it },
-                    animationSpec = androidx.compose.animation.core.tween(300)
-                ) + androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(300))
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
             },
             exitTransition = {
                 val initialIndex = items.indexOfFirst { it.route == initialState.destination.route }
                 val targetIndex = items.indexOfFirst { it.route == targetState.destination.route }
                 val isForward = targetIndex > initialIndex
-                androidx.compose.animation.slideOutHorizontally(
+                slideOutHorizontally(
                     targetOffsetX = { if (isForward) -it else it },
-                    animationSpec = androidx.compose.animation.core.tween(300)
-                ) + androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
             }
         ) {
             composable(BottomNavItem.Home.route) {
@@ -140,3 +126,4 @@ fun DoctorMainScreen(
         }
     }
 }
+

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 object MockSharedData {
-    val mockPatient = User(
+    var mockPatient = User(
         id = "u1", 
         email = "test@gmail.com", 
         phone = null, 

@@ -29,6 +29,11 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeOut
 
 @Composable
 fun DoctorAppointmentRoute(
@@ -154,15 +159,15 @@ fun DoctorAppointmentScreen(
                             }
                         }
 
-                        androidx.compose.animation.AnimatedContent(
+                        AnimatedContent(
                             targetState = selectedTabIndex,
                             transitionSpec = {
                                 if (targetState > initialState) {
-                                    (androidx.compose.animation.slideInHorizontally { width -> width } + androidx.compose.animation.fadeIn())
-                                        .togetherWith(androidx.compose.animation.slideOutHorizontally { width -> -width } + androidx.compose.animation.fadeOut())
+                                    (slideInHorizontally { width -> width } + fadeIn())
+                                        .togetherWith(slideOutHorizontally { width -> -width } + fadeOut())
                                 } else {
-                                    (androidx.compose.animation.slideInHorizontally { width -> -width } + androidx.compose.animation.fadeIn())
-                                        .togetherWith(androidx.compose.animation.slideOutHorizontally { width -> width } + androidx.compose.animation.fadeOut())
+                                    (slideInHorizontally { width -> -width } + fadeIn())
+                                        .togetherWith(slideOutHorizontally { width -> width } + fadeOut())
                                 }
                             },
                             label = "tab_transition"
@@ -514,7 +519,8 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
                         }
                         
                         // Location (if offline)
-                        if (appointment.type == AppointmentType.OFFLINE && appointment.location != null) {
+                        val locationText = appointment.location ?: appointment.doctor.hospital
+                        if (appointment.type == AppointmentType.OFFLINE && locationText.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(2.dp))
                             Row(verticalAlignment = Alignment.Top) {
                                 Icon(
@@ -525,7 +531,7 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = appointment.location,
+                                    text = locationText,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )
@@ -590,3 +596,4 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
         }
     }
 }
+
