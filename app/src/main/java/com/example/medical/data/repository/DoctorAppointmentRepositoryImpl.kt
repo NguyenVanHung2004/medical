@@ -65,4 +65,20 @@ class DoctorAppointmentRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override suspend fun getPatientDetail(patientId: String): com.example.medical.domain.model.PatientDetail? {
+        // Mock data since API endpoint doesn't exist yet
+        return com.example.medical.domain.model.PatientDetail(
+            id = patientId,
+            fullName = "Nguyễn Văn A",
+            avatarUrl = null,
+            phone = "0123456789",
+            email = "nguyenvana@gmail.com",
+            dob = "01/01/1990",
+            gender = "Nam",
+            address = "123 Đường Xuân Thủy, Cầu Giấy, Hà Nội",
+            bloodType = "O+",
+            allergies = "Không có"
+        )
+    }
 }

@@ -32,6 +32,7 @@ import androidx.compose.foundation.BorderStroke
 fun DoctorAppointmentDetailRoute(
     appointmentId: String,
     onNavigateBack: () -> Unit,
+    onNavigateToPatientDetail: (String) -> Unit,
     viewModel: DoctorAppointmentDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -42,7 +43,8 @@ fun DoctorAppointmentDetailRoute(
 
     DoctorAppointmentDetailScreen(
         uiState = uiState,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = onNavigateBack,
+        onNavigateToPatientDetail = onNavigateToPatientDetail
     )
 }
 
@@ -50,7 +52,8 @@ fun DoctorAppointmentDetailRoute(
 @Composable
 fun DoctorAppointmentDetailScreen(
     uiState: DoctorAppointmentDetailUiState,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToPatientDetail: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -213,7 +216,10 @@ fun DoctorAppointmentDetailScreen(
 
                                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                         OutlinedButton(
-                                            onClick = { /* TODO */ },
+                                            onClick = { 
+                                                val safeId = (appointment.patientIdStr as String?) ?: "unknown"
+                                                onNavigateToPatientDetail(safeId) 
+                                            },
                                             modifier = Modifier.weight(1f),
                                             shape = RoundedCornerShape(8.dp),
                                             border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),

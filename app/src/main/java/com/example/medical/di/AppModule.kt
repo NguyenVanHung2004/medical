@@ -61,6 +61,7 @@ import com.example.medical.domain.usecase.doctor.MarkAllNotificationsAsReadUseCa
 import com.example.medical.domain.usecase.doctor.RejectAppointmentUseCase
 import com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentViewModel
 import com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailViewModel
+import com.example.medical.presentation.ui.doctor.patient_detail.PatientDetailViewModel
 import com.example.medical.presentation.ui.doctor.notification.DoctorNotificationViewModel
 import com.example.medical.presentation.ui.doctor.profile.DoctorProfileViewModel
 import com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailViewModel
@@ -125,6 +126,7 @@ val useCaseModule = module {
     factory { ConfirmAppointmentUseCase(get()) }
     factory { RejectAppointmentUseCase(get()) }
     factory { GetDoctorAppointmentDetailUseCase(get()) }
+    factory { com.example.medical.domain.usecase.doctor.GetPatientDetailUseCase(get()) }
 }
 
 val viewModelModule = module {
@@ -135,6 +137,7 @@ val viewModelModule = module {
     viewModel { DoctorNotificationViewModel(get(), get(), get(), get()) }
     viewModel { DoctorProfileViewModel(get()) }
     viewModel { DoctorAppointmentDetailViewModel(get()) }
+    viewModel { PatientDetailViewModel(get()) }
     viewModel { RegisterViewModel(get()) }
     viewModel { PatientHomeViewModel(get()) }
     viewModel { DoctorListViewModel(get(), get(), get()) }
