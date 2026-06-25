@@ -26,7 +26,7 @@ class AppointmentsViewModel(
         loadAppointments()
     }
 
-    private fun loadAppointments() {
+    fun loadAppointments() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             
@@ -55,15 +55,19 @@ class AppointmentsViewModel(
     fun confirmCancelAppointment() {
         val appointmentId = _uiState.value.appointmentToCancel ?: return
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, appointmentToCancel = null) }
+            _uiState.update { it.copy(isLoading = true, appointmentToCancel = null, error = null, successMessage = null) }
             try {
                 cancelAppointmentUseCase(appointmentId)
-                _uiState.update { it.copy(isLoading = false) }
+                _uiState.update { it.copy(isLoading = false, successMessage = "Đã hủy lịch hẹn") }
                 loadAppointments()
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = e.message) }
+                _uiState.update { it.copy(isLoading = false, error = e.message ?: "Không thể hủy lịch hẹn") }
             }
         }
+    }
+
+    fun clearMessages() {
+        _uiState.update { it.copy(error = null, successMessage = null) }
     }
 
     fun rescheduleAppointment(appointmentId: String) {

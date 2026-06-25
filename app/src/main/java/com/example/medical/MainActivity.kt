@@ -227,6 +227,9 @@ class MainActivity : ComponentActivity() {
                                         onNavigateToAppointmentDetail = { appointmentId ->
                                             navController.navigate("appointment_detail/$appointmentId")
                                         },
+                                        onNavigateToBooking = { doctorId ->
+                                            navController.navigate("booking/$doctorId/offline")
+                                        },
                                         onLogout = {
                                             sharedPreferences.edit().putBoolean("is_logged_in", false).apply()
                                             navController.navigate("welcome") {

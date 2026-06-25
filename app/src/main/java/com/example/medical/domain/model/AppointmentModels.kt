@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 // Tham chiếu ConsultationType từ DoctorModels (hoặc Profile) 
 // Enum AppointmentStatus cũng từ DoctorModels. 
 typealias AppointmentType = ConsultationType
-// Nếu chưa có thì sẽ phải tạo.
 
 data class AppointmentDomainModel(
     val id: String,

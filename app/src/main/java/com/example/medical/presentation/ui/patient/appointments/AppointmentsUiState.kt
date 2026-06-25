@@ -7,5 +7,6 @@ data class AppointmentsUiState(
     val historyAppointments: List<Appointment> = emptyList(),
     val isLoading: Boolean = false,
     val appointmentToCancel: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val successMessage: String? = null
 )

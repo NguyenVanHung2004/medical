@@ -1,6 +1,7 @@
 package com.example.medical.presentation.ui.patient.patient_home
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,11 +43,13 @@ import com.example.medical.presentation.ui.patient.profile.ProfileRoute
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun PatientHomeRoute(
     onNavigateToDoctorList: (String, String?) -> Unit,
     onNavigateToAppointmentDetail: (String) -> Unit,
+    onNavigateToBooking: (String) -> Unit = {},
     onLogout: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     viewModel: PatientHomeViewModel = koinViewModel()
@@ -56,6 +59,7 @@ fun PatientHomeRoute(
         uiState = uiState,
         onNavigateToDoctorList = onNavigateToDoctorList,
         onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
+        onNavigateToBooking = onNavigateToBooking,
         onLogout = onLogout,
         onNavigateToSettings = onNavigateToSettings
     )
@@ -68,6 +72,7 @@ fun PatientHomeScreen(
     uiState: PatientHomeUiState,
     onNavigateToDoctorList: (String, String?) -> Unit,
     onNavigateToAppointmentDetail: (String) -> Unit,
+    onNavigateToBooking: (String) -> Unit = {},
     onLogout: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {}
 ) {
@@ -188,8 +193,8 @@ fun HeaderSection(userName: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            androidx.compose.foundation.Image(
-                painter = androidx.compose.ui.res.painterResource(id = R.drawable.medical_app_logo),
+           Image(
+                painter = painterResource(id = R.drawable.medical_app_logo),
                 contentDescription = "Logo",
                 modifier = Modifier.size(40.dp)
             )
@@ -213,21 +218,6 @@ fun HeaderSection(userName: String) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Box {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.error)
-                        .align(Alignment.TopEnd)
-                )
-            }
-
             AsyncImage(
                 model = "https://i.pravatar.cc/150?img=11",
                 contentDescription = "Avatar",
@@ -282,8 +272,8 @@ fun UpcomingAppointmentCard(appointment: Appointment, onClickDetail: (String) ->
 
             // Doctor Info
             Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = appointment.doctor.avatarUrl,
+                Image(
+                    painter = painterResource(id = R.drawable.doctor_avatar),
                     contentDescription = appointment.doctor.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
