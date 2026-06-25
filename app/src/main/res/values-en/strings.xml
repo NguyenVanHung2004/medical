@@ -199,11 +199,11 @@
     <string name="spec_dentistry">Dentistry</string>
 
     <string name="bottom_nav_search">Search</string>
-    <string name="bottom_nav_appointments">Appointments</string>
+    <string name="bottom_nav_appointments">Appointment</string>
     <string name="bottom_nav_profile">Profile</string>
     <string name="bottom_nav_notifications">Notifications</string>
-    <string name="appointments">Appointments</string>
-    <string name="my_appointments_title">My Appointments</string>
+    <string name="appointments">Appointment</string>
+    <string name="my_appointments_title">My Appointment</string>
     <string name="tab_upcoming_appointments">Upcoming</string>
     <string name="tab_history_appointments">History</string>
     <string name="no_upcoming_appointments">No upcoming appointments.</string>
