@@ -216,7 +216,10 @@ fun DoctorAppointmentDetailScreen(
 
                                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                         OutlinedButton(
-                                            onClick = { onNavigateToPatientDetail(appointment.patientIdStr) },
+                                            onClick = { 
+                                                val safeId = (appointment.patientIdStr as String?) ?: "unknown"
+                                                onNavigateToPatientDetail(safeId) 
+                                            },
                                             modifier = Modifier.weight(1f),
                                             shape = RoundedCornerShape(8.dp),
                                             border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
