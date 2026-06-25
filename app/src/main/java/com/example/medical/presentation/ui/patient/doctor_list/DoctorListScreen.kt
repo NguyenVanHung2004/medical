@@ -1,6 +1,7 @@
 package com.example.medical.presentation.ui.patient.doctor_list
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,6 +47,7 @@ import com.example.medical.domain.model.DoctorDetail
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun DoctorListRoute(
@@ -232,8 +234,8 @@ fun DoctorCard(doctor: DoctorDetail, onClick: () -> Unit) {
         ) {
             // Avatar with Online Indicator
             Box {
-                AsyncImage(
-                    model = doctor.avatarUrl,
+                Image(
+                    painter = painterResource(id = R.drawable.doctor_avatar),
                     contentDescription = doctor.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

@@ -8,10 +8,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.DayOfWeek
 import java.time.format.DateTimeFormatter
 import com.example.medical.domain.model.Appointment
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
 
 class DoctorAppointmentViewModel(
     private val getDoctorAppointmentsUseCase: GetDoctorAppointmentsUseCase
@@ -34,9 +38,10 @@ class DoctorAppointmentViewModel(
         _uiState.update { it.copy(availableDates = dates, selectedDate = today) }
     }
 
-    private fun loadData() {
+    fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            val minDelayJob = async { delay(370) }
             getDoctorAppointmentsUseCase().collect { data ->
                 allScheduledAppointments = data.scheduledAppointments
                 
@@ -49,6 +54,7 @@ class DoctorAppointmentViewModel(
                     .filter { it.date == selectedDateStr1 || it.date == selectedDateStr2 }
                     .sortedBy { it.timeRange.split(" - ").firstOrNull() ?: it.timeRange }
 
+                minDelayJob.await()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -84,7 +90,17 @@ class DoctorAppointmentViewModel(
         viewModelScope.launch {
             getDoctorAppointmentsUseCase.respondToRequest(requestId, isAccept).onSuccess {
                 loadData()
+                val message = if (isAccept) "Đã chấp nhận yêu cầu" else "Đã từ chối yêu cầu"
+                showToast(message, ToastType.SUCCESS)
             }
+        }
+    }
+    
+    private fun showToast(message: String, type: ToastType) {
+        _uiState.update { it.copy(toastData = ToastData(message, type)) }
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(3000)
+            _uiState.update { it.copy(toastData = null) }
         }
     }
 }

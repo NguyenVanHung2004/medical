@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 
 class DoctorAppointmentDetailViewModel(
     private val getAppointmentDetailUseCase: GetDoctorAppointmentDetailUseCase
@@ -19,7 +21,9 @@ class DoctorAppointmentDetailViewModel(
     fun loadAppointmentDetail(id: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            val minDelayJob = async { delay(370) }
             getAppointmentDetailUseCase(id).collect { appointment ->
+                minDelayJob.await()
                 if (appointment != null) {
                     _uiState.update {
                         it.copy(

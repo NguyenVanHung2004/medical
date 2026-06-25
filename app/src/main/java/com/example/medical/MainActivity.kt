@@ -32,6 +32,12 @@ import androidx.compose.ui.platform.LocalContext
 import java.util.Locale
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -40,12 +46,32 @@ import com.example.medical.presentation.ui.patient.booking.BookingRoute
 import com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute
 import com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute
 import com.example.medical.presentation.ui.patient.patient_home.PatientHomeRoute
+import com.example.medical.presentation.ui.doctor.complete_profile.CompleteDoctorProfileRoute
+import com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailRoute
+import com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute
+import com.example.medical.presentation.ui.doctor.patient_detail.PatientDetailRoute
 import com.example.medical.presentation.ui.settings.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("LocalContextConfigurationRead")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
+        val lastAppEntry = sharedPreferences.getLong("last_app_entry", 0L)
+        val currentTime = System.currentTimeMillis()
+
+        // Xử lý timeout 5 phút chỉ khi mở app (onCreate)
+        if (isLoggedIn && lastAppEntry != 0L && (currentTime - lastAppEntry > 5 * 60 * 1000)) {
+            sharedPreferences.edit()
+                .putBoolean("is_logged_in", false)
+                .putLong("last_app_entry", currentTime)
+                .apply()
+        } else {
+            sharedPreferences.edit().putLong("last_app_entry", currentTime).apply()
+        }
+
         enableEdgeToEdge()
         setContent {
             val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -54,6 +80,17 @@ class MainActivity : ComponentActivity() {
             }
             var selectedLanguage by remember {
                 mutableStateOf(sharedPreferences.getString("language", "vi") ?: "vi")
+            }
+            
+            val systemTheme = androidx.compose.foundation.isSystemInDarkTheme()
+            var isDarkTheme by remember {
+                mutableStateOf(
+                    if (sharedPreferences.contains("is_dark_theme")) {
+                        sharedPreferences.getBoolean("is_dark_theme", false)
+                    } else {
+                        systemTheme
+                    }
+                )
             }
 
             val context = LocalContext.current
@@ -72,7 +109,7 @@ class MainActivity : ComponentActivity() {
                 LocalContext provides localeContext,
                 LocalConfiguration provides configuration
             ) {
-                MedicalAppTheme(themeName = selectedTheme) {
+                MedicalAppTheme(darkTheme = isDarkTheme, themeName = selectedTheme) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         Box(
                             modifier = Modifier.padding(innerPadding)
@@ -88,13 +125,29 @@ class MainActivity : ComponentActivity() {
                                 "welcome"
                             }
 
-                            NavHost(navController = navController, startDestination = startDest) {
+                            NavHost(
+                                navController = navController,
+                                startDestination = startDest,
+                                enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
+                                exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300)) + fadeOut(animationSpec = tween(300)) },
+                                popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
+                                popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300)) + fadeOut(animationSpec = tween(300)) }
+                            ) {
                                 composable("welcome") {
                                     WelcomeScreen(
                                         currentLanguage = selectedLanguage,
                                         onLanguageChange = { newLang ->
                                             selectedLanguage = newLang
                                             sharedPreferences.edit().putString("language", newLang).apply()
+                                        },
+                                        isDarkTheme = isDarkTheme,
+                                        onThemeToggle = {
+                                            isDarkTheme = !isDarkTheme
+                                            sharedPreferences.edit().putBoolean("is_dark_theme", isDarkTheme).apply()
+                                            
+                                            val newTheme = if (isDarkTheme) "genz" else "standard"
+                                            selectedTheme = newTheme
+                                            sharedPreferences.edit().putString("theme", newTheme).apply()
                                         },
                                         onRoleSelected = { isDoctor ->
                                             navController.navigate("login/$isDoctor")
@@ -199,7 +252,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 composable("complete_doctor_profile") {
-                                    com.example.medical.presentation.ui.doctor.complete_profile.CompleteDoctorProfileRoute(
+                                    CompleteDoctorProfileRoute(
                                         onNavigateBack = { navController.popBackStack() },
                                         onNavigateNext = {
                                             navController.navigate("doctor_home") {
@@ -226,6 +279,9 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onNavigateToAppointmentDetail = { appointmentId ->
                                             navController.navigate("appointment_detail/$appointmentId")
+                                        },
+                                        onNavigateToBooking = { doctorId ->
+                                            navController.navigate("booking/$doctorId/offline")
                                         },
                                         onLogout = {
                                             sharedPreferences.edit().putBoolean("is_logged_in", false).apply()
@@ -263,7 +319,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 ) { backStackEntry ->
-                                    com.example.medical.presentation.ui.patient.doctor_list.DoctorListRoute(
+                                    DoctorListRoute(
                                         onNavigateBack = { navController.popBackStack() },
                                         onNavigateToBooking = { doctorId ->
                                             val type = backStackEntry.arguments?.getString("type")
@@ -279,7 +335,7 @@ class MainActivity : ComponentActivity() {
                                         navArgument("type") { type = NavType.StringType }
                                     )
                                 ) { backStackEntry ->
-                                    com.example.medical.presentation.ui.patient.booking.BookingRoute(
+                                    BookingRoute(
                                         onNavigateBack = { navController.popBackStack() },
                                         onNavigateToNext = { doctorId, date, time ->
                                             val type = backStackEntry.arguments?.getString("type")
@@ -299,7 +355,7 @@ class MainActivity : ComponentActivity() {
                                         navArgument("type") { type = NavType.StringType }
                                     )
                                 ) {
-                                    com.example.medical.presentation.ui.patient.booking_success.BookingSuccessRoute(
+                                    BookingSuccessRoute(
                                         onNavigateBack = { navController.popBackStack() },
                                         onNavigateHome = {
                                             navController.navigate("patient_home") {
@@ -314,7 +370,7 @@ class MainActivity : ComponentActivity() {
                                         type = NavType.StringType
                                     })
                                 ) { backStackEntry ->
-                                    com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailRoute(
+                                    AppointmentDetailRoute(
                                         appointmentId = backStackEntry.arguments?.getString("appointmentId")
                                             ?: "",
                                         onNavigateBack = { navController.popBackStack() },
@@ -326,8 +382,13 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 }
-                                composable("doctor_appointment_detail/{appointmentId}") { backStackEntry ->
-                                    com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute(
+                                composable(
+                                    "doctor_appointment_detail/{appointmentId}",
+                                    arguments = listOf(navArgument("appointmentId") {
+                                        type = NavType.StringType
+                                    })
+                                ) { backStackEntry ->
+                                    DoctorAppointmentDetailRoute(
                                         appointmentId = backStackEntry.arguments?.getString("appointmentId")
                                             ?: "",
                                         onNavigateBack = { navController.popBackStack() },
@@ -340,7 +401,7 @@ class MainActivity : ComponentActivity() {
                                     "patient_detail/{patientId}",
                                     arguments = listOf(navArgument("patientId") { type = NavType.StringType })
                                 ) { backStackEntry ->
-                                    com.example.medical.presentation.ui.doctor.patient_detail.PatientDetailRoute(
+                                    PatientDetailRoute(
                                         patientId = backStackEntry.arguments?.getString("patientId") ?: "",
                                         onNavigateBack = { navController.popBackStack() }
                                     )
@@ -350,8 +411,11 @@ class MainActivity : ComponentActivity() {
                                         currentTheme = selectedTheme,
                                         onThemeChange = { newTheme ->
                                             selectedTheme = newTheme
-                                            sharedPreferences.edit().putString("theme", newTheme)
-                                                .apply()
+                                            sharedPreferences.edit().putString("theme", newTheme).apply()
+                                            
+                                            val newDarkTheme = (newTheme == "genz")
+                                            isDarkTheme = newDarkTheme
+                                            sharedPreferences.edit().putBoolean("is_dark_theme", newDarkTheme).apply()
                                         },
                                         currentLanguage = selectedLanguage,
                                         onLanguageChange = { newLang ->

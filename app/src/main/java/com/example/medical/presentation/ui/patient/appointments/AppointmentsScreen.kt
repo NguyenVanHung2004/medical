@@ -1,6 +1,7 @@
 package com.example.medical.presentation.ui.patient.appointments
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -25,17 +26,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
+import com.example.medical.presentation.ui.common.MedicalToast
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
 import com.example.medical.presentation.ui.patient.appointment_detail.getStatusStringRes
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -43,18 +50,50 @@ fun AppointmentsRoute(
     onNavigateToHome: () -> Unit,
     onNavigateToAppointments: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
+    onNavigateToBooking: (String) -> Unit = {},
     viewModel: AppointmentsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    AppointmentsScreen(
-        uiState = uiState,
-        onNavigateToHome = onNavigateToHome,
-        onNavigateToDetail = onNavigateToDetail,
-        onCancelRequest = { id -> viewModel.requestCancelAppointment(id) },
-        onConfirmCancel = { viewModel.confirmCancelAppointment() },
-        onDismissCancel = { viewModel.hideCancelDialog() },
-        onRescheduleClick = { id -> viewModel.rescheduleAppointment(id) }
-    )
+    var toastData by remember {mutableStateOf<ToastData?>(null) }
+    
+    LaunchedEffect(Unit) {
+        viewModel.loadAppointments()
+    }
+    
+    LaunchedEffect(uiState.successMessage) {
+        if (uiState.successMessage != null) {
+            toastData = ToastData(uiState.successMessage!!, ToastType.SUCCESS)
+            delay(2000)
+            toastData = null
+            viewModel.clearMessages()
+        }
+    }
+    
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null) {
+            toastData =ToastData(uiState.error!!, ToastType.ERROR)
+            delay(3000)
+            toastData = null
+            viewModel.clearMessages()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        AppointmentsScreen(
+            uiState = uiState,
+            onNavigateToHome = onNavigateToHome,
+            onNavigateToDetail = onNavigateToDetail,
+            onCancelRequest = { id -> viewModel.requestCancelAppointment(id) },
+            onConfirmCancel = { viewModel.confirmCancelAppointment() },
+            onDismissCancel = { viewModel.hideCancelDialog() },
+            onRescheduleClick = { doctorId -> onNavigateToBooking(doctorId) }
+        )
+        
+        MedicalToast(
+            toastData = toastData,
+            modifier = Modifier.align(Alignment.TopCenter).zIndex(100f)
+        )
+    }
 }
 
 @Composable
@@ -248,7 +287,7 @@ fun AppointmentsScreen(
                                 time = appt.timeRange,
                                 reason = appt.reason,
                                 notes = "",
-                                onRescheduleClick = { onRescheduleClick(appt.id) }
+                                onRescheduleClick = { onRescheduleClick(appt.doctor.id) }
                             )
                         }
                     }
@@ -318,8 +357,8 @@ fun AppointmentCard(
                 verticalAlignment = Alignment.Top
             ) {
                 Row(modifier = Modifier.weight(1f)) {
-                    AsyncImage(
-                        model = avatarUrl,
+                    Image(
+                        painter = painterResource(id = R.drawable.doctor_avatar),
                         contentDescription = doctorName,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -474,8 +513,8 @@ fun HistoryAppointmentCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
-                AsyncImage(
-                    model = avatarUrl,
+                Image(
+                    painter = painterResource(id = R.drawable.doctor_avatar),
                     contentDescription = doctorName,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

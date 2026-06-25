@@ -199,11 +199,11 @@
     <string name="spec_dentistry">Dentistry</string>
 
     <string name="bottom_nav_search">Search</string>
-    <string name="bottom_nav_appointments">Appointments</string>
+    <string name="bottom_nav_appointments">Appointment</string>
     <string name="bottom_nav_profile">Profile</string>
     <string name="bottom_nav_notifications">Notifications</string>
-    <string name="appointments">Appointments</string>
-    <string name="my_appointments_title">My Appointments</string>
+    <string name="appointments">Appointment</string>
+    <string name="my_appointments_title">My Appointment</string>
     <string name="tab_upcoming_appointments">Upcoming</string>
     <string name="tab_history_appointments">History</string>
     <string name="no_upcoming_appointments">No upcoming appointments.</string>
@@ -266,7 +266,7 @@
     <string name="happening">ONGOING</string>
     <string name="online">Online</string>
     <string name="offline">In-person</string>
-    <string name="patient_info_format">PT %1$s, %2$d y/o • ID: %3$s</string>
+    <string name="patient_info_format">PT %1$s • ID: %2$s</string>
     <string name="enter_clinic">Enter Clinic</string>
     <string name="view_details">View Details</string>
     <string name="nav_patients">Patients</string>
@@ -289,4 +289,5 @@
     <string name="morning">Morning</string>
     <string name="afternoon">Afternoon</string>
     <string name="confirm_schedule_change">Confirm Schedule Change</string>
+    <string name="specialty_prefix">Specialty %1$s</string>
 </resources>

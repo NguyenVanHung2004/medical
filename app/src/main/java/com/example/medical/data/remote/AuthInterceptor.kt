@@ -1,8 +1,6 @@
 package com.example.medical.data.remote
 
 import com.example.medical.data.local.TokenManager
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -11,9 +9,7 @@ class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
         val requestBuilder = chain.request().newBuilder()
         
         // Block to get the token synchronously within the interceptor
-        val token = runBlocking {
-            tokenManager.tokenFlow.firstOrNull()
-        }
+        val token = tokenManager.getToken()
 
         if (!token.isNullOrEmpty()) {
             requestBuilder.addHeader("Authorization", "Bearer $token")

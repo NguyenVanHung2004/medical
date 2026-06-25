@@ -24,8 +24,9 @@ import com.example.medical.R
 import com.example.medical.domain.model.AppointmentType
 import com.example.medical.domain.model.DoctorNotification
 import com.example.medical.domain.model.NotificationType
-import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.BorderStroke
+import org.koin.androidx.compose.koinViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +35,11 @@ fun DoctorNotificationRoute(
     onNavigateBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        viewModel.fetchNotifications()
+    }
+
 
     DoctorNotificationScreen(
         uiState = uiState,

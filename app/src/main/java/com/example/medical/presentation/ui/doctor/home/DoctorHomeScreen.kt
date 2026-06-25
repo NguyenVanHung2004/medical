@@ -3,6 +3,9 @@ package com.example.medical.presentation.ui.doctor.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,21 +34,29 @@ import com.example.medical.presentation.ui.doctor.home.DoctorHomeViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.medical.presentation.ui.common.ScheduledAppointmentCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoctorHomeRoute(
     viewModel: DoctorHomeViewModel = koinViewModel(),
     onNavigateToNotifications: () -> Unit = {},
-    onNavigateToAppointments: () -> Unit = {}
+    onNavigateToAppointments: () -> Unit = {},
+    onNavigateToAppointmentDetail: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
+
 
     DoctorHomeScreen(
         uiState = uiState,
         onNavigateToNotifications = onNavigateToNotifications,
         onNavigateToAppointments = onNavigateToAppointments,
-        onRequestAction = viewModel::handleRequestAction
+        onRequestAction = viewModel::handleRequestAction,
+        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
     )
 }
 
@@ -55,15 +66,16 @@ fun DoctorHomeScreen(
     uiState: DoctorHomeUIState,
     onNavigateToNotifications: () -> Unit,
     onNavigateToAppointments: () -> Unit,
-    onRequestAction: (String, Boolean) -> Unit
+    onRequestAction: (String, Boolean) -> Unit,
+    onNavigateToAppointmentDetail: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        androidx.compose.foundation.Image(
-                            painter = androidx.compose.ui.res.painterResource(id = R.drawable.medical_app_logo),
+                        Image(
+                            painter = painterResource(id = R.drawable.medical_app_logo),
                             contentDescription = "Logo",
                             modifier = Modifier.size(28.dp)
                         )
@@ -101,70 +113,77 @@ fun DoctorHomeScreen(
 //        },
         contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
-        if (uiState.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            BoxWithConstraints(modifier = Modifier.padding(paddingValues)) {
-                if (maxWidth > 600.dp) {
-                    // Tablet Layout
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Column(
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                BoxWithConstraints {
+                    if (maxWidth > 600.dp) {
+                        // Tablet Layout
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            LazyColumn {
-                                item {
-                                    GreetingSection(doctorName = uiState.doctor?.name ?: "")
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                    StatsSection()
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
-                                    Spacer(modifier = Modifier.height(24.dp))
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
+                                LazyColumn {
+                                    item {
+                                        GreetingSection(doctorName = uiState.doctor?.name ?: "")
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                        StatsSection()
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                        RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                    }
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
+                                LazyColumn {
+                                    item {
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        AppointmentsSection(appointments = uiState.todayAppointments, onNavigateToAppointmentDetail = onNavigateToAppointmentDetail)
+                                        Spacer(modifier = Modifier.height(80.dp)) // For FAB
+                                    }
                                 }
                             }
                         }
-                        Column(
+                    } else {
+                        // Mobile Layout
+                        LazyColumn(
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp)
                         ) {
-                            LazyColumn {
-                                item {
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    AppointmentsSection(appointments = uiState.todayAppointments)
-                                    Spacer(modifier = Modifier.height(80.dp)) // For FAB
-                                }
+                            item {
+                                GreetingSection(doctorName = uiState.doctor?.name ?: "")
+                                Spacer(modifier = Modifier.height(24.dp))
+                                StatsSection()
+                                Spacer(modifier = Modifier.height(24.dp))
+                                RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
+                                Spacer(modifier = Modifier.height(24.dp))
+                                AppointmentsSection(appointments = uiState.todayAppointments, onNavigateToAppointmentDetail = onNavigateToAppointmentDetail)
+                                Spacer(modifier = Modifier.height(80.dp)) // For FAB
                             }
-                        }
-                    }
-                } else {
-                    // Mobile Layout
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        item {
-                            GreetingSection(doctorName = uiState.doctor?.name ?: "")
-                            Spacer(modifier = Modifier.height(24.dp))
-                            StatsSection()
-                            Spacer(modifier = Modifier.height(24.dp))
-                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            AppointmentsSection(appointments = uiState.todayAppointments)
-                            Spacer(modifier = Modifier.height(80.dp)) // For FAB
                         }
                     }
                 }
             }
+            
+            com.example.medical.presentation.ui.common.MedicalToast(
+                toastData = uiState.toastData,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -204,10 +223,11 @@ fun GreetingSection(doctorName: String) {
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Person,
+            Image(
+                painter = painterResource(id = R.drawable.doctor_avatar),
                 contentDescription = "Avatar",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
         }
     }
@@ -420,7 +440,7 @@ fun RequestCard(
 }
 
 @Composable
-fun AppointmentsSection(appointments: List<Appointment>) {
+fun AppointmentsSection(appointments: List<Appointment>, onNavigateToAppointmentDetail: (String) -> Unit) {
     Column {
         Text(
             text = stringResource(R.string.schedule_today),
@@ -430,204 +450,11 @@ fun AppointmentsSection(appointments: List<Appointment>) {
         Spacer(modifier = Modifier.height(16.dp))
         
         appointments.forEachIndexed { index, appointment ->
-            AppointmentItem(
+            ScheduledAppointmentCard(
                 appointment = appointment,
-                isLast = index == appointments.size - 1
+                isLast = index == appointments.size - 1,
+                onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
             )
-        }
-    }
-}
-
-
-
-@Composable
-fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
-    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-        // Time
-        Text(
-            text = appointment.timeRange.split(" - ")[0],
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            modifier = Modifier.width(48.dp),
-            textAlign = TextAlign.End
-        )
-        
-        Spacer(modifier = Modifier.width(12.dp))
-        
-        // Timeline Axis
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .background(
-                        if (appointment.status == AppointmentStatus.HAPPENING) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                        CircleShape
-                    )
-            )
-            if (!isLast) {
-                Box(
-                    modifier = Modifier
-                        .width(2.dp)
-                        .weight(1f)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
-                )
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
-            }
-        }
-        
-        Spacer(modifier = Modifier.width(16.dp))
-        
-        // Card
-        Card(
-            modifier = Modifier
-                .weight(1f)
-                .padding(top = 4.dp, bottom = if (isLast) 0.dp else 16.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                // Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (appointment.status == AppointmentStatus.HAPPENING) {
-                        Text(
-                            text = stringResource(R.string.happening),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    } else {
-                        Spacer(modifier = Modifier)
-                    }
-                    
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), RoundedCornerShape(4.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (appointment.type == AppointmentType.ONLINE) Icons.Default.Videocam else Icons.Default.LocalHospital,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (appointment.type == AppointmentType.ONLINE) stringResource(R.string.online) else stringResource(R.string.offline),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(12.dp))
-                
-                // Remove Time from inside the card as it is now on the left
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                // Patient Info
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = appointment.patientInitial,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text = appointment.patientName,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = stringResource(R.string.patient_info_format, appointment.patientGender, appointment.patientAge, appointment.patientIdStr),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Reason
-                if (appointment.status != AppointmentStatus.HAPPENING) {
-                    Text(
-                        text = appointment.reason,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-                
-                // Actions
-                if (appointment.status == AppointmentStatus.HAPPENING) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Button(
-                            onClick = { /* Enter clinic */ },
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.enter_clinic),
-                                textAlign = TextAlign.Center,
-                                lineHeight = 16.sp,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                        OutlinedButton(
-                            onClick = { /* View details */ },
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.view_details),
-                                textAlign = TextAlign.Center,
-                                lineHeight = 16.sp,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    }
-                } else {
-                    OutlinedButton(
-                        onClick = { /* View details */ },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.view_details),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                }
-            }
         }
     }
 }

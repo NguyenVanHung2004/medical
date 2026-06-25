@@ -190,8 +190,8 @@
     <string name="settings_in_app_sound">Âm thanh trong ứng dụng</string>
     <string name="settings_in_app_sound_desc">Phát âm thanh khi nhấn nút hoặc tương tác</string>
     <string name="settings_theme">Giao diện (Theme)</string>
-    <string name="settings_theme_standard">Tiêu chuẩn (Standard)</string>
-    <string name="settings_theme_genz">GenZ (Xanh lá cây đen)</string>
+    <string name="settings_theme_standard">Tiêu chuẩn</string>
+    <string name="settings_theme_genz">GenZ</string>
     <string name="settings_language">Ngôn ngữ</string>
     <string name="health_corner">Góc sức khỏe</string>
     <string name="read_now">Đọc ngay</string>
@@ -269,7 +269,7 @@
     <string name="happening">ĐANG DIỄN RA</string>
     <string name="online">Trực tuyến</string>
     <string name="offline">Tại viện</string>
-    <string name="patient_info_format">BN %1$s, %2$d tuổi • ID: %3$s</string>
+    <string name="patient_info_format">BN %1$s • ID: %2$s</string>
     <string name="enter_clinic">Vào phòng khám</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="nav_patients">Bệnh nhân</string>
@@ -292,4 +292,5 @@
     <string name="morning">Sáng</string>
     <string name="afternoon">Chiều</string>
     <string name="confirm_schedule_change">Xác nhận đổi lịch</string>
+    <string name="specialty_prefix">Chuyên khoa %1$s</string>
 </resources>

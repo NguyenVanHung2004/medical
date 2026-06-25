@@ -1,34 +1,32 @@
 package com.example.medical.data.local
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import android.content.SharedPreferences
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth_prefs")
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class TokenManager(private val context: Context) {
     companion object {
-        private val TOKEN_KEY = stringPreferencesKey("jwt_token")
+        private const val PREFS_NAME = "auth_prefs"
+        private const val TOKEN_KEY = "jwt_token"
     }
 
-    val tokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
-        preferences[TOKEN_KEY]
-    }
+    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    
+    private val _tokenFlow = MutableStateFlow(prefs.getString(TOKEN_KEY, null))
+    val tokenFlow: Flow<String?> = _tokenFlow
 
     suspend fun saveToken(token: String) {
-        context.dataStore.edit { preferences ->
-            preferences[TOKEN_KEY] = token
-        }
+        prefs.edit().putString(TOKEN_KEY, token).apply()
+        _tokenFlow.value = token
     }
 
     suspend fun deleteToken() {
-        context.dataStore.edit { preferences ->
-            preferences.remove(TOKEN_KEY)
-        }
+        prefs.edit().remove(TOKEN_KEY).apply()
+        _tokenFlow.value = null
+    }
+    
+    fun getToken(): String? {
+        return prefs.getString(TOKEN_KEY, null)
     }
 }

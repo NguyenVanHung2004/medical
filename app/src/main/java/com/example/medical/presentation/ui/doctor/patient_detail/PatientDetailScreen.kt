@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,7 +57,7 @@ fun PatientDetailScreen(
                     Text(
                         text = stringResource(id = R.string.profile_title),
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 navigationIcon = {
@@ -66,14 +65,14 @@ fun PatientDetailScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_button_description),
-                            tint = colorResource(id = R.color.textPrimary)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -85,7 +84,7 @@ fun PatientDetailScreen(
             } else if (uiState.errorMessage != null) {
                 Text(
                     text = uiState.errorMessage,
-                    color = colorResource(id = R.color.errorRed),
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else if (uiState.patientDetail != null) {
@@ -111,19 +110,19 @@ fun PatientDetailScreen(
                                     modifier = Modifier
                                         .size(100.dp)
                                         .clip(CircleShape)
-                                        .background(colorResource(id = R.color.primaryBlueLight)),
+                                        .background(MaterialTheme.colorScheme.primaryContainer),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = profile.fullName.take(1).uppercase(),
                                         fontSize = 36.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = colorResource(id = R.color.primaryBlue)
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             } else {
                                 AsyncImage(
-                                    model = profile.avatarUrl,
+                                    model = "https://i.pravatar.cc/150?img=11",
                                     contentDescription = "Avatar",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
@@ -137,13 +136,13 @@ fun PatientDetailScreen(
                                 text = profile.fullName,
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = colorResource(id = R.color.textPrimary)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "ID: #${profile.id}",
                                 fontSize = 14.sp,
-                                color = colorResource(id = R.color.textSecondary),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 letterSpacing = 1.sp
                             )
 
@@ -152,9 +151,9 @@ fun PatientDetailScreen(
                             // Section 1: Personal Info
                             InfoCard(title = stringResource(id = R.string.personal_info), icon = Icons.Default.PersonOutline) {
                                 InfoRow(label = stringResource(id = R.string.full_name), value = profile.fullName)
-                                HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 12.dp))
                                 InfoRow(label = stringResource(id = R.string.dob), value = profile.dob)
-                                HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 12.dp))
                                 InfoRow(label = stringResource(id = R.string.gender), value = profile.gender)
                             }
 
@@ -163,32 +162,32 @@ fun PatientDetailScreen(
                             // Section 2: Contact
                             InfoCard(title = stringResource(id = R.string.contact_info), icon = Icons.Default.ContactMail) {
                                 InfoRow(label = "Email", value = profile.email)
-                                HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 12.dp))
                                 InfoRow(label = stringResource(id = R.string.phone_hint), value = profile.phone)
-                                HorizontalDivider(color = colorResource(id = R.color.dividerColor), modifier = Modifier.padding(vertical = 12.dp))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 12.dp))
                                 InfoRow(label = stringResource(id = R.string.address), value = profile.address)
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))
 
                             // Section 3: Medical Info
-                            InfoCard(title = stringResource(id = R.string.medical_info), icon = Icons.Default.FavoriteBorder, iconTint = colorResource(id = R.color.errorRed)) {
+                            InfoCard(title = stringResource(id = R.string.medical_info), icon = Icons.Default.FavoriteBorder, iconTint = MaterialTheme.colorScheme.error) {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(colorResource(id = R.color.bgLight), RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                                         .padding(12.dp)
                                 ) {
                                     Text(
                                         text = stringResource(id = R.string.blood_type),
                                         fontSize = 12.sp,
-                                        color = colorResource(id = R.color.textSecondary)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
                                             imageVector = Icons.Default.WaterDrop,
                                             contentDescription = null,
-                                            tint = colorResource(id = R.color.errorRed),
+                                            tint = MaterialTheme.colorScheme.error,
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
@@ -196,7 +195,7 @@ fun PatientDetailScreen(
                                             text = profile.bloodType ?: "N/A",
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = colorResource(id = R.color.errorRed)
+                                            color = MaterialTheme.colorScheme.error
                                         )
                                     }
                                 }
@@ -204,20 +203,20 @@ fun PatientDetailScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(colorResource(id = R.color.bgLight), RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                                         .padding(12.dp)
                                 ) {
                                     Text(
                                         text = stringResource(id = R.string.allergies),
                                         fontSize = 12.sp,
-                                        color = colorResource(id = R.color.textSecondary)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = profile.allergies ?: "N/A",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = colorResource(id = R.color.textPrimary)
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -233,13 +232,13 @@ fun PatientDetailScreen(
 private fun InfoCard(
     title: String,
     icon: ImageVector,
-    iconTint: Color = colorResource(id = R.color.primaryBlue),
+    iconTint: Color = MaterialTheme.colorScheme.primary,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -255,7 +254,7 @@ private fun InfoCard(
                     text = title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.textPrimary)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -274,14 +273,14 @@ private fun InfoRow(label: String, value: String) {
         Text(
             text = label,
             fontSize = 12.sp,
-            color = colorResource(id = R.color.textSecondary),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
         )
         Text(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = colorResource(id = R.color.textPrimary),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(2f),
             textAlign = TextAlign.End
         )
