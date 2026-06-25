@@ -8,8 +8,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
 
 class DoctorHomeViewModel(
     private val getDoctorHomeDataUseCase: GetDoctorHomeDataUseCase
@@ -25,6 +29,7 @@ class DoctorHomeViewModel(
     private fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            val minDelayJob = async { delay(500) }
             getDoctorHomeDataUseCase().collect { data ->
                 val today = LocalDate.now()
                 val todayStr1 = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -34,6 +39,7 @@ class DoctorHomeViewModel(
                     .filter { it.date == todayStr1 || it.date == todayStr2 }
                     .sortedBy { it.timeRange.split(" - ").firstOrNull() ?: it.timeRange }
                     
+                minDelayJob.await()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -49,7 +55,17 @@ class DoctorHomeViewModel(
     fun handleRequestAction(requestId: String, isAccept: Boolean) {
         viewModelScope.launch {
             getDoctorHomeDataUseCase.respondToRequest(requestId, isAccept)
-            // Reloading is not needed because the flows will automatically emit new data
+            loadData()
+            val message = if (isAccept) "Đã chấp nhận yêu cầu" else "Đã từ chối yêu cầu"
+            showToast(message, ToastType.SUCCESS)
+        }
+    }
+    
+    private fun showToast(message: String, type: ToastType) {
+        _uiState.update { it.copy(toastData = ToastData(message, type)) }
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(3000)
+            _uiState.update { it.copy(toastData = null) }
         }
     }
 }

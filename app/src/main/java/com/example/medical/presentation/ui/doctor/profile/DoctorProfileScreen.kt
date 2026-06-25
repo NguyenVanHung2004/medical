@@ -28,14 +28,15 @@ import com.example.medical.domain.model.WorkingTimeSlot
 import org.koin.androidx.compose.koinViewModel
 import java.time.DayOfWeek
 import java.util.*
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import android.net.Uri
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
 import com.example.medical.presentation.ui.common.MedicalTextField
 import com.example.medical.presentation.ui.common.PrimaryButton
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
+
 
 @Composable
 fun DoctorProfileRoute(
@@ -455,6 +456,7 @@ fun ServicesAndFeesCard(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
     Card(
@@ -496,37 +498,43 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
                             DayOfWeek.SUNDAY -> "Chủ nhật"
                         }
                         
-                        Text(
-                            text = dayName,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        val morningSlots = slots.filter { it.time < "12:00" }
-                        val afternoonSlots = slots.filter { it.time >= "12:00" }
-                        val maxRows = maxOf(morningSlots.size, afternoonSlots.size)
-                        
-                        for (i in 0 until maxRows) {
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                val morningTime = morningSlots.getOrNull(i)?.time ?: ""
-                                val afternoonTime = afternoonSlots.getOrNull(i)?.time ?: ""
-                                
-                                Text(
-                                    text = morningTime,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Text(
-                                    text = afternoonTime,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.weight(1f)
-                                )
+                        Row(
+                            verticalAlignment = Alignment.Top,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = dayName,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .padding(top = 8.dp)
+                            )
+                            
+                            val sortedSlots = slots.sortedBy { it.time }
+                            
+                            FlowRow(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                sortedSlots.forEach { slot ->
+                                    androidx.compose.material3.Surface(
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                                    ) {
+                                        Text(
+                                            text = slot.time,
+                                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }

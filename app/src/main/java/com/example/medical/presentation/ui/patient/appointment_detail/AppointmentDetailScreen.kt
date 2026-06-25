@@ -23,14 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentStatus
 import com.example.medical.domain.model.AppointmentType
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
 import com.example.medical.presentation.ui.common.SecondaryButton
 
@@ -203,8 +204,8 @@ fun AppointmentDetailScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            AsyncImage(
-                                model = appointment.doctor.avatarUrl,
+                            Image(
+                                painter = painterResource(id = R.drawable.doctor_avatar),
                                 contentDescription = "Avatar",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
@@ -255,24 +256,8 @@ fun AppointmentDetailScreen(
 
                         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                             OutlinedButton(
-                                onClick = { /* TODO */ },
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(8.dp),
-                                border = BorderStroke(
-                                    1.dp,
-                                    colorResource(id = R.color.primaryBlue)
-                                ),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = colorResource(
-                                        id = R.color.primaryBlue
-                                    )
-                                )
-                            ) {
-                                Text(stringResource(id = R.string.view_profile))
-                            }
-                            OutlinedButton(
                                 onClick = onNavigateToChangeDoctor,
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(8.dp),
                                 border = BorderStroke(
                                     1.dp,
