@@ -27,8 +27,7 @@ data class Appointment(
     val patientInitial: String,
     val patientGender: String,
     val patientAge: Int,
-    @SerializedName("patientId")
-    val patientIdStr: String,
+    val patientIdStr: String?,
     val patientAvatarUrl: String?,
     val date: String,
     val timeRange: String,

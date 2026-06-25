@@ -269,7 +269,7 @@
     <string name="happening">ĐANG DIỄN RA</string>
     <string name="online">Trực tuyến</string>
     <string name="offline">Tại viện</string>
-    <string name="patient_info_format">BN %1$s, %2$d tuổi • ID: %3$s</string>
+    <string name="patient_info_format">BN %1$s • ID: %2$s</string>
     <string name="enter_clinic">Vào phòng khám</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="nav_patients">Bệnh nhân</string>
