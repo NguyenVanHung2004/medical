@@ -1,6 +1,5 @@
 package com.example.medical.presentation.ui.doctor.appointment
 
-import com.example.medical.presentation.ui.common.ScheduledAppointmentCard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,14 +26,15 @@ import com.example.medical.domain.model.Appointment
 import com.example.medical.domain.model.AppointmentRequest
 import com.example.medical.domain.model.AppointmentType
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.fadeOut
+import com.example.medical.presentation.ui.common.ScheduledAppointmentCard
 
 @Composable
 fun DoctorAppointmentRoute(

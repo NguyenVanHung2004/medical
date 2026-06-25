@@ -72,7 +72,7 @@ fun ScheduledAppointmentCard(appointment: Appointment, isLast: Boolean = false, 
         
         Spacer(modifier = Modifier.width(16.dp))
         
-        // Card
+        // Cardi
         Card(
             modifier = Modifier.weight(1f).padding(top = 4.dp, bottom = if (isLast) 0.dp else 16.dp).clickable { onNavigateToAppointmentDetail(appointment.id) },
             shape = RoundedCornerShape(12.dp),

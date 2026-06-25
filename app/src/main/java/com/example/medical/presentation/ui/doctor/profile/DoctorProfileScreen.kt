@@ -28,14 +28,15 @@ import com.example.medical.domain.model.WorkingTimeSlot
 import org.koin.androidx.compose.koinViewModel
 import java.time.DayOfWeek
 import java.util.*
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import android.net.Uri
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
 import com.example.medical.presentation.ui.common.MedicalTextField
 import com.example.medical.presentation.ui.common.PrimaryButton
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
+
 
 @Composable
 fun DoctorProfileRoute(

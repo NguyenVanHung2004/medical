@@ -19,15 +19,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import com.example.medical.presentation.ui.doctor.appointment.DoctorAppointmentRoute
 import com.example.medical.presentation.ui.doctor.home.DoctorHomeRoute
 import com.example.medical.presentation.ui.doctor.notification.DoctorNotificationRoute
 import com.example.medical.presentation.ui.doctor.profile.DoctorProfileRoute
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.core.tween
 
 @Composable
 fun DoctorMainScreen(

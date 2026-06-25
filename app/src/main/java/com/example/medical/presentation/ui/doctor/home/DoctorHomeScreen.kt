@@ -1,6 +1,5 @@
 package com.example.medical.presentation.ui.doctor.home
 
-import com.example.medical.presentation.ui.common.ScheduledAppointmentCard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,6 +31,7 @@ import com.example.medical.presentation.ui.doctor.home.DoctorHomeViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.medical.presentation.ui.common.ScheduledAppointmentCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

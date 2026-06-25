@@ -24,8 +24,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
-import com.example.medical.domain.model.AppointmentType
 import androidx.compose.foundation.BorderStroke
+import com.example.medical.domain.model.AppointmentType
+
 
 @Composable
 fun DoctorAppointmentDetailRoute(
