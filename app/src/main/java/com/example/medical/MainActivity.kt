@@ -46,6 +46,22 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("LocalContextConfigurationRead")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
+        val lastAppEntry = sharedPreferences.getLong("last_app_entry", 0L)
+        val currentTime = System.currentTimeMillis()
+
+        // Xử lý timeout 5 phút chỉ khi mở app (onCreate)
+        if (isLoggedIn && lastAppEntry != 0L && (currentTime - lastAppEntry > 5 * 60 * 1000)) {
+            sharedPreferences.edit()
+                .putBoolean("is_logged_in", false)
+                .putLong("last_app_entry", currentTime)
+                .apply()
+        } else {
+            sharedPreferences.edit().putLong("last_app_entry", currentTime).apply()
+        }
+
         enableEdgeToEdge()
         setContent {
             val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
