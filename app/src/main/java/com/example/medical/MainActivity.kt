@@ -80,7 +80,15 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val navController = rememberNavController()
 
-                            NavHost(navController = navController, startDestination = "welcome") {
+                            val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
+                            val isDoctorPrefs = sharedPreferences.getBoolean("is_doctor", false)
+                            val startDest = if (isLoggedIn) {
+                                if (isDoctorPrefs) "doctor_home" else "patient_home"
+                            } else {
+                                "welcome"
+                            }
+
+                            NavHost(navController = navController, startDestination = startDest) {
                                 composable("welcome") {
                                     WelcomeScreen(
                                         currentLanguage = selectedLanguage,
@@ -104,7 +112,13 @@ class MainActivity : ComponentActivity() {
                                     LoginRoute(
                                         isDoctor = isDoctor,
                                         onBackClick = { navController.popBackStack() },
-                                        onLoginSuccess = {
+                                        onLoginSuccess = { rememberMe ->
+                                            if (rememberMe) {
+                                                sharedPreferences.edit()
+                                                    .putBoolean("is_logged_in", true)
+                                                    .putBoolean("is_doctor", isDoctor)
+                                                    .apply()
+                                            }
                                             if (isDoctor) {
                                                 navController.navigate("doctor_home") {
                                                     popUpTo("welcome") { inclusive = true }
@@ -214,6 +228,7 @@ class MainActivity : ComponentActivity() {
                                             navController.navigate("appointment_detail/$appointmentId")
                                         },
                                         onLogout = {
+                                            sharedPreferences.edit().putBoolean("is_logged_in", false).apply()
                                             navController.navigate("welcome") {
                                                 popUpTo(0)
                                             }
@@ -226,6 +241,7 @@ class MainActivity : ComponentActivity() {
                                 composable("doctor_home") {
                                     DoctorMainScreen(
                                         onLogout = {
+                                            sharedPreferences.edit().putBoolean("is_logged_in", false).apply()
                                             navController.navigate("welcome") {
                                                 popUpTo(0) // Xóa toàn bộ stack để về màn welcome an toàn
                                             }
