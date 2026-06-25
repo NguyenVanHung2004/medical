@@ -73,9 +73,12 @@ class CompleteProfileViewModel(
         viewModelScope.launch {
             profileRepository.updateProfile(
                 fullName = state.fullName,
+                phone = "", // Màn này không nhập phone
                 dob = state.dateOfBirth,
                 gender = state.gender,
                 address = state.address,
+                bloodType = null,
+                allergies = null,
                 insuranceInfo = if (state.insuranceProvider.isNotBlank() && state.insuranceCode.isNotBlank()) "${state.insuranceProvider}: ${state.insuranceCode}" else null
             ).collect { result ->
                 when (result) {

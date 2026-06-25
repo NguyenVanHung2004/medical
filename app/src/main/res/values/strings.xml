@@ -142,6 +142,9 @@
     <string name="noti_title_cancelled">Lịch khám bị hủy</string>
     <string name="noti_body_cancelled">Bệnh nhân %1$s đã hủy ca khám %2$s.</string>
     <string name="noti_title_upcoming">Sắp đến giờ khám</string>
+    <string name="noti_title_reminder">Nhắc nhở</string>
+    <string name="noti_title_update">Cập nhật lịch hẹn</string>
+    <string name="noti_title_system">Thông báo hệ thống</string>
     <string name="noti_body_upcoming">Ca khám %1$s với %2$s sẽ bắt đầu %3$s.</string>
     <string name="noti_online">trực tuyến</string>
     <string name="noti_offline">trực tiếp</string>

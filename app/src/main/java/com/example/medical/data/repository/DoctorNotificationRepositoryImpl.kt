@@ -4,77 +4,79 @@ import com.example.medical.domain.model.AppointmentType
 import com.example.medical.domain.model.DoctorNotification
 import com.example.medical.domain.model.NotificationType
 import com.example.medical.domain.repository.DoctorNotificationRepository
-import kotlinx.coroutines.delay
+import com.example.medical.data.remote.ApiService
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import java.util.UUID
 
-class DoctorNotificationRepositoryImpl : DoctorNotificationRepository {
+class DoctorNotificationRepositoryImpl(
+    private val apiService: ApiService
+) : DoctorNotificationRepository {
 
-    private val _notifications = MutableStateFlow<List<DoctorNotification>>(emptyList())
+    override fun getNotifications(): Flow<List<DoctorNotification>> = flow {
+        try {
+            val dtos = apiService.getNotifications()
+            val notifications = dtos.map { dto ->
+                val type = when (dto.type) {
+                    "APPOINTMENT_UPDATE" -> NotificationType.UPDATE
+                    "REMINDER" -> NotificationType.REMINDER
+                    "NEW_APPOINTMENT_REQUEST" -> NotificationType.NEW_APPOINTMENT_REQUEST
+                    "APPOINTMENT_CANCELLED" -> NotificationType.APPOINTMENT_CANCELLED
+                    "UPCOMING_APPOINTMENT" -> NotificationType.UPCOMING_APPOINTMENT
+                    else -> NotificationType.SYSTEM
+                }
 
-    init {
-        // Mock data
-        _notifications.value = listOf(
-            DoctorNotification(
-                id = UUID.randomUUID().toString(),
-                type = NotificationType.NEW_APPOINTMENT_REQUEST,
-                patientName = "Trần Thị Bích",
-                timeInfo = "lúc 09:00 ngày mai",
-                timestamp = "10 phút trước",
-                isRead = false
-            ),
-            DoctorNotification(
-                id = UUID.randomUUID().toString(),
-                type = NotificationType.APPOINTMENT_CANCELLED,
-                patientName = "Nguyễn Văn A",
-                timeInfo = "lúc 14:00 chiều nay",
-                timestamp = "2 giờ trước",
-                isRead = true
-            ),
-            DoctorNotification(
-                id = UUID.randomUUID().toString(),
-                type = NotificationType.UPCOMING_APPOINTMENT,
-                patientName = "Phạm Văn Hùng",
-                timeInfo = "sau 15 phút nữa",
-                timestamp = "Hôm qua, 08:30",
-                isRead = true,
-                appointmentType = AppointmentType.ONLINE
-            )
-        )
-    }
+                val timeAgoStr = try {
+                    val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.getDefault())
+                    sdf.timeZone = java.util.TimeZone.getTimeZone("UTC")
+                    val date = sdf.parse(dto.time)
+                    if (date != null) {
+                        val diff = System.currentTimeMillis() - date.time
+                        when {
+                            diff < 60 * 1000 -> "Vừa xong"
+                            diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)} phút trước"
+                            diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)} giờ trước"
+                            diff < 30L * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)} ngày trước"
+                            else -> java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(date)
+                        }
+                    } else "Gần đây"
+                } catch (e: Exception) {
+                    "Gần đây"
+                }
 
-    override fun getNotifications(): Flow<List<DoctorNotification>> = _notifications.asStateFlow()
-
-    override suspend fun markAsRead(notificationId: String) {
-        delay(300)
-        _notifications.update { currentList ->
-            currentList.map {
-                if (it.id == notificationId) it.copy(isRead = true) else it
+                // Parse message to get patient name if needed, or just use message
+                DoctorNotification(
+                    id = dto.id,
+                    type = type,
+                    patientName = dto.title,
+                    timeInfo = dto.message,
+                    timestamp = timeAgoStr,
+                    isRead = dto.isRead,
+                    appointmentType = AppointmentType.OFFLINE
+                )
             }
+            emit(notifications)
+        } catch (e: Exception) {
+            emit(emptyList()) // Handle error state appropriately if needed
         }
     }
 
+    override suspend fun markAsRead(notificationId: String) {
+        // Option to implement individual mark as read API, currently just dummy
+    }
+
     override suspend fun markAllAsRead() {
-        delay(300)
-        _notifications.update { currentList ->
-            currentList.map { it.copy(isRead = true) }
+        try {
+            apiService.markAllNotificationsAsRead()
+        } catch (e: Exception) {
+            // Log error
         }
     }
 
     override suspend fun confirmAppointment(notificationId: String) {
-        delay(500)
-        _notifications.update { currentList ->
-            currentList.filter { it.id != notificationId }
-        }
+        // Implement confirm logic by mapping notificationId to appointmentId
     }
 
     override suspend fun rejectAppointment(notificationId: String) {
-        delay(500)
-        _notifications.update { currentList ->
-            currentList.filter { it.id != notificationId }
-        }
+        // Implement reject logic
     }
 }

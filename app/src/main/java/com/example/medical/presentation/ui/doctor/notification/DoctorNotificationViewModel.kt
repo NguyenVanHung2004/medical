@@ -54,6 +54,7 @@ class DoctorNotificationViewModel(
     fun markAllAsRead() {
         viewModelScope.launch {
             markAllNotificationsAsReadUseCase()
+            fetchNotifications() // Reload notifications
         }
     }
 

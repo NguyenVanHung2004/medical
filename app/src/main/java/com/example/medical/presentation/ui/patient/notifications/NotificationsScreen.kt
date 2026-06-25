@@ -32,11 +32,14 @@ fun NotificationsRoute(
     viewModel: NotificationsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    NotificationsScreen(uiState = uiState)
+    NotificationsScreen(uiState = uiState, onMarkAllAsRead = viewModel::markAllAsRead)
 }
 
 @Composable
-fun NotificationsScreen(uiState: NotificationsUiState) {
+fun NotificationsScreen(
+    uiState: NotificationsUiState,
+    onMarkAllAsRead: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,8 +63,12 @@ fun NotificationsScreen(uiState: NotificationsUiState) {
                 text = stringResource(id = R.string.notifications_screen_title),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f)
             )
+            TextButton(onClick = onMarkAllAsRead) {
+                Text("Đánh dấu đã đọc", color = MaterialTheme.colorScheme.primary)
+            }
         }
 
         if (uiState.notifications.isEmpty()) {

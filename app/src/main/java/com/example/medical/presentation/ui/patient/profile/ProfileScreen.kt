@@ -32,6 +32,14 @@ import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.BorderStroke
 import com.example.medical.presentation.ui.common.SecondaryButton
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
+import com.example.medical.presentation.ui.common.MedicalToast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun ProfileRoute(
@@ -40,15 +48,47 @@ fun ProfileRoute(
     onNavigateToSettings: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    ProfileScreen(uiState = uiState, onLogout = onLogout, onNavigateToSettings = onNavigateToSettings)
+    ProfileScreen(
+        uiState = uiState, 
+        onLogout = onLogout, 
+        onNavigateToSettings = onNavigateToSettings,
+        onEditClick = viewModel::showEditDialog,
+        onDismissEdit = viewModel::hideEditDialog,
+        onSaveEdit = viewModel::updateProfile,
+        onClearMessages = viewModel::clearMessages
+    )
 }
 
 @Composable
 fun ProfileScreen(
     uiState: ProfileUiState, 
     onLogout: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onNavigateToSettings: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDismissEdit: () -> Unit = {},
+    onSaveEdit: (String, String, String, String, String, String?, String?) -> Unit = { _, _, _, _, _, _, _ -> },
+    onClearMessages: () -> Unit = {}
 ) {
+    var toastData by remember { mutableStateOf<ToastData?>(null) }
+    
+    LaunchedEffect(uiState.successMessage) {
+        if (uiState.successMessage != null) {
+            toastData = ToastData(uiState.successMessage, ToastType.SUCCESS)
+            kotlinx.coroutines.delay(2000)
+            toastData = null
+            onClearMessages()
+        }
+    }
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null) {
+            toastData = ToastData(uiState.error, ToastType.ERROR)
+            kotlinx.coroutines.delay(3000)
+            toastData = null
+            onClearMessages()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +142,7 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedButton(
-                    onClick = { /* TODO */ },
+                    onClick = onEditClick,
                     shape = RoundedCornerShape(20.dp),
                     border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
@@ -241,6 +281,33 @@ fun ProfileScreen(
             }
         }
     }
+    
+    if (uiState.showEditDialog && uiState.profile != null) {
+        EditProfileDialog(
+            profile = uiState.profile,
+            onDismiss = onDismissEdit,
+            onSave = onSaveEdit,
+            isSubmitting = uiState.isSubmitting
+        )
+    }
+
+    if (uiState.isSubmitting) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f))
+                .clickable(enabled = false) {},
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        }
+    }
+
+    MedicalToast(
+        toastData = toastData,
+        modifier = Modifier.align(Alignment.TopCenter)
+    )
+    }
 }
 
 @Composable
@@ -274,6 +341,128 @@ fun InfoCard(
             }
             Spacer(modifier = Modifier.height(16.dp))
             content()
+        }
+    }
+}
+
+@Composable
+fun EditProfileDialog(
+    profile: UserProfileUiModel,
+    onDismiss: () -> Unit,
+    onSave: (String, String, String, String, String, String?, String?) -> Unit,
+    isSubmitting: Boolean
+) {
+    var fullName by remember { mutableStateOf(profile.fullName) }
+    var phone by remember { mutableStateOf(profile.phone) }
+    var dob by remember { mutableStateOf(profile.dob) }
+    var gender by remember { mutableStateOf(profile.gender) }
+    var address by remember { mutableStateOf(profile.address) }
+    var bloodType by remember { mutableStateOf(profile.bloodType ?: "") }
+    var allergies by remember { mutableStateOf(profile.allergies ?: "") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Text(
+                    text = "Chỉnh sửa Hồ sơ",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 400.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedTextField(
+                        value = fullName,
+                        onValueChange = { fullName = it },
+                        label = { Text("Họ và Tên") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = phone,
+                        onValueChange = { phone = it },
+                        label = { Text("Số điện thoại") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = dob,
+                        onValueChange = { dob = it },
+                        label = { Text("Ngày sinh (DD/MM/YYYY)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = gender,
+                        onValueChange = { gender = it },
+                        label = { Text("Giới tính") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = address,
+                        onValueChange = { address = it },
+                        label = { Text("Địa chỉ") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    OutlinedTextField(
+                        value = bloodType,
+                        onValueChange = { bloodType = it },
+                        label = { Text("Nhóm máu") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = allergies,
+                        onValueChange = { allergies = it },
+                        label = { Text("Dị ứng") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Hủy", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = { onSave(fullName, phone, dob, gender, address, bloodType.takeIf { it.isNotBlank() }, allergies.takeIf { it.isNotBlank() }) },
+                        enabled = !isSubmitting,
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Text("Lưu")
+                    }
+                }
+            }
         }
     }
 }
