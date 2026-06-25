@@ -42,6 +42,11 @@ fun DoctorHomeRoute(
     onNavigateToAppointmentDetail: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
+
 
     DoctorHomeScreen(
         uiState = uiState,

@@ -26,7 +26,7 @@ class DoctorHomeViewModel(
         loadData()
     }
 
-    private fun loadData() {
+    fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val minDelayJob = async { delay(500) }

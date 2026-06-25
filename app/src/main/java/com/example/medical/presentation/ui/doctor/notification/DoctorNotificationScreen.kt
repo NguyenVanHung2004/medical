@@ -35,6 +35,11 @@ fun DoctorNotificationRoute(
     onNavigateBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        viewModel.fetchNotifications()
+    }
+
 
     DoctorNotificationScreen(
         uiState = uiState,

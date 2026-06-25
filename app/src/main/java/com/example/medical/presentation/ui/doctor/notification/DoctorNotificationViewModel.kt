@@ -28,7 +28,7 @@ class DoctorNotificationViewModel(
         fetchNotifications()
     }
 
-    private fun fetchNotifications() {
+    fun fetchNotifications() {
         viewModelScope.launch {
             getNotificationsUseCase()
                 .onStart { _uiState.update { it.copy(isLoading = true) } }

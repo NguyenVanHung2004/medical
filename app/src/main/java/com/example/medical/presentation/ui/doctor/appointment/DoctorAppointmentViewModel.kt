@@ -38,7 +38,7 @@ class DoctorAppointmentViewModel(
         _uiState.update { it.copy(availableDates = dates, selectedDate = today) }
     }
 
-    private fun loadData() {
+    fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val minDelayJob = async { delay(500) }

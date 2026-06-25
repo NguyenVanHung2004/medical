@@ -43,6 +43,10 @@ fun DoctorAppointmentRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
+
     DoctorAppointmentScreen(
         uiState = uiState,
         onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
