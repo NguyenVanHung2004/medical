@@ -52,7 +52,7 @@ fun LoginRoute(
     viewModel: AuthViewModel = koinViewModel(),
     isDoctor: Boolean,
     onBackClick: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (Boolean) -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
@@ -89,7 +89,7 @@ fun LoginScreen(
     onGoogleLoginSuccess: (String) -> Unit,
     onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (Boolean) -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onResetState: () -> Unit
@@ -99,6 +99,7 @@ fun LoginScreen(
     val backgroundColor = MaterialTheme.colorScheme.background
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var rememberMe by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -175,7 +176,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            var rememberMe by remember { mutableStateOf(false) }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -304,19 +304,12 @@ fun LoginScreen(
         
         if (uiState.isSuccess) {
             val title = stringResource(id = if (uiState.isDoctor) R.string.login_doctor_success else R.string.login_patient_success)
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = title, style = MaterialTheme.typography.titleLarge) },
-                text = { Text(text = stringResource(id = R.string.welcome_back_message), style = MaterialTheme.typography.bodyLarge) },
-                confirmButton = {
-                    Button(onClick = {
-                        onLoginSuccess()
-                        onResetState()
-                    }) {
-                        Text(stringResource(id = R.string.continue_text))
-                    }
-                }
-            )
+            LaunchedEffect(Unit) {
+                android.widget.Toast.makeText(context, title, android.widget.Toast.LENGTH_SHORT).show()
+                kotlinx.coroutines.delay(2000)
+                onLoginSuccess(rememberMe)
+                onResetState()
+            }
         }
     }
 }
@@ -334,7 +327,7 @@ fun LoginScreenPreview() {
             onGoogleLoginSuccess = {},
             onBackClick = {},
             onLoginClick = {},
-            onLoginSuccess = {},
+            onLoginSuccess = { _ -> },
             onRegisterClick = {},
             onForgotPasswordClick = {},
             onResetState = {}
@@ -355,7 +348,7 @@ fun LoginScreenDoctorPreview() {
             onGoogleLoginSuccess = {},
             onBackClick = {},
             onLoginClick = {},
-            onLoginSuccess = {},
+            onLoginSuccess = { _ -> },
             onRegisterClick = {},
             onForgotPasswordClick = {},
             onResetState = {}
