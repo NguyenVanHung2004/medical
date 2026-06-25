@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import kotlinx.coroutines.delay
 import com.example.medical.presentation.ui.common.ToastData
@@ -26,32 +28,35 @@ class DoctorProfileViewModel(
         fetchDoctorProfile()
     }
 
-    private fun fetchDoctorProfile() {
+    private fun fetchDoctorProfile(onSuccess: (() -> Unit)? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            val minDelayJob = async { delay(500) }
+            
             repository.getDoctorProfile()
                 .catch { e ->
+                    minDelayJob.await()
                     _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
                 }
                 .collect { doctor ->
+                    minDelayJob.await()
                     _uiState.update { it.copy(isLoading = false, doctor = doctor) }
+                    onSuccess?.invoke()
                 }
         }
     }
 
     fun toggleOnlineConsultation(isEnabled: Boolean) {
+        _uiState.update { it.copy(doctor = it.doctor?.copy(isOnlineConsultationEnabled = isEnabled)) }
         viewModelScope.launch {
-            repository.toggleOnlineConsultation(isEnabled).collect {
-                fetchDoctorProfile()
-            }
+            repository.toggleOnlineConsultation(isEnabled).collect {}
         }
     }
 
     fun toggleInPersonConsultation(isEnabled: Boolean) {
+        _uiState.update { it.copy(doctor = it.doctor?.copy(isInPersonConsultationEnabled = isEnabled)) }
         viewModelScope.launch {
-            repository.toggleInPersonConsultation(isEnabled).collect {
-                fetchDoctorProfile()
-            }
+            repository.toggleInPersonConsultation(isEnabled).collect {}
         }
     }
 
@@ -76,8 +81,9 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateProfile(name, specialty, hospital, experience, bio).collect {
                 hideEditProfileDialog()
-                showToast("Cập nhật hồ sơ thành công", ToastType.SUCCESS)
-                fetchDoctorProfile()
+                fetchDoctorProfile {
+                    showToast("Cập nhật hồ sơ thành công", ToastType.SUCCESS)
+                }
             }
         }
     }
@@ -94,8 +100,9 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateFees(onlineFee, inPersonFee).collect {
                 hideEditFeesDialog()
-                showToast("Cập nhật chi phí thành công", ToastType.SUCCESS)
-                fetchDoctorProfile()
+                fetchDoctorProfile {
+                    showToast("Cập nhật chi phí thành công", ToastType.SUCCESS)
+                }
             }
         }
     }
@@ -130,6 +137,9 @@ class DoctorProfileViewModel(
                 slots = _uiState.value.timeSlotsForSelectedDay
             ).collect {
                 hideWorkingHoursDialog()
+                fetchDoctorProfile {
+                    showToast("Cập nhật lịch làm việc thành công", ToastType.SUCCESS)
+                }
             }
         }
     }

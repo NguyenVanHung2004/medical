@@ -37,7 +37,8 @@ import androidx.compose.ui.text.style.TextOverflow
 fun DoctorHomeRoute(
     viewModel: DoctorHomeViewModel = koinViewModel(),
     onNavigateToNotifications: () -> Unit = {},
-    onNavigateToAppointments: () -> Unit = {}
+    onNavigateToAppointments: () -> Unit = {},
+    onNavigateToAppointmentDetail: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -45,7 +46,8 @@ fun DoctorHomeRoute(
         uiState = uiState,
         onNavigateToNotifications = onNavigateToNotifications,
         onNavigateToAppointments = onNavigateToAppointments,
-        onRequestAction = viewModel::handleRequestAction
+        onRequestAction = viewModel::handleRequestAction,
+        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
     )
 }
 
@@ -55,7 +57,8 @@ fun DoctorHomeScreen(
     uiState: DoctorHomeUIState,
     onNavigateToNotifications: () -> Unit,
     onNavigateToAppointments: () -> Unit,
-    onRequestAction: (String, Boolean) -> Unit
+    onRequestAction: (String, Boolean) -> Unit,
+    onNavigateToAppointmentDetail: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -101,70 +104,77 @@ fun DoctorHomeScreen(
 //        },
         contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
-        if (uiState.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            BoxWithConstraints(modifier = Modifier.padding(paddingValues)) {
-                if (maxWidth > 600.dp) {
-                    // Tablet Layout
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Column(
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                BoxWithConstraints {
+                    if (maxWidth > 600.dp) {
+                        // Tablet Layout
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            LazyColumn {
-                                item {
-                                    GreetingSection(doctorName = uiState.doctor?.name ?: "")
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                    StatsSection()
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                    RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
-                                    Spacer(modifier = Modifier.height(24.dp))
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
+                                LazyColumn {
+                                    item {
+                                        GreetingSection(doctorName = uiState.doctor?.name ?: "")
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                        StatsSection()
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                        RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                    }
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
+                                LazyColumn {
+                                    item {
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        AppointmentsSection(appointments = uiState.todayAppointments, onNavigateToAppointmentDetail = onNavigateToAppointmentDetail)
+                                        Spacer(modifier = Modifier.height(80.dp)) // For FAB
+                                    }
                                 }
                             }
                         }
-                        Column(
+                    } else {
+                        // Mobile Layout
+                        LazyColumn(
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp)
                         ) {
-                            LazyColumn {
-                                item {
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    AppointmentsSection(appointments = uiState.todayAppointments)
-                                    Spacer(modifier = Modifier.height(80.dp)) // For FAB
-                                }
+                            item {
+                                GreetingSection(doctorName = uiState.doctor?.name ?: "")
+                                Spacer(modifier = Modifier.height(24.dp))
+                                StatsSection()
+                                Spacer(modifier = Modifier.height(24.dp))
+                                RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
+                                Spacer(modifier = Modifier.height(24.dp))
+                                AppointmentsSection(appointments = uiState.todayAppointments, onNavigateToAppointmentDetail = onNavigateToAppointmentDetail)
+                                Spacer(modifier = Modifier.height(80.dp)) // For FAB
                             }
-                        }
-                    }
-                } else {
-                    // Mobile Layout
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        item {
-                            GreetingSection(doctorName = uiState.doctor?.name ?: "")
-                            Spacer(modifier = Modifier.height(24.dp))
-                            StatsSection()
-                            Spacer(modifier = Modifier.height(24.dp))
-                            RequestsSection(requests = uiState.pendingRequests, onViewAllClick = onNavigateToAppointments, onRequestAction = onRequestAction)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            AppointmentsSection(appointments = uiState.todayAppointments)
-                            Spacer(modifier = Modifier.height(80.dp)) // For FAB
                         }
                     }
                 }
             }
+            
+            com.example.medical.presentation.ui.common.MedicalToast(
+                toastData = uiState.toastData,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -420,7 +430,7 @@ fun RequestCard(
 }
 
 @Composable
-fun AppointmentsSection(appointments: List<Appointment>) {
+fun AppointmentsSection(appointments: List<Appointment>, onNavigateToAppointmentDetail: (String) -> Unit) {
     Column {
         Text(
             text = stringResource(R.string.schedule_today),
@@ -432,7 +442,8 @@ fun AppointmentsSection(appointments: List<Appointment>) {
         appointments.forEachIndexed { index, appointment ->
             AppointmentItem(
                 appointment = appointment,
-                isLast = index == appointments.size - 1
+                isLast = index == appointments.size - 1,
+                onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
             )
         }
     }
@@ -441,7 +452,7 @@ fun AppointmentsSection(appointments: List<Appointment>) {
 
 
 @Composable
-fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
+fun AppointmentItem(appointment: Appointment, isLast: Boolean, onNavigateToAppointmentDetail: (String) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
         // Time
         Text(
@@ -599,7 +610,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                             )
                         }
                         OutlinedButton(
-                            onClick = { /* View details */ },
+                            onClick = { onNavigateToAppointmentDetail(appointment.id) },
                             modifier = Modifier.weight(1f).fillMaxHeight(),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
@@ -614,7 +625,7 @@ fun AppointmentItem(appointment: Appointment, isLast: Boolean) {
                     }
                 } else {
                     OutlinedButton(
-                        onClick = { /* View details */ },
+                        onClick = { onNavigateToAppointmentDetail(appointment.id) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)

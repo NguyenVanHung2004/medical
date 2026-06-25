@@ -296,7 +296,11 @@ class MainActivity : ComponentActivity() {
                                     "appointment_detail/{appointmentId}",
                                     arguments = listOf(navArgument("appointmentId") {
                                         type = NavType.StringType
-                                    })
+                                    }),
+                                    enterTransition = { androidx.compose.animation.slideInHorizontally(initialOffsetX = { it }) },
+                                    exitTransition = { androidx.compose.animation.fadeOut() },
+                                    popEnterTransition = { androidx.compose.animation.fadeIn() },
+                                    popExitTransition = { androidx.compose.animation.slideOutHorizontally(targetOffsetX = { it }) }
                                 ) { backStackEntry ->
                                     com.example.medical.presentation.ui.patient.appointment_detail.AppointmentDetailRoute(
                                         appointmentId = backStackEntry.arguments?.getString("appointmentId")
@@ -310,7 +314,13 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 }
-                                composable("doctor_appointment_detail/{appointmentId}") { backStackEntry ->
+                                composable(
+                                    "doctor_appointment_detail/{appointmentId}",
+                                    enterTransition = { androidx.compose.animation.slideInHorizontally(initialOffsetX = { it }) },
+                                    exitTransition = { androidx.compose.animation.fadeOut() },
+                                    popEnterTransition = { androidx.compose.animation.fadeIn() },
+                                    popExitTransition = { androidx.compose.animation.slideOutHorizontally(targetOffsetX = { it }) }
+                                ) { backStackEntry ->
                                     com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute(
                                         appointmentId = backStackEntry.arguments?.getString("appointmentId")
                                             ?: "",
@@ -322,7 +332,11 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable(
                                     "patient_detail/{patientId}",
-                                    arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+                                    arguments = listOf(navArgument("patientId") { type = NavType.StringType }),
+                                    enterTransition = { androidx.compose.animation.slideInHorizontally(initialOffsetX = { it }) },
+                                    exitTransition = { androidx.compose.animation.fadeOut() },
+                                    popEnterTransition = { androidx.compose.animation.fadeIn() },
+                                    popExitTransition = { androidx.compose.animation.slideOutHorizontally(targetOffsetX = { it }) }
                                 ) { backStackEntry ->
                                     com.example.medical.presentation.ui.doctor.patient_detail.PatientDetailRoute(
                                         patientId = backStackEntry.arguments?.getString("patientId") ?: "",

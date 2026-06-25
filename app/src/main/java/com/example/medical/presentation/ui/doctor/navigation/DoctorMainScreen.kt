@@ -102,7 +102,8 @@ fun DoctorMainScreen(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    }
+                    },
+                    onNavigateToAppointmentDetail = onNavigateToAppointmentDetail
                 )
             }
             composable(BottomNavItem.Appointments.route) {

@@ -100,89 +100,31 @@ fun DoctorAppointmentScreen(
         },
         contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
-        if (uiState.isLoading) {
-            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            BoxWithConstraints(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                if (maxWidth > 600.dp) {
-                    // Tablet Layout: Split screen into two columns
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.pending_requests),
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                            PendingRequestsList(uiState.pendingRequests, onHandleRequest)
-                        }
-                        VerticalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.status_confirmed),
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                            ScheduledAppointmentsList(
-                                uiState = uiState,
-                                onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
-                                onSelectDate = onSelectDate
-                            )
-                        }
-                    }
-                } else {
-                    // Mobile Layout: Segmented Control
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
-                                .padding(4.dp)
-                        ) {
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                tabs.forEachIndexed { index, title ->
-                                    val isSelected = selectedTabIndex == index
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
-                                            .clickable { selectedTabIndex = index }
-                                            .padding(vertical = 12.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = title,
-                                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        AnimatedContent(
-                            targetState = selectedTabIndex,
-                            transitionSpec = {
-                                if (targetState > initialState) {
-                                    (slideInHorizontally { width -> width } + fadeIn())
-                                        .togetherWith(slideOutHorizontally { width -> -width } + fadeOut())
-                                } else {
-                                    (slideInHorizontally { width -> -width } + fadeIn())
-                                        .togetherWith(slideOutHorizontally { width -> width } + fadeOut())
-                                }
-                            },
-                            label = "tab_transition"
-                        ) { targetIndex ->
-                            if (targetIndex == 0) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    if (maxWidth > 600.dp) {
+                        // Tablet Layout: Split screen into two columns
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.pending_requests),
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
                                 PendingRequestsList(uiState.pendingRequests, onHandleRequest)
-                            } else {
+                            }
+                            VerticalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.status_confirmed),
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
                                 ScheduledAppointmentsList(
                                     uiState = uiState,
                                     onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
@@ -190,9 +132,74 @@ fun DoctorAppointmentScreen(
                                 )
                             }
                         }
+                    } else {
+                        // Mobile Layout: Segmented Control
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                                    .padding(4.dp)
+                            ) {
+                                Row(modifier = Modifier.fillMaxWidth()) {
+                                    tabs.forEachIndexed { index, title ->
+                                        val isSelected = selectedTabIndex == index
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
+                                                .clickable { selectedTabIndex = index }
+                                                .padding(vertical = 12.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = title,
+                                                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            AnimatedContent(
+                                targetState = selectedTabIndex,
+                                transitionSpec = {
+                                    if (targetState > initialState) {
+                                        (slideInHorizontally { width -> width } + fadeIn())
+                                            .togetherWith(slideOutHorizontally { width -> -width } + fadeOut())
+                                    } else {
+                                        (slideInHorizontally { width -> -width } + fadeIn())
+                                            .togetherWith(slideOutHorizontally { width -> width } + fadeOut())
+                                    }
+                                },
+                                label = "tab_transition"
+                            ) { targetIndex ->
+                                if (targetIndex == 0) {
+                                    PendingRequestsList(uiState.pendingRequests, onHandleRequest)
+                                } else {
+                                    ScheduledAppointmentsList(
+                                        uiState = uiState,
+                                        onNavigateToAppointmentDetail = onNavigateToAppointmentDetail,
+                                        onSelectDate = onSelectDate
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
+            
+            com.example.medical.presentation.ui.common.MedicalToast(
+                toastData = uiState.toastData,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
