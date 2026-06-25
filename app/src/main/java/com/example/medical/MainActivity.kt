@@ -261,6 +261,18 @@ class MainActivity : ComponentActivity() {
                             ) { backStackEntry ->
                                 com.example.medical.presentation.ui.doctor.appointment_detail.DoctorAppointmentDetailRoute(
                                     appointmentId = backStackEntry.arguments?.getString("appointmentId") ?: "",
+                                    onNavigateBack = { navController.popBackStack() },
+                                    onNavigateToPatientDetail = { patientId ->
+                                        navController.navigate("patient_detail/$patientId")
+                                    }
+                                )
+                            }
+                            composable(
+                                "patient_detail/{patientId}",
+                                arguments = listOf(navArgument("patientId") { type = NavType.StringType })
+                            ) { backStackEntry ->
+                                com.example.medical.presentation.ui.doctor.patient_detail.PatientDetailRoute(
+                                    patientId = backStackEntry.arguments?.getString("patientId") ?: "",
                                     onNavigateBack = { navController.popBackStack() }
                                 )
                             }
