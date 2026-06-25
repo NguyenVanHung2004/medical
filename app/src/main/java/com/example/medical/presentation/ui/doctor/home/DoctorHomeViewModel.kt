@@ -29,7 +29,7 @@ class DoctorHomeViewModel(
     fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val minDelayJob = async { delay(500) }
+            val minDelayJob = async { delay(370) }
             getDoctorHomeDataUseCase().collect { data ->
                 val today = LocalDate.now()
                 val todayStr1 = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))

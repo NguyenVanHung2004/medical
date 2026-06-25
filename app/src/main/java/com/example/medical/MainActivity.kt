@@ -32,6 +32,12 @@ import androidx.compose.ui.platform.LocalContext
 import java.util.Locale
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -88,7 +94,14 @@ class MainActivity : ComponentActivity() {
                                 "welcome"
                             }
 
-                            NavHost(navController = navController, startDestination = startDest) {
+                            NavHost(
+                                navController = navController,
+                                startDestination = startDest,
+                                enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
+                                exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300)) + fadeOut(animationSpec = tween(300)) },
+                                popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
+                                popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300)) + fadeOut(animationSpec = tween(300)) }
+                            ) {
                                 composable("welcome") {
                                     WelcomeScreen(
                                         currentLanguage = selectedLanguage,
