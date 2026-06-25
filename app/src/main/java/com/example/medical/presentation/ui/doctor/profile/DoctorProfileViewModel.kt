@@ -28,10 +28,10 @@ class DoctorProfileViewModel(
         fetchDoctorProfile()
     }
 
-    private fun fetchDoctorProfile(onSuccess: (() -> Unit)? = null) {
+    fun fetchDoctorProfile(onSuccess: (() -> Unit)? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val minDelayJob = async { delay(500) }
+            val minDelayJob = async { delay(370) }
             
             repository.getDoctorProfile()
                 .catch { e ->

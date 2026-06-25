@@ -21,7 +21,7 @@ class PatientDetailViewModel(
     fun loadPatientDetail(patientId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val minDelayJob = async { delay(500) }
+            val minDelayJob = async { delay(370) }
             getPatientDetailUseCase(patientId).collect { detail ->
                 minDelayJob.await()
                 if (detail != null) {

@@ -21,7 +21,7 @@ class DoctorAppointmentDetailViewModel(
     fun loadAppointmentDetail(id: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val minDelayJob = async { delay(500) }
+            val minDelayJob = async { delay(370) }
             getAppointmentDetailUseCase(id).collect { appointment ->
                 minDelayJob.await()
                 if (appointment != null) {
