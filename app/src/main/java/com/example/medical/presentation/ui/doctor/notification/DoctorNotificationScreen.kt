@@ -25,6 +25,7 @@ import com.example.medical.domain.model.AppointmentType
 import com.example.medical.domain.model.DoctorNotification
 import com.example.medical.domain.model.NotificationType
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.BorderStroke
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,7 +185,7 @@ fun NotificationItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = if (notification.isRead) androidx.compose.foundation.BorderStroke(1.dp, borderColor) else null
+        border = if (notification.isRead) BorderStroke(1.dp, borderColor) else null
     ) {
         Row(
             modifier = Modifier
@@ -207,27 +208,27 @@ fun NotificationItem(
                 NotificationType.NEW_APPOINTMENT_REQUEST -> MaterialTheme.colorScheme.background
                 NotificationType.APPOINTMENT_CANCELLED -> Color(0xFFFFEBEE)
                 NotificationType.UPCOMING_APPOINTMENT -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                NotificationType.REMINDER -> TODO()
-                NotificationType.UPDATE -> TODO()
-                NotificationType.SYSTEM -> TODO()
+                NotificationType.REMINDER -> MaterialTheme.colorScheme.primaryContainer
+                NotificationType.UPDATE -> Color(0xFFFFF3E0)
+                NotificationType.SYSTEM -> Color(0xFFE8F5E9)
             }
             
             val iconTint = when (notification.type) {
                 NotificationType.NEW_APPOINTMENT_REQUEST -> MaterialTheme.colorScheme.primary
                 NotificationType.APPOINTMENT_CANCELLED -> Color(0xFFD32F2F)
                 NotificationType.UPCOMING_APPOINTMENT -> MaterialTheme.colorScheme.primary
-                NotificationType.REMINDER -> TODO()
-                NotificationType.UPDATE -> TODO()
-                NotificationType.SYSTEM -> TODO()
+                NotificationType.REMINDER -> MaterialTheme.colorScheme.primary
+                NotificationType.UPDATE -> Color(0xFFF57C00)
+                NotificationType.SYSTEM -> Color(0xFF388E3C)
             }
 
             val icon = when (notification.type) {
                 NotificationType.NEW_APPOINTMENT_REQUEST -> Icons.Default.EventNote
                 NotificationType.APPOINTMENT_CANCELLED -> Icons.Default.Cancel
                 NotificationType.UPCOMING_APPOINTMENT -> Icons.Default.Videocam
-                NotificationType.REMINDER -> TODO()
-                NotificationType.UPDATE -> TODO()
-                NotificationType.SYSTEM -> TODO()
+                NotificationType.REMINDER -> Icons.Default.Schedule
+                NotificationType.UPDATE -> Icons.Default.Sync
+                NotificationType.SYSTEM -> Icons.Default.Info
             }
 
             Box(
@@ -256,9 +257,9 @@ fun NotificationItem(
                         NotificationType.NEW_APPOINTMENT_REQUEST -> R.string.noti_title_new_request
                         NotificationType.APPOINTMENT_CANCELLED -> R.string.noti_title_cancelled
                         NotificationType.UPCOMING_APPOINTMENT -> R.string.noti_title_upcoming
-                        NotificationType.REMINDER -> TODO()
-                        NotificationType.UPDATE -> TODO()
-                        NotificationType.SYSTEM -> TODO()
+                        NotificationType.REMINDER -> R.string.noti_title_reminder
+                        NotificationType.UPDATE -> R.string.noti_title_update
+                        NotificationType.SYSTEM -> R.string.noti_title_system
                     }
                     Text(
                         text = stringResource(id = titleRes),
@@ -304,9 +305,9 @@ fun NotificationItem(
                         )
                     }
 
-                    NotificationType.REMINDER -> TODO()
-                    NotificationType.UPDATE -> TODO()
-                    NotificationType.SYSTEM -> TODO()
+                    NotificationType.REMINDER -> notification.timeInfo
+                    NotificationType.UPDATE -> notification.timeInfo
+                    NotificationType.SYSTEM -> notification.timeInfo
                 }
 
                 Text(
@@ -342,7 +343,7 @@ fun NotificationItem(
                                 containerColor = MaterialTheme.colorScheme.surface,
                                 contentColor = MaterialTheme.colorScheme.onSurface
                             ),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
                         ) {
                             Text(
                                 text = stringResource(id = R.string.reject),
@@ -355,3 +356,4 @@ fun NotificationItem(
         }
     }
 }
+

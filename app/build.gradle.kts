@@ -82,4 +82,15 @@ dependencies {
     
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Retrofit & OkHttp
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // Preferences DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    //lotties
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
 }

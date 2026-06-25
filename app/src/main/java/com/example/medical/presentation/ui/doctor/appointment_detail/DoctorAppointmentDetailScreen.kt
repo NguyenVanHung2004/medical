@@ -26,11 +26,13 @@ import coil.compose.AsyncImage
 import com.example.medical.R
 import org.koin.androidx.compose.koinViewModel
 import com.example.medical.domain.model.AppointmentType
+import androidx.compose.foundation.BorderStroke
 
 @Composable
 fun DoctorAppointmentDetailRoute(
     appointmentId: String,
     onNavigateBack: () -> Unit,
+    onNavigateToPatientDetail: (String) -> Unit,
     viewModel: DoctorAppointmentDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -41,7 +43,8 @@ fun DoctorAppointmentDetailRoute(
 
     DoctorAppointmentDetailScreen(
         uiState = uiState,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = onNavigateBack,
+        onNavigateToPatientDetail = onNavigateToPatientDetail
     )
 }
 
@@ -49,7 +52,8 @@ fun DoctorAppointmentDetailRoute(
 @Composable
 fun DoctorAppointmentDetailScreen(
     uiState: DoctorAppointmentDetailUiState,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToPatientDetail: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -212,10 +216,13 @@ fun DoctorAppointmentDetailScreen(
 
                                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                         OutlinedButton(
-                                            onClick = { /* TODO */ },
+                                            onClick = { 
+                                                val safeId = (appointment.patientIdStr as String?) ?: "unknown"
+                                                onNavigateToPatientDetail(safeId) 
+                                            },
                                             modifier = Modifier.weight(1f),
                                             shape = RoundedCornerShape(8.dp),
-                                            border = androidx.compose.foundation.BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
+                                            border = BorderStroke(1.dp, colorResource(id = R.color.primaryBlue)),
                                             colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(id = R.color.primaryBlue))
                                         ) {
                                             Text(stringResource(id = R.string.view_profile))
@@ -276,10 +283,11 @@ fun DoctorAppointmentDetailScreen(
                                                 color = colorResource(id = R.color.textPrimary)
                                             )
                                             
-                                            if (appointment.type == AppointmentType.OFFLINE && !appointment.location.isNullOrEmpty()) {
+                                            val locationText = appointment.location ?: appointment.doctor.hospital
+                                            if (appointment.type == AppointmentType.OFFLINE && !locationText.isNullOrEmpty()) {
                                                 Spacer(modifier = Modifier.height(8.dp))
                                                 Text(
-                                                    text = appointment.location,
+                                                    text = locationText,
                                                     fontSize = 14.sp,
                                                     color = colorResource(id = R.color.textPrimary)
                                                 )
@@ -372,3 +380,4 @@ fun DoctorAppointmentDetailScreen(
         }
     }
 }
+

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -22,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +33,18 @@ import com.example.medical.domain.model.User
 import com.example.medical.presentation.theme.MedicalAppTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import com.example.medical.presentation.theme.GoogleRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,13 +52,13 @@ fun LoginRoute(
     viewModel: AuthViewModel = koinViewModel(),
     isDoctor: Boolean,
     onBackClick: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (Boolean) -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(isDoctor) {
+    LaunchedEffect(isDoctor) {
         viewModel.onDoctorRoleChange(isDoctor)
     }
 
@@ -79,7 +89,7 @@ fun LoginScreen(
     onGoogleLoginSuccess: (String) -> Unit,
     onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (Boolean) -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onResetState: () -> Unit
@@ -87,30 +97,32 @@ fun LoginScreen(
 
 
     val backgroundColor = MaterialTheme.colorScheme.background
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var rememberMe by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .widthIn(max = 600.dp)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 24.dp)
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -118,82 +130,52 @@ fun LoginScreen(
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                Column {
-                    Text(
-                        text = stringResource(id = R.string.welcome_back),
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 26.sp
-                        ),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = if (uiState.isDoctor) "Dành cho Bác sĩ" else "Dành cho Bệnh nhân",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
+                
+                Text(
+                    text = stringResource(id = if (uiState.isDoctor) R.string.for_doctor else R.string.for_patient),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
             }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Text(
-                text = stringResource(id = R.string.please_enter_info),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+
+
+            Image(
+                painter = painterResource(
+                    id = if (uiState.isDoctor) R.drawable.doctor_icon else R.drawable.patient_icon
+                ),
+                contentDescription = "Role Icon",
+                modifier = Modifier
+                    .size(100.dp)
+                    .padding(bottom = 16.dp)
             )
             
-            Spacer(modifier = Modifier.height(48.dp))
-
-            OutlinedTextField(
-                value = uiState.email,
-                onValueChange = onEmailChange,
-                label = { Text(stringResource(id = R.string.email_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email, 
-                        contentDescription = "Email Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
-            )
-
             Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedTextField(
+            MedicalTextField(
+                value = uiState.email,
+                onValueChange = onEmailChange,
+                label = stringResource(id = R.string.email_hint),
+                leadingIcon = Icons.Default.Email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            MedicalTextField(
                 value = uiState.password,
                 onValueChange = onPasswordChange,
-                label = { Text(stringResource(id = R.string.password_hint)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock, 
-                        contentDescription = "Lock Icon", 
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                trailingIcon = {
-                    val image = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                    IconButton(onClick = { onPasswordVisibilityChange(!uiState.passwordVisible) }) {
-                        Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.primary.copy(alpha=0.7f))
-                    }
-                },
+                label = stringResource(id = R.string.password_hint),
+                leadingIcon = Icons.Default.Lock,
+                trailingIcon = if (uiState.passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                onTrailingIconClick = { onPasswordVisibilityChange(!uiState.passwordVisible) },
                 visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            var rememberMe by remember { mutableStateOf(false) }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -202,7 +184,7 @@ fun LoginScreen(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .clickable { rememberMe = !rememberMe }
                         .padding(end = 8.dp, top = 4.dp, bottom = 4.dp)
                 ) {
@@ -224,40 +206,19 @@ fun LoginScreen(
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .clickable { onForgotPasswordClick() }
                         .padding(vertical = 8.dp, horizontal = 4.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
+            PrimaryButton(
+                text = stringResource(id = R.string.login_button),
                 onClick = onLoginClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                contentPadding = PaddingValues(),
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(28.dp), 
-                        color = Color.White, 
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.login_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    )
-                }
-            }
+                isLoading = uiState.isLoading
+            )
 
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 Column {
@@ -265,13 +226,13 @@ fun LoginScreen(
                     Text(
                         text = uiState.errorMessage ?: "",
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -287,7 +248,7 @@ fun LoginScreen(
                 HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(18.dp))
             
             OutlinedButton(
                 onClick = { 
@@ -301,30 +262,29 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.large,
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             ) {
                 Text(
                     text = "G",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
-                    color = Color(0xFFDB4437)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = GoogleRed
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = stringResource(id = R.string.login_with_google),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(id = R.string.no_account),
@@ -333,29 +293,23 @@ fun LoginScreen(
                 )
                 TextButton(onClick = onRegisterClick, contentPadding = PaddingValues(horizontal = 8.dp)) {
                     Text(
-                        text = stringResource(id = R.string.register_now),
+                        text = stringResource(id = if (uiState.isDoctor) R.string.register_now_doctor else R.string.register_now_patient),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
         }
         
         if (uiState.isSuccess) {
-            val title = if (uiState.isDoctor) "Đăng nhập bác sĩ thành công" else "Đăng nhập bệnh nhân thành công"
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = title, style = MaterialTheme.typography.titleLarge) },
-                text = { Text(text = "Chào mừng bạn quay lại với Medical APP!", style = MaterialTheme.typography.bodyLarge) },
-                confirmButton = {
-                    Button(onClick = {
-                        onLoginSuccess()
-                        onResetState()
-                    }) {
-                        Text("Tiếp tục")
-                    }
-                }
-            )
+            val title = stringResource(id = if (uiState.isDoctor) R.string.login_doctor_success else R.string.login_patient_success)
+            LaunchedEffect(Unit) {
+                android.widget.Toast.makeText(context, title, android.widget.Toast.LENGTH_SHORT).show()
+                kotlinx.coroutines.delay(2000)
+                onLoginSuccess(rememberMe)
+                onResetState()
+            }
         }
     }
 }
@@ -373,7 +327,28 @@ fun LoginScreenPreview() {
             onGoogleLoginSuccess = {},
             onBackClick = {},
             onLoginClick = {},
-            onLoginSuccess = {},
+            onLoginSuccess = { _ -> },
+            onRegisterClick = {},
+            onForgotPasswordClick = {},
+            onResetState = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LoginScreenDoctorPreview() {
+    MedicalAppTheme {
+        LoginScreen(
+            uiState = LoginUiState(isDoctor = true),
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibilityChange = {},
+            onDoctorRoleChange = {},
+            onGoogleLoginSuccess = {},
+            onBackClick = {},
+            onLoginClick = {},
+            onLoginSuccess = { _ -> },
             onRegisterClick = {},
             onForgotPasswordClick = {},
             onResetState = {}

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class RegisterUseCase(private val repository: AuthRepository) {
-    operator fun invoke(email: String, phone: String, password: String, confirmPassword: String, isPhoneTab: Boolean = false): Flow<Result<User>> {
+    operator fun invoke(email: String, phone: String, password: String, confirmPassword: String, isPhoneTab: Boolean = false, isDoctor: Boolean = false): Flow<Result<User>> {
         if (isPhoneTab) {
             if (phone.isBlank() || password.isBlank()) {
                 return flow { emit(Result.Error("Vui lòng nhập Số điện thoại và Mã OTP")) }
@@ -41,6 +41,6 @@ class RegisterUseCase(private val repository: AuthRepository) {
             }
         }
         
-        return repository.register(email, phone, password)
+        return repository.register(email, phone, password, isDoctor)
     }
 }

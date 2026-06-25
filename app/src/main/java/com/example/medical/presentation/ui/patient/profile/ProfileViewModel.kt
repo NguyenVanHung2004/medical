@@ -40,4 +40,36 @@ class ProfileViewModel(
             }
         }
     }
+    
+    fun showEditDialog() {
+        _uiState.update { it.copy(showEditDialog = true) }
+    }
+    
+    fun hideEditDialog() {
+        _uiState.update { it.copy(showEditDialog = false) }
+    }
+    
+    fun updateProfile(fullName: String, phone: String, dob: String, gender: String, address: String, bloodType: String?, allergies: String?) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(error = null, successMessage = null) }
+            repository.updateProfile(fullName, phone, dob, gender, address, bloodType, allergies, null).collect { result ->
+                when (result) {
+                    is com.example.medical.domain.model.Result.Success -> {
+                        _uiState.update { it.copy(isSubmitting = false, showEditDialog = false, successMessage = "Cập nhật hồ sơ thành công!") }
+                        loadProfile() // reload data
+                    }
+                    is com.example.medical.domain.model.Result.Error -> {
+                        _uiState.update { it.copy(isSubmitting = false, error = result.message) }
+                    }
+                    is com.example.medical.domain.model.Result.Loading -> {
+                        _uiState.update { it.copy(isSubmitting = true) }
+                    }
+                }
+            }
+        }
+    }
+    
+    fun clearMessages() {
+        _uiState.update { it.copy(error = null, successMessage = null) }
+    }
 }

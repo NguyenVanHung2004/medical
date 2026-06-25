@@ -5,7 +5,7 @@ import com.example.medical.domain.repository.AppointmentRepository
 class BookAppointmentUseCase(
     private val repository: AppointmentRepository
 ) {
-    suspend operator fun invoke(doctorName: String, avatarUrl: String?, specialty: String, date: String, timeRange: String) {
-        repository.bookAppointment(doctorName, avatarUrl, specialty, date, timeRange)
+    suspend operator fun invoke(doctorId: String, date: String, timeRange: String, reason: String, type: String) {
+        repository.bookAppointment(doctorId, date, timeRange, reason, type)
     }
 }

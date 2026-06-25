@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import kotlinx.coroutines.delay
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
 
 class DoctorProfileViewModel(
     private val repository: DoctorProfileRepository
@@ -65,10 +68,11 @@ class DoctorProfileViewModel(
         _uiState.update { it.copy(isEditProfileDialogVisible = false) }
     }
 
-    fun saveProfile(name: String, specialty: String, hospital: String, experience: String) {
+    fun saveProfile(name: String, specialty: String, hospital: String, experience: String, bio: String) {
         viewModelScope.launch {
-            repository.updateProfile(name, specialty, hospital, experience).collect {
+            repository.updateProfile(name, specialty, hospital, experience, bio).collect {
                 hideEditProfileDialog()
+                showToast("Cập nhật hồ sơ thành công", ToastType.SUCCESS)
             }
         }
     }
@@ -85,6 +89,7 @@ class DoctorProfileViewModel(
         viewModelScope.launch {
             repository.updateFees(onlineFee, inPersonFee).collect {
                 hideEditFeesDialog()
+                showToast("Cập nhật chi phí thành công", ToastType.SUCCESS)
             }
         }
     }
@@ -102,8 +107,10 @@ class DoctorProfileViewModel(
 
     fun toggleTimeSlot(timeSlot: WorkingTimeSlot) {
         val updatedSlots = _uiState.value.timeSlotsForSelectedDay.map {
-            if (it.time == timeSlot.time) it.copy(isSelected = !it.isSelected)
-            else it
+            if (it.time == timeSlot.time) {
+                val newState = !it.isSelected
+                it.copy(isSelected = newState, isAvailable = newState)
+            } else it
         }
         _uiState.update { it.copy(timeSlotsForSelectedDay = updatedSlots) }
     }
@@ -124,6 +131,14 @@ class DoctorProfileViewModel(
             repository.getWorkingTimeSlots(dayOfWeek).collect { slots ->
                 _uiState.update { it.copy(timeSlotsForSelectedDay = slots) }
             }
+        }
+    }
+
+    private fun showToast(message: String, type: ToastType) {
+        _uiState.update { it.copy(toastData = ToastData(message, type)) }
+        viewModelScope.launch {
+            delay(3000)
+            _uiState.update { it.copy(toastData = null) }
         }
     }
 }

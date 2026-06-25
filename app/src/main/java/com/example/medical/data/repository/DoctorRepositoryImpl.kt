@@ -1,5 +1,6 @@
-    package com.example.medical.data.repository
+package com.example.medical.data.repository
 
+import com.example.medical.data.remote.ApiService
 import com.example.medical.domain.model.ConsultationType
 import com.example.medical.domain.model.DoctorDetail
 import com.example.medical.domain.model.BookingDate
@@ -7,62 +8,63 @@ import com.example.medical.domain.model.TimeSlot
 import com.example.medical.domain.repository.DoctorRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
+import java.lang.Exception
 
-class DoctorRepositoryImpl : DoctorRepository {
-    private val allDoctors = listOf(
-        DoctorDetail(
-            id = "1",
-            name = "PGS. TS. BS. Nguyễn Văn An",
-            specialty = "Chuyên khoa Tim mạch",
-            hospital = "Bệnh viện Đại học Y Hà Nội",
-            avatarUrl = "https://i.pravatar.cc/150?img=11",
-            rating = 4.9,
-            yearsOfExperience = 20,
-            isOnline = true,
-            supportedTypes = listOf(ConsultationType.ONLINE, ConsultationType.OFFLINE),
-            reviewCount = 128,
-            bio = "Hơn 20 năm kinh nghiệm trong chẩn đoán và điều trị các bệnh lý tim mạch. Nguyên Trưởng khoa Tim mạch can thiệp. Thế mạnh trong điều trị suy tim, tăng huyết áp..."
-        ),
-        DoctorDetail(
-            id = "2",
-            name = "BS. Trần Thị B",
-            specialty = "Nhi khoa",
-            hospital = "Bệnh viện Nhi Đồng TP.HCM",
-            avatarUrl = "https://i.pravatar.cc/150?img=5",
-            rating = 4.8,
-            yearsOfExperience = 8,
-            isOnline = true,
-            supportedTypes = listOf(ConsultationType.ONLINE),
-            reviewCount = 95,
-            bio = "Bác sĩ tận tâm với 8 năm kinh nghiệm trong lĩnh vực Nhi khoa. Đặc biệt chuyên sâu về các bệnh hô hấp và tiêu hóa ở trẻ sơ sinh."
-        ),
-        DoctorDetail(
-            id = "3",
-            name = "BS. Lê Văn C",
-            specialty = "Da liễu",
-            hospital = "Phòng khám tư Đà Nẵng",
-            avatarUrl = "https://i.pravatar.cc/150?img=13",
-            rating = 4.7,
-            yearsOfExperience = 12,
-            isOnline = false,
-            supportedTypes = listOf(ConsultationType.OFFLINE),
-            isFullyBookedToday = true,
-            reviewCount = 201,
-            bio = "Chuyên gia da liễu với nhiều năm tu nghiệp tại Pháp. Tư vấn và điều trị mụn, sẹo, rụng tóc và các bệnh lý da liễu phức tạp."
-        )
-    )
+class DoctorRepositoryImpl(
+    private val apiService: ApiService
+) : DoctorRepository {
 
-    override fun getDoctors(consultationType: ConsultationType?): Flow<List<DoctorDetail>> {
-        
-        return if (consultationType != null) {
-            flowOf(allDoctors.filter { it.supportedTypes.contains(consultationType) })
-        } else {
-            flowOf(allDoctors)
+    override fun getDoctors(consultationType: ConsultationType?): Flow<List<DoctorDetail>> = flow {
+        try {
+            val doctorDtos = apiService.getDoctors()
+            val doctors = doctorDtos.map { dto ->
+                DoctorDetail(
+                    id = dto.id,
+                    name = dto.name,
+                    specialty = dto.specialty ?: "",
+                    hospital = dto.hospital ?: "",
+                    avatarUrl = dto.avatarUrl ?: "",
+                    rating = dto.rating ?: 0.0,
+                    yearsOfExperience = dto.experience?.filter { it.isDigit() }?.toIntOrNull() ?: 0,
+                    isOnline = false,
+                    supportedTypes = listOf(ConsultationType.ONLINE, ConsultationType.OFFLINE),
+                    reviewCount = dto.reviewCount ?: 0
+                )
+            }
+            if (consultationType != null) {
+                emit(doctors.filter { it.supportedTypes.contains(consultationType) })
+            } else {
+                emit(doctors)
+            }
+        } catch (e: Exception) {
+            emit(emptyList())
         }
     }
 
-    override fun getDoctorById(id: String): Flow<DoctorDetail?> {
-        return flowOf(allDoctors.find { it.id == id })
+    override fun getDoctorById(id: String): Flow<DoctorDetail?> = flow {
+        try {
+            val dto = apiService.getDoctorDetail(id)
+            val listDto = try { apiService.getDoctors().find { it.id == id } } catch (e: Exception) { null }
+            val doctor = DoctorDetail(
+                id = dto.id,
+                name = dto.name,
+                specialty = dto.specialty ?: "",
+                hospital = dto.hospital ?: "",
+                avatarUrl = dto.avatarUrl ?: "",
+                rating = dto.rating ?: 0.0,
+                yearsOfExperience = dto.yearsOfExperience ?: 0,
+                isOnline = false,
+                supportedTypes = listOf(ConsultationType.ONLINE, ConsultationType.OFFLINE),
+                reviewCount = dto.reviewCount ?: 0,
+                bio = dto.bio ?: "",
+                workingSchedule = mapWorkingSchedule(dto.workingSchedule ?: dto.doctorProfile?.workingSchedule ?: listDto?.workingSchedule)
+            )
+            emit(doctor)
+        } catch (e: Exception) {
+            emit(null)
+        }
     }
 
     override fun getBookingDates(): Flow<List<BookingDate>> {
@@ -81,24 +83,37 @@ class DoctorRepositoryImpl : DoctorRepository {
             BookingDate(
                 dateString = date.dayOfMonth.toString(),
                 dayOfWeek = if (i == 0) "Hôm nay" else dayOfWeek,
-                month = "Tháng ${date.monthValue}"
+                month = "Tháng ${date.monthValue}",
+                dayOfWeekEnum = date.dayOfWeek
             )
         }
         return flowOf(dates)
     }
 
     override fun getTimeSlots(dateString: String): Flow<List<TimeSlot>> {
-        return flowOf(
-            listOf(
-                TimeSlot("1", "08:00 - 08:30", isAvailable = false),
-                TimeSlot("2", "08:30 - 09:00", isAvailable = false),
-                TimeSlot("3", "09:00 - 09:30", isAvailable = true),
-                TimeSlot("4", "09:30 - 10:00", isAvailable = true),
-                TimeSlot("5", "10:00 - 10:30", isAvailable = true),
-                TimeSlot("6", "10:30 - 11:00", isAvailable = true),
-                TimeSlot("7", "14:00 - 14:30", isAvailable = true),
-                TimeSlot("8", "14:30 - 15:00", isAvailable = true)
-            )
-        )
+        return MockSharedData.doctorProfile.map { doctor ->
+            val scheduleSlots = doctor.workingSchedule.values.firstOrNull { it.isNotEmpty() } ?: emptyList()
+            scheduleSlots.mapIndexed { index, slot ->
+                TimeSlot(
+                    id = index.toString(),
+                    timeRange = slot.time,
+                    isAvailable = slot.isSelected
+                )
+            }
+        }
+    }
+
+    private fun mapWorkingSchedule(dto: Map<String, List<com.example.medical.data.remote.WorkingTimeSlotDto>>?): Map<java.time.DayOfWeek, List<com.example.medical.domain.model.WorkingTimeSlot>> {
+        val scheduleMap = mutableMapOf<java.time.DayOfWeek, List<com.example.medical.domain.model.WorkingTimeSlot>>()
+        if (dto != null) {
+            dto.forEach { (key, value) ->
+                try {
+                    val day = java.time.DayOfWeek.valueOf(key)
+                    scheduleMap[day] = value.map { com.example.medical.domain.model.WorkingTimeSlot(it.time, it.isSelected, it.isAvailable) }
+                } catch (e: Exception) {
+                }
+            }
+        }
+        return scheduleMap
     }
 }

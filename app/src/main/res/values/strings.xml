@@ -14,6 +14,7 @@
     <string name="register_button">Đăng Ký</string>
     <string name="forgot_password">Quên mật khẩu?</string>
     <string name="login_with_google">Đăng nhập với Google</string>
+    <string name="register_with_google">Đăng ký với Google</string>
     <string name="login_with_facebook">Đăng nhập với Facebook</string>
     <string name="login_with_apple">Đăng nhập với Apple</string>
     <string name="terms_and_conditions">Điều khoản Dịch vụ &amp; Chính sách Bảo mật</string>
@@ -41,6 +42,23 @@
     <string name="otp_mock_dialog_title">Mã xác nhận</string>
     <string name="otp_mock_dialog_message">Mã OTP của bạn là: 123456</string>
     <string name="close">Đóng</string>
+    <string name="press_get_code">Hãy nhấn Lấy mã để nhận OTP</string>
+    <string name="enter_otp_placeholder">Nhập mã OTP</string>
+    
+    <string name="for_doctor">Dành cho Bác sĩ</string>
+    <string name="for_patient">Dành cho Bệnh nhân</string>
+    <string name="register_now_doctor">Đăng ký ngay (Bác sĩ)</string>
+    <string name="register_now_patient">Đăng ký ngay (Bệnh nhân)</string>
+    <string name="login_doctor_success">Đăng nhập bác sĩ thành công</string>
+    <string name="login_patient_success">Đăng nhập bệnh nhân thành công</string>
+    <string name="welcome_back_message">Chào mừng bạn quay lại với Medical APP!</string>
+    <string name="continue_text">Tiếp tục</string>
+    <string name="welcome_greeting">Medical rất vui được chào đón bạn.</string>
+    <string name="who_are_you">Bạn là?</string>
+    <string name="patient_role">Bệnh nhân</string>
+    <string name="patient_role_desc">Tìm kiếm bác sĩ, đặt lịch khám và theo dõi hồ sơ</string>
+    <string name="doctor_role">Bác sĩ</string>
+    <string name="doctor_role_desc">Quản lý lịch hẹn, tư vấn và hỗ trợ bệnh nhân</string>
     
     <!-- Forgot Password -->
     <string name="forgot_password_title">Quên Mật Khẩu</string>
@@ -61,24 +79,26 @@
     <string name="complete_profile_title">Hoàn thiện hồ sơ</string>
     <string name="complete_profile_desc">Vui lòng cung cấp thông tin chi tiết để chúng tôi có thể phục vụ bạn tốt nhất.</string>
     <string name="personal_info_section">Thông tin cá nhân</string>
-    <string name="full_name_hint">HỌ VÀ TÊN</string>
+    <string name="full_name_hint">Họ và tên</string>
     <string name="enter_full_name">Nhập họ và tên của bạn</string>
-    <string name="dob_hint">NGÀY SINH</string>
-    <string name="gender_hint">GIỚI TÍNH</string>
+    <string name="dob_hint">Ngày sinh</string>
+    <string name="gender_hint">Giới tính</string>
     <string name="select_gender">Chọn giới tính</string>
     <string name="gender_male">Nam</string>
     <string name="gender_female">Nữ</string>
     <string name="gender_other">Khác</string>
-    <string name="address_hint">ĐỊA CHỈ</string>
+    <string name="address_hint">Địa chỉ</string>
     <string name="enter_address">Nhập địa chỉ hiện tại</string>
     <string name="insurance_info_section">Thông tin bảo hiểm</string>
     <string name="optional_badge">Tùy chọn</string>
-    <string name="insurance_provider_hint">NHÀ CUNG CẤP BẢO HIỂM</string>
+    <string name="insurance_provider_hint">Nhà cung cấp bảo hiểm</string>
     <string name="enter_insurance_provider">VD: Bảo Việt, PVI...</string>
-    <string name="insurance_code_hint">MÃ THẺ BẢO HIỂM</string>
+    <string name="insurance_code_hint">Mã thẻ bảo hiểm</string>
     <string name="enter_insurance_code">Nhập mã số trên thẻ</string>
-    <string name="agree_policy">Tôi đồng ý với Điều khoản và Chính sách bảo mật của MediConnect liên quan đến việc xử lý dữ liệu y tế.</string>
+    <string name="agree_policy">Điều Khoản Sử Dụng &amp; Chính Sách Quyền Riêng Tư</string>
     <string name="complete_button">Hoàn tất</string>
+    <string name="terms_dialog_title">Điều Khoản</string>
+    <string name="terms_dialog_content">Khi đăng ký tài khoản Medical, bạn đồng ý cung cấp các thông tin cần thiết như họ tên, số điện thoại, email và các thông tin liên quan đến việc đặt lịch khám.\n\nMedical sử dụng thông tin này để:\n- Tạo và quản lý tài khoản.\n- Đặt lịch khám và kết nối với bác sĩ hoặc cơ sở y tế.\n- Gửi thông báo liên quan đến lịch hẹn và dịch vụ.\n- Cải thiện trải nghiệm sử dụng ứng dụng.\n\nMedical cam kết bảo vệ thông tin cá nhân của bạn và chỉ chia sẻ với bác sĩ, cơ sở y tế hoặc cơ quan có thẩm quyền khi cần thiết theo quy định pháp luật.\n\nNgười dùng chịu trách nhiệm về tính chính xác của thông tin đã cung cấp và bảo mật tài khoản của mình.</string>
 
     <!-- Hồ sơ -->
     <string name="profile_title">Hồ Sơ Cá Nhân</string>
@@ -122,6 +142,9 @@
     <string name="noti_title_cancelled">Lịch khám bị hủy</string>
     <string name="noti_body_cancelled">Bệnh nhân %1$s đã hủy ca khám %2$s.</string>
     <string name="noti_title_upcoming">Sắp đến giờ khám</string>
+    <string name="noti_title_reminder">Nhắc nhở</string>
+    <string name="noti_title_update">Cập nhật lịch hẹn</string>
+    <string name="noti_title_system">Thông báo hệ thống</string>
     <string name="noti_body_upcoming">Ca khám %1$s với %2$s sẽ bắt đầu %3$s.</string>
     <string name="noti_online">trực tuyến</string>
     <string name="noti_offline">trực tiếp</string>
@@ -154,6 +177,22 @@
     <string name="action_in_person_desc">Đặt khám trực tiếp</string>
     <string name="popular_specialties">Chuyên khoa phổ biến</string>
     <string name="see_all">Xem tất cả</string>
+    <string name="health_metrics">Chỉ số sức khỏe</string>
+    <string name="medical_records">Hồ sơ bệnh án</string>
+    <string name="payment_history">Lịch sử thanh toán</string>
+
+    <!-- Cài đặt -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_notifications">Cài đặt thông báo</string>
+    <string name="settings_allow_notifications">Cho phép tiếng thông báo</string>
+    <string name="settings_allow_notifications_desc">Phát âm thanh khi có thông báo mới</string>
+    <string name="settings_in_app_sound_section">Âm thanh ứng dụng</string>
+    <string name="settings_in_app_sound">Âm thanh trong ứng dụng</string>
+    <string name="settings_in_app_sound_desc">Phát âm thanh khi nhấn nút hoặc tương tác</string>
+    <string name="settings_theme">Giao diện (Theme)</string>
+    <string name="settings_theme_standard">Tiêu chuẩn (Standard)</string>
+    <string name="settings_theme_genz">GenZ (Xanh lá cây đen)</string>
+    <string name="settings_language">Ngôn ngữ</string>
     <string name="health_corner">Góc sức khỏe</string>
     <string name="read_now">Đọc ngay</string>
     
@@ -192,7 +231,12 @@
     <string name="follow_up_appointment">Tái khám</string>
     <string name="export_pdf">Xuất PDF/CSV</string>
     <string name="share_info">Chia sẻ thông tin</string>
-    
+    <string name="status_upcoming">Sắp tới</string>
+    <string name="status_happening">Đang diễn ra</string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <string name="status_cancelled">Đã hủy</string>
+    <string name="status_pending">Chờ xác nhận</string>
+    <string name="status_confirm">Đã xác nhận</string>
     <!-- Profile Screen -->
     <string name="edit_profile">Chỉnh sửa hồ sơ</string>
     <string name="personal_info">Thông tin cá nhân</string>

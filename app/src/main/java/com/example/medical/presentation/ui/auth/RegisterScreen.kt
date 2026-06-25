@@ -1,14 +1,12 @@
 package com.example.medical.presentation.ui.auth
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
@@ -27,7 +25,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +35,16 @@ import com.example.medical.R
 import com.example.medical.presentation.theme.MedicalAppTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import com.example.medical.presentation.theme.GoogleRed
 
 @Composable
 fun RegisterRoute(
@@ -49,7 +56,7 @@ fun RegisterRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(isDoctor) {
+    LaunchedEffect(isDoctor) {
         viewModel.onDoctorRoleChange(isDoctor)
     }
 
@@ -94,7 +101,7 @@ fun RegisterScreen(
     onResetState: () -> Unit
 ) {
     val backgroundColor = MaterialTheme.colorScheme.background
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showOtpDialog by remember { mutableStateOf(false) }
     var hasRequestedOtp by remember { mutableStateOf(false) }
@@ -128,24 +135,25 @@ fun RegisterScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .widthIn(max = 600.dp)
-                .padding(horizontal = 24.dp)
-                .padding(top = 16.dp, bottom = 32.dp)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 24.dp)
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.align(Alignment.CenterStart)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -156,22 +164,24 @@ fun RegisterScreen(
 
                 Text(
                     text = stringResource(id = R.string.create_new_account),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
                 )
             }
 
-            Text(
-                text = stringResource(id = R.string.join_platform),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            Image(
+                painter = painterResource(
+                    id = if (uiState.isDoctor) R.drawable.doctor_icon else R.drawable.patient_icon
+                ),
+                contentDescription = "Role Icon",
+                modifier = Modifier
+                    .size(100.dp)
+                    .padding(bottom = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -225,85 +235,38 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (uiState.selectedTab == 0) {
-                OutlinedTextField(
+                MedicalTextField(
                     value = uiState.email,
                     onValueChange = onEmailChange,
-                    label = { Text(stringResource(id = R.string.email_address)) },
-                    placeholder = { Text("nguyenvana@example.com", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Email,
-                            contentDescription = "Email",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
+                    label = stringResource(id = R.string.email_address),
+                    leadingIcon = Icons.Outlined.Email,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = uiState.password,
                     onValueChange = onPasswordChange,
-                    label = { Text(stringResource(id = R.string.password_hint)) },
-                    placeholder = { Text("••••••", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Lock,
-                            contentDescription = "Lock",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    },
-                    trailingIcon = {
-                        val image = if (uiState.passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-                        IconButton(onClick = { onPasswordVisibilityChange(!uiState.passwordVisible) }) {
-                            Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
-                        }
-                    },
+                    label = stringResource(id = R.string.password_hint),
+                    leadingIcon = Icons.Outlined.Lock,
+                    trailingIcon = if (uiState.passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                    onTrailingIconClick = { onPasswordVisibilityChange(!uiState.passwordVisible) },
                     visualTransformation = if (uiState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = uiState.confirmPassword,
                     onValueChange = onConfirmPasswordChange,
-                    label = { Text(stringResource(id = R.string.confirm_password_hint)) },
-                    placeholder = { Text("••••••", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Lock,
-                            contentDescription = "Lock",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    },
-                    trailingIcon = {
-                        val image = if (uiState.confirmPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-                        IconButton(onClick = { onConfirmPasswordVisibilityChange(!uiState.confirmPasswordVisible) }) {
-                            Icon(imageVector = image, contentDescription = "Toggle Password", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
-                        }
-                    },
+                    label = stringResource(id = R.string.confirm_password_hint),
+                    leadingIcon = Icons.Outlined.Lock,
+                    trailingIcon = if (uiState.confirmPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                    onTrailingIconClick = { onConfirmPasswordVisibilityChange(!uiState.confirmPasswordVisible) },
                     visualTransformation = if (uiState.confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -323,25 +286,12 @@ fun RegisterScreen(
                     )
                 }
             } else {
-                OutlinedTextField(
+                MedicalTextField(
                     value = uiState.phone,
                     onValueChange = onPhoneChange,
-                    label = { Text(stringResource(id = R.string.phone_hint)) },
-                    placeholder = { Text("0912345678", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = "Phone",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
+                    label = stringResource(id = R.string.phone_hint),
+                    leadingIcon = Icons.Outlined.Info,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -349,8 +299,8 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = uiState.otp,
                     onValueChange = onOtpChange,
-                    label = { Text("Mã OTP") },
-                    placeholder = { Text("Nhập mã OTP", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
+                    label = { Text(stringResource(id = R.string.otp_hint)) },
+                    placeholder = { Text(stringResource(id = R.string.enter_otp_placeholder), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Outlined.Lock,
@@ -385,38 +335,18 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
+            PrimaryButton(
+                text = stringResource(id = R.string.register_button),
                 onClick = {
                     if (uiState.selectedTab == 1 && !hasRequestedOtp) {
                         blinkTrigger++
-                        android.widget.Toast.makeText(context, "Hãy nhấn Lấy mã để nhận OTP", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, context.getString(R.string.press_get_code), android.widget.Toast.LENGTH_SHORT).show()
                     } else {
                         onRegisterClick()
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                enabled = !uiState.isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(28.dp),
-                        color = Color.White,
-                        strokeWidth = 3.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.register_button),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    )
-                }
-            }
+                isLoading = uiState.isLoading
+            )
 
             AnimatedVisibility(visible = uiState.errorMessage != null) {
                 Column {
@@ -430,7 +360,7 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -446,23 +376,39 @@ fun RegisterScreen(
                 HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                SocialButton(text = "G", color = Color(0xFFDB4437), onClick = {
+            OutlinedButton(
+                onClick = { 
                     scope.launch {
                         val token = GoogleAuthHelper.doGoogleLogin(context)
                         if (token != null) {
                             onGoogleLoginSuccess(token)
                         }
                     }
-                })
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+            ) {
+                Text(
+                    text = "G",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = GoogleRed
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(id = R.string.register_with_google),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -534,3 +480,4 @@ fun RegisterScreenPreview() {
         )
     }
 }
+

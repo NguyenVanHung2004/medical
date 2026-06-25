@@ -18,8 +18,8 @@ class GetDoctorAppointmentsUseCase(
         }
     }
 
-    suspend fun respondToRequest(requestId: String, accept: Boolean) {
-        repository.respondToRequest(requestId, accept)
+    suspend fun respondToRequest(requestId: String, accept: Boolean): Result<Unit> {
+        return repository.respondToRequest(requestId, accept)
     }
 }
 

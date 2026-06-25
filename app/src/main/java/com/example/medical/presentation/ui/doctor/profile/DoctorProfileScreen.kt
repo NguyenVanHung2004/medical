@@ -32,11 +32,16 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import coil.compose.AsyncImage
+import com.example.medical.presentation.ui.common.MedicalTextField
+import com.example.medical.presentation.ui.common.PrimaryButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun DoctorProfileRoute(
     viewModel: DoctorProfileViewModel = koinViewModel(),
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -56,7 +61,8 @@ fun DoctorProfileRoute(
         onShowEditFeesDialog = viewModel::showEditFeesDialog,
         onHideEditFeesDialog = viewModel::hideEditFeesDialog,
         onSaveFees = viewModel::saveFees,
-        onAvatarSelected = viewModel::updateAvatar
+        onAvatarSelected = viewModel::updateAvatar,
+        onNavigateToSettings = onNavigateToSettings
     )
 }
 
@@ -74,12 +80,72 @@ fun DoctorProfileScreen(
     onConfirmWorkingHoursUpdate: () -> Unit,
     onShowEditProfileDialog: () -> Unit,
     onHideEditProfileDialog: () -> Unit,
-    onSaveProfile: (String, String, String, String) -> Unit,
+    onSaveProfile: (String, String, String, String, String) -> Unit,
     onShowEditFeesDialog: () -> Unit,
     onHideEditFeesDialog: () -> Unit,
     onSaveFees: (Long, Long) -> Unit,
-    onAvatarSelected: (String) -> Unit
+    onAvatarSelected: (String) -> Unit,
+    onNavigateToSettings: () -> Unit = {}
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val registryOwner = androidx.activity.compose.LocalActivityResultRegistryOwner.current 
+        ?: (context as? androidx.activity.result.ActivityResultRegistryOwner)
+
+    if (registryOwner != null) {
+        androidx.compose.runtime.CompositionLocalProvider(
+            androidx.activity.compose.LocalActivityResultRegistryOwner provides registryOwner
+        ) {
+            DoctorProfileScreenContent(
+                uiState, onLogout, onToggleOnline, onToggleOffline, onShowWorkingHoursDialog,
+                onHideWorkingHoursDialog, onSelectDayOfWeek, onToggleTimeSlot,
+                onConfirmWorkingHoursUpdate, onShowEditProfileDialog, onHideEditProfileDialog,
+                onSaveProfile, onShowEditFeesDialog, onHideEditFeesDialog, onSaveFees,
+                onAvatarSelected, onNavigateToSettings, true
+            )
+        }
+    } else {
+        DoctorProfileScreenContent(
+            uiState, onLogout, onToggleOnline, onToggleOffline, onShowWorkingHoursDialog,
+            onHideWorkingHoursDialog, onSelectDayOfWeek, onToggleTimeSlot,
+            onConfirmWorkingHoursUpdate, onShowEditProfileDialog, onHideEditProfileDialog,
+            onSaveProfile, onShowEditFeesDialog, onHideEditFeesDialog, onSaveFees,
+            onAvatarSelected, onNavigateToSettings, false
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DoctorProfileScreenContent(
+    uiState: DoctorProfileUiState,
+    onLogout: () -> Unit,
+    onToggleOnline: (Boolean) -> Unit,
+    onToggleOffline: (Boolean) -> Unit,
+    onShowWorkingHoursDialog: () -> Unit,
+    onHideWorkingHoursDialog: () -> Unit,
+    onSelectDayOfWeek: (DayOfWeek) -> Unit,
+    onToggleTimeSlot: (WorkingTimeSlot) -> Unit,
+    onConfirmWorkingHoursUpdate: () -> Unit,
+    onShowEditProfileDialog: () -> Unit,
+    onHideEditProfileDialog: () -> Unit,
+    onSaveProfile: (String, String, String, String, String) -> Unit,
+    onShowEditFeesDialog: () -> Unit,
+    onHideEditFeesDialog: () -> Unit,
+    onSaveFees: (Long, Long) -> Unit,
+    onAvatarSelected: (String) -> Unit,
+    onNavigateToSettings: () -> Unit,
+    canUseLauncher: Boolean
+) {
+    val launcher = if (canUseLauncher) {
+        androidx.activity.compose.rememberLauncherForActivityResult(
+            contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
+        ) { uri: android.net.Uri? ->
+            uri?.let {
+                onAvatarSelected(it.toString())
+            }
+        }
+    } else null
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,7 +164,8 @@ fun DoctorProfileScreen(
         },
         contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
-        if (uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -123,7 +190,7 @@ fun DoctorProfileScreen(
                             DoctorInfoCard(
                                 doctor = doctor,
                                 onEditClick = onShowEditProfileDialog,
-                                onAvatarSelected = onAvatarSelected
+                                onLaunchAvatarPicker = { launcher?.launch("image/*") }
                             )
                         }
                         item {
@@ -141,7 +208,7 @@ fun DoctorProfileScreen(
                             )
                         }
                         item {
-                            SettingsList()
+                            SettingsList(onNavigateToSettings = onNavigateToSettings)
                         }
                         item {
                             LogoutButton(onLogout = onLogout)
@@ -180,19 +247,17 @@ fun DoctorProfileScreen(
                 onSave = onSaveFees
             )
         }
+        
+        com.example.medical.presentation.ui.common.MedicalToast(
+            toastData = uiState.toastData,
+            modifier = Modifier.align(Alignment.TopCenter).padding(paddingValues)
+        )
+        }
     }
 }
 
 @Composable
-fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onAvatarSelected: (String) -> Unit) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            onAvatarSelected(it.toString())
-        }
-    }
-
+fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onLaunchAvatarPicker: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -236,7 +301,7 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onAvatarSelected: (S
                         .size(32.dp)
                         .background(MaterialTheme.colorScheme.primary, CircleShape)
                         .clip(CircleShape)
-                        .clickable { launcher.launch("image/*") },
+                        .clickable { onLaunchAvatarPicker() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -483,7 +548,7 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
 }
 
 @Composable
-fun SettingsList() {
+fun SettingsList(onNavigateToSettings: () -> Unit = {}) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -492,29 +557,20 @@ fun SettingsList() {
     ) {
         Column {
             SettingItem(
-                icon = Icons.Default.NotificationsNone,
-                title = stringResource(R.string.notification_settings)
-            )
-            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-            SettingItem(
-                icon = Icons.Default.Security,
-                title = stringResource(R.string.account_security)
-            )
-            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-            SettingItem(
-                icon = Icons.Default.HelpOutline,
-                title = stringResource(R.string.help_and_faq)
+                icon = Icons.Default.Settings,
+                title = "Cài đặt",
+                onClick = onNavigateToSettings
             )
         }
     }
 }
 
 @Composable
-fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String) {
+fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Navigate */ }
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -732,12 +788,13 @@ fun TimeSlotItem(
 fun EditProfileDialog(
     doctor: Doctor,
     onDismiss: () -> Unit,
-    onSave: (String, String, String, String) -> Unit
+    onSave: (String, String, String, String, String) -> Unit
 ) {
     var name by remember { mutableStateOf(doctor.name) }
     var specialty by remember { mutableStateOf(doctor.specialty) }
     var hospital by remember { mutableStateOf(doctor.hospital) }
     var experience by remember { mutableStateOf(doctor.experience) }
+    var bio by remember { mutableStateOf(doctor.bio) }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -773,14 +830,11 @@ fun EditProfileDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Họ và Tên") },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    label = "Họ và Tên",
+                    leadingIcon = Icons.Default.Person
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -819,38 +873,41 @@ fun EditProfileDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = hospital,
                     onValueChange = { hospital = it },
-                    label = { Text("Bệnh viện / Nơi công tác") },
-                    leadingIcon = { Icon(Icons.Default.LocalHospital, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    label = "Bệnh viện / Nơi công tác",
+                    leadingIcon = Icons.Default.LocalHospital
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                MedicalTextField(
+                    value = experience,
+                    onValueChange = { experience = it },
+                    label = "Kinh nghiệm",
+                    leadingIcon = Icons.Default.WorkOutline
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = experience,
-                    onValueChange = { experience = it },
-                    label = { Text("Kinh nghiệm") },
-                    leadingIcon = { Icon(Icons.Default.WorkOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    value = bio,
+                    onValueChange = { bio = it },
+                    label = { Text("Giới thiệu bản thân") },
+                    leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    singleLine = false,
+                    maxLines = 3
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Button(
-                    onClick = { onSave(name, specialty, hospital, experience) },
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(text = "Lưu Thay Đổi", style = MaterialTheme.typography.titleMedium, color = Color.White)
-                }
+                PrimaryButton(
+                    text = "Lưu Thay Đổi",
+                    onClick = { onSave(name, specialty, hospital, experience, bio) }
+                )
             }
         }
     }
@@ -899,45 +956,36 @@ fun EditFeesDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = onlineFeeStr,
                     onValueChange = { onlineFeeStr = it },
-                    label = { Text("Chi phí khám trực tuyến (VNĐ)") },
-                    leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                    label = "Chi phí khám trực tuyến (VNĐ)",
+                    leadingIcon = Icons.Default.Payments,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                MedicalTextField(
                     value = inPersonFeeStr,
                     onValueChange = { inPersonFeeStr = it },
-                    label = { Text("Chi phí khám tại viện (VNĐ)") },
-                    leadingIcon = { Icon(Icons.Default.Payments, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                    label = "Chi phí khám tại viện (VNĐ)",
+                    leadingIcon = Icons.Default.Payments,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Button(
+                PrimaryButton(
+                    text = "Lưu Thay Đổi",
                     onClick = {
                         val onlineFee = onlineFeeStr.toLongOrNull() ?: doctor.onlineConsultationFee
                         val inPersonFee = inPersonFeeStr.toLongOrNull() ?: doctor.inPersonConsultationFee
                         onSave(onlineFee, inPersonFee)
-                    },
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(text = "Lưu Thay Đổi", style = MaterialTheme.typography.titleMedium, color = Color.White)
-                }
+                    }
+                )
             }
         }
     }
 }
+

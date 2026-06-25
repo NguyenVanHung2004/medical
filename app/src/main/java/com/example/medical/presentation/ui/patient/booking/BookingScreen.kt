@@ -21,11 +21,16 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -33,12 +38,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.medical.R
 import com.example.medical.domain.model.BookingDate
 import com.example.medical.domain.model.DoctorDetail
 import com.example.medical.domain.model.TimeSlot
+import com.example.medical.presentation.ui.common.MedicalToast
 import org.koin.androidx.compose.koinViewModel
+import com.example.medical.presentation.ui.common.PrimaryButton
+import com.example.medical.presentation.ui.common.ToastData
+import com.example.medical.presentation.ui.common.ToastType
+import kotlinx.coroutines.delay
 
 @Composable
 fun BookingRoute(
@@ -51,13 +62,18 @@ fun BookingRoute(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onNavigateToNext = {
-            val doctorId = uiState.doctor?.id ?: return@BookingScreen
-            val date = uiState.selectedDate?.let { "${it.dateString} ${it.month}" } ?: return@BookingScreen
-            val time = uiState.selectedTimeSlot?.timeRange?.split(" - ")?.firstOrNull() ?: return@BookingScreen
-            onNavigateToNext(doctorId, date, time)
+            viewModel.submitBooking(
+                onSuccess = {
+                    val doctorId = uiState.doctor?.id ?: return@submitBooking
+                    val date = uiState.selectedDate?.let { "${it.dateString} ${it.month}" } ?: return@submitBooking
+                    val time = uiState.selectedTimeSlot?.timeRange?.split(" - ")?.firstOrNull() ?: return@submitBooking
+                    onNavigateToNext(doctorId, date, time)
+                }
+            )
         },
         onDateSelected = viewModel::selectDate,
-        onTimeSlotSelected = viewModel::selectTimeSlot
+        onTimeSlotSelected = viewModel::selectTimeSlot,
+        onClearMessages = viewModel::clearMessages
     )
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -68,7 +84,8 @@ fun BookingScreen(
     onNavigateBack: () -> Unit,
     onNavigateToNext: () -> Unit,
     onDateSelected: (BookingDate) -> Unit,
-    onTimeSlotSelected: (TimeSlot) -> Unit
+    onTimeSlotSelected: (TimeSlot) -> Unit,
+    onClearMessages: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -77,7 +94,7 @@ fun BookingScreen(
                     Text(
                         text = "MediConnect",
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.primaryBlue),
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -87,39 +104,55 @@ fun BookingScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = colorResource(id = R.color.primaryBlue)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 actions = { Spacer(modifier = Modifier.width(48.dp)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.white))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
         bottomBar = {
             Surface(
-                color = colorResource(id = R.color.white),
+                color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 8.dp
             ) {
-                Button(
+                PrimaryButton(
+                    text = if (uiState.isSubmitting) "Đang xử lý..." else "Xác nhận đặt lịch",
                     onClick = onNavigateToNext,
-                    enabled = uiState.selectedTimeSlot != null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(50.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.primaryBlue),
-                        disabledContainerColor = Color.LightGray
-                    )
-                ) {
-                    Text("Tiếp tục", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                    enabled = uiState.selectedTimeSlot != null && !uiState.isSubmitting,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         },
-        containerColor = colorResource(id = R.color.bgLight)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            var toastData by remember { mutableStateOf<ToastData?>(null) }
+            
+//            LaunchedEffect(uiState.successMessage) {
+//                if (uiState.successMessage != null) {
+//                    toastData = ToastData(uiState.successMessage, ToastType.SUCCESS)
+//                    delay(2000)
+//                    toastData = null
+//                    onClearMessages()
+//                }
+//            }
+            
+            LaunchedEffect(uiState.error) {
+                if (uiState.error != null) {
+                    toastData = ToastData(uiState.error, ToastType.ERROR)
+                    delay(3000)
+                    toastData = null
+                    onClearMessages()
+                }
+            }
+            
+            MedicalToast(
+                toastData = toastData,
+                modifier = Modifier.align(Alignment.TopCenter).zIndex(100f)
+            )
+
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
@@ -133,6 +166,7 @@ fun BookingScreen(
                     uiState.doctor?.let { doctor ->
                         DoctorInfoCard(doctor)
                     }
+                // (Closing braces are lower down)
 
                     // Select Date
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -140,7 +174,7 @@ fun BookingScreen(
                             text = "Chọn ngày khám",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             items(uiState.dates) { date ->
@@ -159,15 +193,14 @@ fun BookingScreen(
                             text = "Khung giờ có sẵn",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colorResource(id = R.color.textPrimary)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
-                            modifier = Modifier.height(240.dp),
+                            modifier = Modifier.heightIn(max = 400.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            userScrollEnabled = false
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(uiState.timeSlots) { slot ->
                                 TimeSlotCard(
@@ -184,8 +217,8 @@ fun BookingScreen(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            LegendItem(color = colorResource(id = R.color.primaryBlue), text = "Đang chọn", isFilled = true)
-                            LegendItem(color = colorResource(id = R.color.primaryBlue), text = "Còn trống", isFilled = false)
+                            LegendItem(color = MaterialTheme.colorScheme.primary, text = "Đang chọn", isFilled = true)
+                            LegendItem(color = MaterialTheme.colorScheme.primary, text = "Còn trống", isFilled = false)
                             LegendItem(color = Color.LightGray, text = "Kín lịch", isFilled = false, isTextGray = true)
                         }
                     }
@@ -202,7 +235,7 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -221,13 +254,13 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                         text = doctor.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.textPrimary)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "${doctor.specialty} - ${doctor.hospital}",
                         fontSize = 14.sp,
-                        color = colorResource(id = R.color.textSecondary)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -238,7 +271,7 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                         Text(
                             text = "(${doctor.reviewCount} đánh giá)",
                             fontSize = 14.sp,
-                            color = colorResource(id = R.color.textSecondary)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -247,13 +280,13 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
                 thickness = DividerDefaults.Thickness,
-                color = colorResource(id = R.color.dividerColor)
+                color = MaterialTheme.colorScheme.outline
             )
 
             Text(
                 text = doctor.bio,
                 fontSize = 14.sp,
-                color = colorResource(id = R.color.textSecondary),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -261,7 +294,7 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
                 text = "Đọc thêm",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.primaryBlue),
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { /* TODO */ }
             )
         }
@@ -270,9 +303,9 @@ fun DoctorInfoCard(doctor: DoctorDetail) {
 
 @Composable
 fun DateCard(date: BookingDate, isSelected: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isSelected) colorResource(id = R.color.primaryBlue) else colorResource(id = R.color.white)
-    val contentColor = if (isSelected) colorResource(id = R.color.white) else colorResource(id = R.color.textPrimary)
-    val borderColor = if (isSelected) Color.Transparent else colorResource(id = R.color.dividerColor)
+    val bgColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
+    val borderColor = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline
 
     Column(
         modifier = Modifier
@@ -295,18 +328,18 @@ fun DateCard(date: BookingDate, isSelected: Boolean, onClick: () -> Unit) {
 @Composable
 fun TimeSlotCard(slot: TimeSlot, isSelected: Boolean, onClick: () -> Unit) {
     val bgColor = when {
-        isSelected -> colorResource(id = R.color.primaryBlue)
-        else -> colorResource(id = R.color.white)
+        isSelected -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.surface
     }
     val contentColor = when {
         !slot.isAvailable -> Color.Gray
-        isSelected -> colorResource(id = R.color.white)
-        else -> colorResource(id = R.color.primaryBlue)
+        isSelected -> MaterialTheme.colorScheme.surface
+        else -> MaterialTheme.colorScheme.primary
     }
     val borderColor = when {
         !slot.isAvailable -> Color.Transparent
         isSelected -> Color.Transparent
-        else -> colorResource(id = R.color.primaryBlue)
+        else -> MaterialTheme.colorScheme.primary
     }
 
     Box(
@@ -342,7 +375,7 @@ fun LegendItem(color: Color, text: String, isFilled: Boolean, isTextGray: Boolea
         Text(
             text = text,
             fontSize = 12.sp,
-            color = if (isTextGray) Color.Gray else colorResource(id = R.color.textSecondary)
+            color = if (isTextGray) Color.Gray else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

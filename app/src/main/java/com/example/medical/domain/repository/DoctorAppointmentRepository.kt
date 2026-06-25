@@ -9,4 +9,5 @@ interface DoctorAppointmentRepository {
     fun getScheduledAppointments(): Flow<List<Appointment>>
     fun getAppointmentDetail(id: String): Flow<Appointment?>
     suspend fun respondToRequest(requestId: String, accept: Boolean): Result<Unit>
+    suspend fun getPatientDetail(patientId: String): com.example.medical.domain.model.PatientDetail?
 }

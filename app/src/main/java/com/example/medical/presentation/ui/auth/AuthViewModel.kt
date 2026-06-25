@@ -39,7 +39,7 @@ class AuthViewModel(private val loginUseCase: LoginUseCase) : ViewModel() {
     fun login() {
         viewModelScope.launch {
             val currentState = _uiState.value
-            loginUseCase(currentState.email, currentState.password).collect { result ->
+            loginUseCase(currentState.email, currentState.password, currentState.isDoctor).collect { result ->
                 when (result) {
                     is Result.Loading -> {
                         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
