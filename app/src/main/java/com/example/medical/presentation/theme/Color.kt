@@ -22,3 +22,5 @@ val GenZBackground = Color(0xFF000000) // Đen tuyền
 val GenZSurface = Color(0xFF1A1A1A)
 val GenZText = Color(0xFFFFFFFF)
 val GenZSecondaryText = Color(0xFFBDBDBD)
+
+
