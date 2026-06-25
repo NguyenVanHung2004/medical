@@ -41,6 +41,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 fun WelcomeScreen(
     currentLanguage: String = "vi",
     onLanguageChange: (String) -> Unit = {},
+    isDarkTheme: Boolean = false,
+    onThemeToggle: () -> Unit = {},
     onRoleSelected: (isDoctor: Boolean) -> Unit
 ) {
     Box(
@@ -120,8 +122,19 @@ Box(
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.TopEnd),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(onClick = onThemeToggle) {
+                if (isDarkTheme) {
+                    Text("☀️", fontSize = 24.sp)
+                } else {
+                    Text("🌙", fontSize = 24.sp)
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+
             if (currentLanguage == "vi") {
                 Text(
                     text = "EN",

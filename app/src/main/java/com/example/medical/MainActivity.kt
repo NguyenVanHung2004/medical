@@ -55,6 +55,17 @@ class MainActivity : ComponentActivity() {
             var selectedLanguage by remember {
                 mutableStateOf(sharedPreferences.getString("language", "vi") ?: "vi")
             }
+            
+            val systemTheme = androidx.compose.foundation.isSystemInDarkTheme()
+            var isDarkTheme by remember {
+                mutableStateOf(
+                    if (sharedPreferences.contains("is_dark_theme")) {
+                        sharedPreferences.getBoolean("is_dark_theme", false)
+                    } else {
+                        systemTheme
+                    }
+                )
+            }
 
             val context = LocalContext.current
             val locale = Locale(selectedLanguage)
@@ -72,7 +83,7 @@ class MainActivity : ComponentActivity() {
                 LocalContext provides localeContext,
                 LocalConfiguration provides configuration
             ) {
-                MedicalAppTheme(themeName = selectedTheme) {
+                MedicalAppTheme(darkTheme = isDarkTheme, themeName = selectedTheme) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         Box(
                             modifier = Modifier.padding(innerPadding)
@@ -95,6 +106,15 @@ class MainActivity : ComponentActivity() {
                                         onLanguageChange = { newLang ->
                                             selectedLanguage = newLang
                                             sharedPreferences.edit().putString("language", newLang).apply()
+                                        },
+                                        isDarkTheme = isDarkTheme,
+                                        onThemeToggle = {
+                                            isDarkTheme = !isDarkTheme
+                                            sharedPreferences.edit().putBoolean("is_dark_theme", isDarkTheme).apply()
+                                            
+                                            val newTheme = if (isDarkTheme) "genz" else "standard"
+                                            selectedTheme = newTheme
+                                            sharedPreferences.edit().putString("theme", newTheme).apply()
                                         },
                                         onRoleSelected = { isDoctor ->
                                             navController.navigate("login/$isDoctor")
@@ -367,8 +387,11 @@ class MainActivity : ComponentActivity() {
                                         currentTheme = selectedTheme,
                                         onThemeChange = { newTheme ->
                                             selectedTheme = newTheme
-                                            sharedPreferences.edit().putString("theme", newTheme)
-                                                .apply()
+                                            sharedPreferences.edit().putString("theme", newTheme).apply()
+                                            
+                                            val newDarkTheme = (newTheme == "genz")
+                                            isDarkTheme = newDarkTheme
+                                            sharedPreferences.edit().putBoolean("is_dark_theme", newDarkTheme).apply()
                                         },
                                         currentLanguage = selectedLanguage,
                                         onLanguageChange = { newLang ->

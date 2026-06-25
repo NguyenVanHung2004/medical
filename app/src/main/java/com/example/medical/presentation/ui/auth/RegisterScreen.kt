@@ -15,6 +15,10 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
+import com.example.medical.presentation.ui.common.MedicalButton as Button
+import com.example.medical.presentation.ui.common.MedicalOutlinedButton as OutlinedButton
+import com.example.medical.presentation.ui.common.MedicalTextButton as TextButton
+import com.example.medical.presentation.ui.common.MedicalIconButton as IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
