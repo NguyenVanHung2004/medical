@@ -32,6 +32,12 @@ Dự án ứng dụng Y tế (Medical App) phát triển trên nền tảng Andr
   - **Appointment Detail**: Chi tiết lịch hẹn, thông tin bác sĩ, trạng thái đặt khám.
 - **Notifications**: Các thông báo về thay đổi trạng thái lịch hẹn, hệ thống.
 
+### 4. ⚙️ Cài đặt chung (Settings)
+- **Cài đặt thông báo**: Cho phép bật/tắt thông báo âm thanh.
+- **Cài đặt âm thanh**: Cho phép bật/tắt âm thanh trong ứng dụng.
+- **Cài đặt Theme**: Hỗ trợ thay đổi giao diện (Standard Theme, GenZ Theme).
+- **Cài đặt ngôn ngữ**: Chuyển đổi ngôn ngữ hiển thị (Tiếng Việt, English).
+
 ## 🛠 Công nghệ sử dụng chính
 - **Ngôn ngữ**: Kotlin
 - **UI Toolkit**: Jetpack Compose (Modern Android UI)
