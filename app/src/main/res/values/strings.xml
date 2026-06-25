@@ -292,4 +292,5 @@
     <string name="morning">Sáng</string>
     <string name="afternoon">Chiều</string>
     <string name="confirm_schedule_change">Xác nhận đổi lịch</string>
+    <string name="specialty_prefix">Chuyên khoa %1$s</string>
 </resources>

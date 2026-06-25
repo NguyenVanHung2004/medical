@@ -3,6 +3,7 @@ package com.example.medical.presentation.ui.doctor.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -17,20 +18,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.medical.R
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.sp
 import com.example.medical.domain.model.Doctor
 import com.example.medical.domain.model.WorkingTimeSlot
 import org.koin.androidx.compose.koinViewModel
 import java.time.DayOfWeek
 import java.util.*
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
@@ -67,7 +73,6 @@ fun DoctorProfileRoute(
         onShowEditFeesDialog = viewModel::showEditFeesDialog,
         onHideEditFeesDialog = viewModel::hideEditFeesDialog,
         onSaveFees = viewModel::saveFees,
-        onAvatarSelected = viewModel::updateAvatar,
         onNavigateToSettings = onNavigateToSettings
     )
 }
@@ -90,67 +95,8 @@ fun DoctorProfileScreen(
     onShowEditFeesDialog: () -> Unit,
     onHideEditFeesDialog: () -> Unit,
     onSaveFees: (Long, Long) -> Unit,
-    onAvatarSelected: (String) -> Unit,
     onNavigateToSettings: () -> Unit = {}
 ) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val registryOwner = androidx.activity.compose.LocalActivityResultRegistryOwner.current 
-        ?: (context as? androidx.activity.result.ActivityResultRegistryOwner)
-
-    if (registryOwner != null) {
-        androidx.compose.runtime.CompositionLocalProvider(
-            androidx.activity.compose.LocalActivityResultRegistryOwner provides registryOwner
-        ) {
-            DoctorProfileScreenContent(
-                uiState, onLogout, onToggleOnline, onToggleOffline, onShowWorkingHoursDialog,
-                onHideWorkingHoursDialog, onSelectDayOfWeek, onToggleTimeSlot,
-                onConfirmWorkingHoursUpdate, onShowEditProfileDialog, onHideEditProfileDialog,
-                onSaveProfile, onShowEditFeesDialog, onHideEditFeesDialog, onSaveFees,
-                onAvatarSelected, onNavigateToSettings, true
-            )
-        }
-    } else {
-        DoctorProfileScreenContent(
-            uiState, onLogout, onToggleOnline, onToggleOffline, onShowWorkingHoursDialog,
-            onHideWorkingHoursDialog, onSelectDayOfWeek, onToggleTimeSlot,
-            onConfirmWorkingHoursUpdate, onShowEditProfileDialog, onHideEditProfileDialog,
-            onSaveProfile, onShowEditFeesDialog, onHideEditFeesDialog, onSaveFees,
-            onAvatarSelected, onNavigateToSettings, false
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DoctorProfileScreenContent(
-    uiState: DoctorProfileUiState,
-    onLogout: () -> Unit,
-    onToggleOnline: (Boolean) -> Unit,
-    onToggleOffline: (Boolean) -> Unit,
-    onShowWorkingHoursDialog: () -> Unit,
-    onHideWorkingHoursDialog: () -> Unit,
-    onSelectDayOfWeek: (DayOfWeek) -> Unit,
-    onToggleTimeSlot: (WorkingTimeSlot) -> Unit,
-    onConfirmWorkingHoursUpdate: () -> Unit,
-    onShowEditProfileDialog: () -> Unit,
-    onHideEditProfileDialog: () -> Unit,
-    onSaveProfile: (String, String, String, String, String) -> Unit,
-    onShowEditFeesDialog: () -> Unit,
-    onHideEditFeesDialog: () -> Unit,
-    onSaveFees: (Long, Long) -> Unit,
-    onAvatarSelected: (String) -> Unit,
-    onNavigateToSettings: () -> Unit,
-    canUseLauncher: Boolean
-) {
-    val launcher = if (canUseLauncher) {
-        androidx.activity.compose.rememberLauncherForActivityResult(
-            contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
-        ) { uri: android.net.Uri? ->
-            uri?.let {
-                onAvatarSelected(it.toString())
-            }
-        }
-    } else null
 
     Scaffold(
         topBar = {
@@ -195,8 +141,7 @@ private fun DoctorProfileScreenContent(
                         item {
                             DoctorInfoCard(
                                 doctor = doctor,
-                                onEditClick = onShowEditProfileDialog,
-                                onLaunchAvatarPicker = { launcher?.launch("image/*") }
+                                onEditClick = onShowEditProfileDialog
                             )
                         }
                         item {
@@ -263,7 +208,7 @@ private fun DoctorProfileScreenContent(
 }
 
 @Composable
-fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onLaunchAvatarPicker: () -> Unit) {
+fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -284,21 +229,12 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onLaunchAvatarPicker
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (doctor.avatarUrl != null) {
-                        AsyncImage(
-                            model = doctor.avatarUrl,
-                            contentDescription = "Avatar",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Avatar",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.doctor_avatar),
+                        contentDescription = "Avatar",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                 }
                 Box(
                     modifier = Modifier
@@ -306,8 +242,7 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onLaunchAvatarPicker
                         .offset(x = 8.dp, y = 8.dp)
                         .size(32.dp)
                         .background(MaterialTheme.colorScheme.primary, CircleShape)
-                        .clip(CircleShape)
-                        .clickable { onLaunchAvatarPicker() },
+                        .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -325,7 +260,7 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onLaunchAvatarPicker
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = doctor.specialty.uppercase(),
+                text = stringResource(R.string.specialty_prefix, doctor.specialty).uppercase(),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary
             )
@@ -524,10 +459,10 @@ fun WorkingHoursCard(doctor: Doctor, onUpdateWorkingHours: () -> Unit) {
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 sortedSlots.forEach { slot ->
-                                    androidx.compose.material3.Surface(
+                                    Surface(
                                         shape = RoundedCornerShape(16.dp),
                                         color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-                                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
                                     ) {
                                         Text(
                                             text = slot.time,
@@ -579,7 +514,7 @@ fun SettingsList(onNavigateToSettings: () -> Unit = {}) {
 }
 
 @Composable
-fun SettingItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, onClick: () -> Unit = {}) {
+fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -3,6 +3,9 @@ package com.example.medical.presentation.ui.doctor.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -71,8 +74,8 @@ fun DoctorHomeScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        androidx.compose.foundation.Image(
-                            painter = androidx.compose.ui.res.painterResource(id = R.drawable.medical_app_logo),
+                        Image(
+                            painter = painterResource(id = R.drawable.medical_app_logo),
                             contentDescription = "Logo",
                             modifier = Modifier.size(28.dp)
                         )
@@ -220,10 +223,11 @@ fun GreetingSection(doctorName: String) {
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Person,
+            Image(
+                painter = painterResource(id = R.drawable.doctor_avatar),
                 contentDescription = "Avatar",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
         }
     }

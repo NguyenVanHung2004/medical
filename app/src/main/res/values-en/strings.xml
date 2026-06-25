@@ -289,4 +289,5 @@
     <string name="morning">Morning</string>
     <string name="afternoon">Afternoon</string>
     <string name="confirm_schedule_change">Confirm Schedule Change</string>
+    <string name="specialty_prefix">Specialty %1$s</string>
 </resources>

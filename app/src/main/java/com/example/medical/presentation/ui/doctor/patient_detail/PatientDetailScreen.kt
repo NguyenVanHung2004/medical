@@ -122,7 +122,7 @@ fun PatientDetailScreen(
                                 }
                             } else {
                                 AsyncImage(
-                                    model = profile.avatarUrl,
+                                    model = "https://i.pravatar.cc/150?img=11",
                                     contentDescription = "Avatar",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
