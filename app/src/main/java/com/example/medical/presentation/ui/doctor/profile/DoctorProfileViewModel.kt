@@ -41,13 +41,17 @@ class DoctorProfileViewModel(
 
     fun toggleOnlineConsultation(isEnabled: Boolean) {
         viewModelScope.launch {
-            repository.toggleOnlineConsultation(isEnabled).collect {}
+            repository.toggleOnlineConsultation(isEnabled).collect {
+                fetchDoctorProfile()
+            }
         }
     }
 
     fun toggleInPersonConsultation(isEnabled: Boolean) {
         viewModelScope.launch {
-            repository.toggleInPersonConsultation(isEnabled).collect {}
+            repository.toggleInPersonConsultation(isEnabled).collect {
+                fetchDoctorProfile()
+            }
         }
     }
 
@@ -73,6 +77,7 @@ class DoctorProfileViewModel(
             repository.updateProfile(name, specialty, hospital, experience, bio).collect {
                 hideEditProfileDialog()
                 showToast("Cập nhật hồ sơ thành công", ToastType.SUCCESS)
+                fetchDoctorProfile()
             }
         }
     }
@@ -90,13 +95,16 @@ class DoctorProfileViewModel(
             repository.updateFees(onlineFee, inPersonFee).collect {
                 hideEditFeesDialog()
                 showToast("Cập nhật chi phí thành công", ToastType.SUCCESS)
+                fetchDoctorProfile()
             }
         }
     }
 
     fun updateAvatar(uri: String) {
         viewModelScope.launch {
-            repository.updateAvatar(uri).collect {}
+            repository.updateAvatar(uri).collect {
+                fetchDoctorProfile()
+            }
         }
     }
 
