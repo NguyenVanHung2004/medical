@@ -14,10 +14,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.medical.presentation.theme.GenZSurface
+import com.example.medical.presentation.theme.LocalThemeMode
+import com.example.medical.presentation.theme.NeonBlue
+import com.example.medical.presentation.ui.common.PrimaryButton
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -137,7 +142,7 @@ fun CompleteDoctorProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF8F9FA))
+                .background(backgroundColor)
                 .padding(innerPadding)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -167,7 +172,7 @@ fun CompleteDoctorProfileScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -189,11 +194,14 @@ fun CompleteDoctorProfileScreen(
                         placeholder = "VD: BS. Nguyễn Văn An"
                     )
                     
-                    DoctorProfileTextField(
+                    val specialties = com.example.medical.domain.model.DoctorSpecialty.values().map { it.displayName }
+                    
+                    DoctorProfileDropdownField(
                         label = "Chuyên khoa",
                         value = uiState.specialty,
                         onValueChange = onSpecialtyChange,
-                        placeholder = "VD: Tim mạch, Nhi khoa..."
+                        options = specialties,
+                        placeholder = "Chọn chuyên khoa"
                     )
                     
                     DoctorProfileTextField(
@@ -259,6 +267,78 @@ fun DoctorProfileTextField(
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
             )
         )
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DoctorProfileDropdownField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    options: List<String>,
+    placeholder: String
+) {
+    val isGenZ = LocalThemeMode.current == "genz"
+    var expanded by remember { mutableStateOf(false) }
+
+    val textColor = if (isGenZ) Color.White else MaterialTheme.colorScheme.onSurface
+    val borderColor = if (isGenZ) NeonBlue else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+    val focusedBorderColor = if (isGenZ) NeonBlue else MaterialTheme.colorScheme.primary
+    val dropdownBgColor = if (isGenZ) GenZSurface else MaterialTheme.colorScheme.surface
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            color = if (isGenZ) Color.White else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = {}, 
+                readOnly = true,
+                placeholder = { Text(placeholder, color = textColor.copy(alpha = 0.4f)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(),
+                shape = RoundedCornerShape(8.dp),
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded
+                    )
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = borderColor,
+                    focusedBorderColor = focusedBorderColor,
+                    unfocusedTextColor = textColor,
+                    focusedTextColor = textColor,
+                    unfocusedTrailingIconColor = textColor,
+                    focusedTrailingIconColor = textColor
+                )
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = if (isGenZ) Modifier.background(dropdownBgColor) else Modifier
+            ) {
+                options.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectionOption, color = textColor) },
+                        onClick = {
+                            onValueChange(selectionOption)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
