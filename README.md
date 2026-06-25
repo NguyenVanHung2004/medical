@@ -7,7 +7,7 @@ Dự án ứng dụng Y tế (Medical App) phát triển trên nền tảng Andr
 ### 1.  Xác thực (Authentication) & Khởi động
 - **Intro / Welcome**: Màn hình chào mừng và giới thiệu ứng dụng.
 - **Login**: Đăng nhập hệ thống (Hỗ trợ tài khoản thường và Google Auth).
-- **Register**: Đăng ký tài khoản mới.
+- **Register**: Đăng ký tài khoản mới (thông qua số điện thoại hoặc email).
 - **Forgot Password**: Quên và khôi phục mật khẩu.
 
 ### 2.  Dành cho Bác sĩ (Doctor)
@@ -17,7 +17,6 @@ Dự án ứng dụng Y tế (Medical App) phát triển trên nền tảng Andr
   - **Appointment List**: Danh sách các lịch khám (Sắp tới, đã hoàn thành, bị hủy...).
   - **Appointment Detail**: Chi tiết một lịch khám, hồ sơ bệnh nhân và thông tin thanh toán.
 - **Patient Management (Quản lý bệnh nhân)**:
-  - **Patient List**: Danh sách bệnh nhân bác sĩ đang phụ trách.
   - **Patient Detail**: Xem hồ sơ y tế chi tiết của từng bệnh nhân.
 - **Notifications**: Màn hình thông báo nhắc nhở lịch khám, thay đổi trạng thái.
 
@@ -32,13 +31,13 @@ Dự án ứng dụng Y tế (Medical App) phát triển trên nền tảng Andr
   - **Appointment Detail**: Chi tiết lịch hẹn, thông tin bác sĩ, trạng thái đặt khám.
 - **Notifications**: Các thông báo về thay đổi trạng thái lịch hẹn, hệ thống.
 
-### 4. ⚙️ Cài đặt chung (Settings)
+### 4.  Cài đặt chung (Settings)
 - **Cài đặt thông báo**: Cho phép bật/tắt thông báo âm thanh.
 - **Cài đặt âm thanh**: Cho phép bật/tắt âm thanh trong ứng dụng.
 - **Cài đặt Theme**: Hỗ trợ thay đổi giao diện (Standard Theme, GenZ Theme).
 - **Cài đặt ngôn ngữ**: Chuyển đổi ngôn ngữ hiển thị (Tiếng Việt, English).
 
-## 🛠 Công nghệ sử dụng chính
+##  Công nghệ sử dụng chính
 - **Ngôn ngữ**: Kotlin
 - **UI Toolkit**: Jetpack Compose (Modern Android UI)
 - **Kiến trúc**: MVVM (Model-View-ViewModel), Clean Architecture
