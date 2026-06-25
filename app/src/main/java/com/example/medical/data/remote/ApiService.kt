@@ -122,6 +122,9 @@ interface ApiService {
     @GET("api/users/profile")
     suspend fun getProfile(): UserDto
     
+    @GET("api/users/{id}")
+    suspend fun getUserById(@Path("id") userId: String): UserDto
+    
     @PUT("api/users/profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): UserDto
     

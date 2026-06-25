@@ -87,6 +87,65 @@ fun DoctorProfileScreen(
     onAvatarSelected: (String) -> Unit,
     onNavigateToSettings: () -> Unit = {}
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val registryOwner = androidx.activity.compose.LocalActivityResultRegistryOwner.current 
+        ?: (context as? androidx.activity.result.ActivityResultRegistryOwner)
+
+    if (registryOwner != null) {
+        androidx.compose.runtime.CompositionLocalProvider(
+            androidx.activity.compose.LocalActivityResultRegistryOwner provides registryOwner
+        ) {
+            DoctorProfileScreenContent(
+                uiState, onLogout, onToggleOnline, onToggleOffline, onShowWorkingHoursDialog,
+                onHideWorkingHoursDialog, onSelectDayOfWeek, onToggleTimeSlot,
+                onConfirmWorkingHoursUpdate, onShowEditProfileDialog, onHideEditProfileDialog,
+                onSaveProfile, onShowEditFeesDialog, onHideEditFeesDialog, onSaveFees,
+                onAvatarSelected, onNavigateToSettings, true
+            )
+        }
+    } else {
+        DoctorProfileScreenContent(
+            uiState, onLogout, onToggleOnline, onToggleOffline, onShowWorkingHoursDialog,
+            onHideWorkingHoursDialog, onSelectDayOfWeek, onToggleTimeSlot,
+            onConfirmWorkingHoursUpdate, onShowEditProfileDialog, onHideEditProfileDialog,
+            onSaveProfile, onShowEditFeesDialog, onHideEditFeesDialog, onSaveFees,
+            onAvatarSelected, onNavigateToSettings, false
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DoctorProfileScreenContent(
+    uiState: DoctorProfileUiState,
+    onLogout: () -> Unit,
+    onToggleOnline: (Boolean) -> Unit,
+    onToggleOffline: (Boolean) -> Unit,
+    onShowWorkingHoursDialog: () -> Unit,
+    onHideWorkingHoursDialog: () -> Unit,
+    onSelectDayOfWeek: (DayOfWeek) -> Unit,
+    onToggleTimeSlot: (WorkingTimeSlot) -> Unit,
+    onConfirmWorkingHoursUpdate: () -> Unit,
+    onShowEditProfileDialog: () -> Unit,
+    onHideEditProfileDialog: () -> Unit,
+    onSaveProfile: (String, String, String, String, String) -> Unit,
+    onShowEditFeesDialog: () -> Unit,
+    onHideEditFeesDialog: () -> Unit,
+    onSaveFees: (Long, Long) -> Unit,
+    onAvatarSelected: (String) -> Unit,
+    onNavigateToSettings: () -> Unit,
+    canUseLauncher: Boolean
+) {
+    val launcher = if (canUseLauncher) {
+        androidx.activity.compose.rememberLauncherForActivityResult(
+            contract = androidx.activity.result.contract.ActivityResultContracts.GetContent()
+        ) { uri: android.net.Uri? ->
+            uri?.let {
+                onAvatarSelected(it.toString())
+            }
+        }
+    } else null
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -131,7 +190,7 @@ fun DoctorProfileScreen(
                             DoctorInfoCard(
                                 doctor = doctor,
                                 onEditClick = onShowEditProfileDialog,
-                                onAvatarSelected = onAvatarSelected
+                                onLaunchAvatarPicker = { launcher?.launch("image/*") }
                             )
                         }
                         item {
@@ -198,15 +257,7 @@ fun DoctorProfileScreen(
 }
 
 @Composable
-fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onAvatarSelected: (String) -> Unit) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            onAvatarSelected(it.toString())
-        }
-    }
-
+fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onLaunchAvatarPicker: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -250,7 +301,7 @@ fun DoctorInfoCard(doctor: Doctor, onEditClick: () -> Unit, onAvatarSelected: (S
                         .size(32.dp)
                         .background(MaterialTheme.colorScheme.primary, CircleShape)
                         .clip(CircleShape)
-                        .clickable { launcher.launch("image/*") },
+                        .clickable { onLaunchAvatarPicker() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

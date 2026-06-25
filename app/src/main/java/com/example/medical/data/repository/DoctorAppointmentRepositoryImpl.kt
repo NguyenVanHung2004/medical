@@ -67,18 +67,34 @@ class DoctorAppointmentRepositoryImpl(
     }
 
     override suspend fun getPatientDetail(patientId: String): com.example.medical.domain.model.PatientDetail? {
-        // Mock data since API endpoint doesn't exist yet
-        return com.example.medical.domain.model.PatientDetail(
-            id = patientId,
-            fullName = "Nguyễn Văn A",
-            avatarUrl = null,
-            phone = "0123456789",
-            email = "nguyenvana@gmail.com",
-            dob = "01/01/1990",
-            gender = "Nam",
-            address = "123 Đường Xuân Thủy, Cầu Giấy, Hà Nội",
-            bloodType = "O+",
-            allergies = "Không có"
-        )
+        return try {
+            val userDto = apiService.getUserById(patientId)
+            com.example.medical.domain.model.PatientDetail(
+                id = userDto.id,
+                fullName = userDto.fullName,
+                avatarUrl = userDto.avatarUrl,
+                phone = userDto.phone ?: "Chưa cập nhật",
+                email = userDto.email,
+                dob = userDto.patientProfile?.dob ?: "Chưa cập nhật",
+                gender = userDto.patientProfile?.gender ?: "Chưa cập nhật",
+                address = userDto.patientProfile?.address ?: "Chưa cập nhật",
+                bloodType = userDto.patientProfile?.bloodType,
+                allergies = userDto.patientProfile?.allergies
+            )
+        } catch (e: Exception) {
+            // Fallback for mock environment or API failure
+            com.example.medical.domain.model.PatientDetail(
+                id = patientId,
+                fullName = "Bệnh nhân ẩn danh",
+                avatarUrl = null,
+                phone = "N/A",
+                email = "N/A",
+                dob = "N/A",
+                gender = "N/A",
+                address = "N/A",
+                bloodType = "N/A",
+                allergies = "N/A"
+            )
+        }
     }
 }

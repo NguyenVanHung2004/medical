@@ -13,9 +13,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.medical.R
@@ -54,7 +54,7 @@ fun MedicalBottomNavigation(
     val items = if (role == UserRole.PATIENT) patientItems else doctorItems
 
     NavigationBar(
-        containerColor = colorResource(id = R.color.white),
+        containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
     ) {
         items.forEach { item ->
@@ -64,11 +64,11 @@ fun MedicalBottomNavigation(
                 selected = currentRoute == item.route,
                 onClick = { onTabSelected(item.route) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = colorResource(id = R.color.primaryBlue),
-                    selectedTextColor = colorResource(id = R.color.primaryBlue),
-                    unselectedIconColor = colorResource(id = R.color.textSecondary),
-                    unselectedTextColor = colorResource(id = R.color.textSecondary),
-                    indicatorColor = colorResource(id = R.color.primaryBlueLight)
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
         }

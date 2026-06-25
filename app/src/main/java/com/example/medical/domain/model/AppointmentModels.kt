@@ -1,5 +1,7 @@
 package com.example.medical.domain.model
 
+import com.google.gson.annotations.SerializedName
+
 // Tham chiếu ConsultationType từ DoctorModels (hoặc Profile) 
 // Enum AppointmentStatus cũng từ DoctorModels. 
 typealias AppointmentType = ConsultationType
@@ -26,6 +28,7 @@ data class Appointment(
     val patientInitial: String,
     val patientGender: String,
     val patientAge: Int,
+    @SerializedName("patientId")
     val patientIdStr: String,
     val patientAvatarUrl: String?,
     val date: String,
